@@ -2,13 +2,17 @@ package com.company.web.smart_garage.models;
 
 import com.company.web.smart_garage.models.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "vehicles")
-@Data
 public class Vehicle {
 
     @Id

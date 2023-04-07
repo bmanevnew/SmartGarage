@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.helpers;
+package com.company.web.smart_garage.utils.helpers;
 
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.user.UserDtoIn;

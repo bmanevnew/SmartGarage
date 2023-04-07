@@ -1,13 +1,15 @@
 package com.company.web.smart_garage.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "repairs")
-@Data
 public class Repair {
 
     @Id
@@ -21,6 +23,6 @@ public class Repair {
     @Column(name = "price")
     private double price;
 
-    @ManyToMany(mappedBy = "repairs")
-    private Set<Visit> visits;
+    @Column(name = "is_active")
+    private boolean isActive;
 }

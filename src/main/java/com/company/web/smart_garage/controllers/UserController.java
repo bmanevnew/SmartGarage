@@ -1,18 +1,18 @@
 package com.company.web.smart_garage.controllers;
 
-import com.company.web.smart_garage.helpers.UserMapper;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.user.UserDtoIn;
 import com.company.web.smart_garage.services.UserService;
+import com.company.web.smart_garage.utils.helpers.UserMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/users")
-@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
@@ -26,7 +26,6 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody UserDtoIn userDto) {
         User user = userMapper.dtoToUser(userDto);
-        userService.create(user);
-        return user;
+        return userService.create(user);
     }
 }
