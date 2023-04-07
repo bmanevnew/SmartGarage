@@ -1,4 +1,4 @@
-package com.company.web.smartgarage.models;
+package com.company.web.smart_garage.models;
 
 import jakarta.persistence.*;
 import lombok.Data;

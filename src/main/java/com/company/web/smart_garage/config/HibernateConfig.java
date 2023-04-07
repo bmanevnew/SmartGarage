@@ -1,4 +1,4 @@
-package com.company.web.smartgarage.config;
+package com.company.web.smart_garage.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("com.company.web.smartgarage.models");
+        sessionFactory.setPackagesToScan("com.company.web.smart_garage.models");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }

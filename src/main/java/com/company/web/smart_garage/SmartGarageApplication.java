@@ -1,4 +1,4 @@
-package com.company.web.smartgarage;
+package com.company.web.smart_garage;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
