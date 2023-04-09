@@ -1,5 +1,6 @@
 package com.company.web.smart_garage.models;
 
+import com.company.web.smart_garage.models.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,10 @@ public class Visit {
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
+
+    @ManyToOne
+    @Column(name = "user_id")
+    private User visitor;
 
     @ManyToMany
     @JoinTable(

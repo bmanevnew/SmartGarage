@@ -2,6 +2,7 @@ package com.company.web.smart_garage.models.user;
 
 import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.models.Vehicle;
+import com.company.web.smart_garage.models.Visit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,4 +50,7 @@ public class User {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", cascade = CascadeType.ALL)
     private Set<Vehicle> vehicles;
+
+    @OneToMany(mappedBy = "visitor")
+    private Set<Visit> visits;
 }
