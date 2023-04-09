@@ -47,6 +47,6 @@ public class User {
     )
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", cascade = CascadeType.ALL)
     private Set<Vehicle> vehicles;
 }

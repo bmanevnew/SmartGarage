@@ -19,9 +19,16 @@ public class UserDtoIn {
     @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
     private String username;
     @NotBlank
+    @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
+    private String firstName;
+    @NotBlank
+    @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
+    private String lastName;
+    @NotBlank
     @Email(message = EMAIL_INVALID_MESSAGE)
     private String email;
     @NotBlank
     @Size(min = 10, max = 10, message = PHONE_NUMBER_INVALID_MESSAGE)
     private String phoneNumber;
+
 }
