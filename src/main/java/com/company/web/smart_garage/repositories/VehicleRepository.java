@@ -1,6 +1,5 @@
 package com.company.web.smart_garage.repositories;
 
-import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.vehicle.Vehicle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,14 +15,14 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     Optional<Vehicle> findFirstByVin(String vin);
 
-    Page<Vehicle> findByOwner(User owner, Pageable pageable);
-
     @Query("select v from Vehicle v where " +
+            "(:owner is null or v.owner.id = :owner) and " +
             "(:model is null or v.model like %:model%) and " +
             "(:brand is null or v.brand like %:brand%) and " +
             "(:prodYearFrom is null or v.productionYear >= :prodYearFrom) and " +
             "(:prodYearTo is null or v.productionYear <= :prodYearTo)")
-    Page<Vehicle> findByParameters(@Param("model") String model,
+    Page<Vehicle> findByParameters(@Param("owner") Long ownerId,
+                                   @Param("model") String model,
                                    @Param("brand") String brand,
                                    @Param("prodYearFrom") Integer prodYearFrom,
                                    @Param("prodYearTo") Integer prodYearTo,

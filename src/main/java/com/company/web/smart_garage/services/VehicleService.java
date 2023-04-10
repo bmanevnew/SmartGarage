@@ -3,8 +3,7 @@ package com.company.web.smart_garage.services;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.vehicle.Vehicle;
 import org.springframework.data.domain.Page;
-
-import java.util.Map;
+import org.springframework.data.domain.Pageable;
 
 public interface VehicleService {
 
@@ -14,9 +13,8 @@ public interface VehicleService {
 
     Vehicle getByVin(String vin);
 
-    Page<Vehicle> getByOwner(String username, int page);
-
-    Page<Vehicle> filterAndSort(Map<String, String> params);
+    Page<Vehicle> getAll(Long ownerId, String model, String brand, Integer prodYearFrom, Integer prodYearTo,
+                         Pageable pageable);
 
     Vehicle create(Vehicle vehicle, User owner);
 

@@ -8,12 +8,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername(String username);
+    Optional<User> findFirstByUsername(String username);
 
-    User findByEmail(String email);
+    Optional<User> findFirstByEmail(String email);
+
+    Optional<User> findFirstByPhoneNumber(String phoneNumber);
 
     List<User> findByFirstName(String firstName);
 
@@ -22,5 +25,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRolesIn(List<Role> roles);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.vehicles WHERE u.id = :userId")
-    public User findByIdWithVehicles(@Param("userId") Long userId);
+    User findByIdWithVehicles(@Param("userId") Long userId);
 }

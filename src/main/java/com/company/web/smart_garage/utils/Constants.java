@@ -32,14 +32,15 @@ public class Constants {
     public static final String VEHICLE_VIN_INVALID_FORMAT = "Vehicle vin number must consist of 17 character/digits.";
     public static final String VEHICLE_MODEL_INVALID_SIZE = "Vehicle model must be between 2 and 32 symbols.";
     public static final String VEHICLE_BRAND_INVALID_SIZE = "Vehicle brand must be between 2 and 32 symbols.";
-    public static final String VEHICLE_PROD_YEAR_INVALID_FORMAT = "Production year is invalid. Please enter a number.";
     public static final String VEHICLE_PROD_YEAR_INVALID = "Production year must be between 1886 and the present year.";
     public static final String VEHICLE_PROD_YEAR_INTERVAL_INVALID = "Production year interval is invalid.";
     public static final String VEHICLE_PLATE_INVALID_AREA_CODE = "License plate area code is invalid.";
-    public static final String VALID_AREA_CODES = "E,A,B,BT,BH,BP,EB,TX,K,KH,OB,M,PA,PK,EH,PB,PP,P,CC,CH,CM,CO," +
+    public static final String VEHICLE_VALID_AREA_CODES = "E,A,B,BT,BH,BP,EB,TX,K,KH,OB,M,PA,PK,EH,PB,PP,P,CC,CH,CM,CO," +
             "C,CA,CB,CT,T,X,H,Y";
-    public static final String SORT_BY_INVALID = "Sort by parameter is invalid.";
-    public static final String SORT_ORDER_INVALID = "Sort order parameter is invalid.";
-    public static final String PAGE_INVALID = "Page number is invalid.";
+
+    //general
+    public static final String SORT_PROPERTY_S_IS_INVALID = "Sort property %s is invalid.";
+    public static final String ID_MUST_BE_POSITIVE = "Id must be positive.";
+    public static final String PAGE_IS_INVALID = "Page number is invalid.";
 
 }

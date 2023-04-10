@@ -5,17 +5,21 @@ import com.company.web.smart_garage.models.user.User;
 import java.util.List;
 
 public interface UserService {
+    User getUserById(long id);
+
+    User getByUsername(String username);
+
+    User getByEmail(String email);
+
+    User getByPhoneNumber(String phoneNumber);
+
     List<User> getAll();
 
     User create(User user);
 
-    User getUserById(long id);
-
     void update(long id, User user, User requester);
 
     void delete(long id, User user);
-
-    public User getByUsername(String username);
 
     void makeAdmin(int id, User user);
 

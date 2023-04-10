@@ -65,7 +65,7 @@ public class UserController {
 //        }
     //  }
     @PutMapping("/{id}")
-    public User update(@RequestHeader HttpHeaders headers, @PathVariable int id,
+    public User update(@RequestHeader HttpHeaders headers, @PathVariable long id,
                        @Valid @RequestBody UserDtoIn userDtoIn) {
         try {
             User requester = authenticationHelper.tryGetUser(headers);

@@ -36,6 +36,28 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public User getUserById(long id) {
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
+    }
+
+    public User getByUsername(String username) {
+        throwIfUsernameIsDeleted(username);
+        return userRepository.findFirstByUsername(username).orElseThrow(
+                () -> new EntityNotFoundException("User", "username", username));
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        return userRepository.findFirstByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("User", "email", email));
+    }
+
+    @Override
+    public User getByPhoneNumber(String phoneNumber) {
+        return userRepository.findFirstByPhoneNumber(phoneNumber).orElseThrow(
+                () -> new EntityNotFoundException("User", "phone number", phoneNumber));
+    }
+
     @Override
     public List<User> getAll() {
         return userRepository.findAll();
@@ -45,15 +67,6 @@ public class UserServiceImpl implements UserService {
     public User create(User user) {
         user.setPassword(PasswordGenerator.generatePassword());
         return userRepository.save(user);
-    }
-
-    public User getUserById(long id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
-    }
-
-    public User getByUsername(String username) {
-        throwIfUsernameIsDeleted(username);
-        return throwIfUserDeleted(userRepository.findByUsername(username));
     }
 
     @Override
@@ -142,7 +155,7 @@ public class UserServiceImpl implements UserService {
             user.setVehicles(getUserById(id).getVehicles());
             boolean duplicateExists = true;
             try {
-                User existingUser = userRepository.findByEmail(user.getEmail());
+                User existingUser = getByEmail(user.getEmail());
                 if (existingUser.getId() == user.getId()) {
                     duplicateExists = false;
                 }
