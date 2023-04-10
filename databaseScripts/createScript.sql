@@ -51,7 +51,7 @@ create table smart_garage.vehicles
         primary key,
     license_plate   varchar(10) not null,
     vin             char(17)    not null,
-    production_year smallint    not null,
+    production_year int         not null,
     model           varchar(32) not null,
     brand           varchar(32) not null,
     user_id         bigint      not null,

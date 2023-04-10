@@ -179,10 +179,10 @@ CREATE TABLE IF NOT EXISTS `visits`
 -- Dumping data for table smart_garage.visits: ~3 rows (approximately)
 /*!40000 ALTER TABLE `visits`
     DISABLE KEYS */;
-INSERT INTO `visits` (`visit_id`, `date`, `vehicle_id`)
-VALUES (1, '2023-04-06', 1),
-       (2, '2021-06-17', 2),
-       (3, '2020-04-02', 3);
+INSERT INTO `visits` (`visit_id`, `date`, `vehicle_id`, `user_id`)
+VALUES (1, '2023-04-06', 1, 1),
+       (2, '2021-06-17', 2, 1),
+       (3, '2020-04-02', 3, 2);
 /*!40000 ALTER TABLE `visits`
     ENABLE KEYS */;
 
