@@ -1,7 +1,7 @@
 package com.company.web.smart_garage.services.impl;
 
-import com.company.web.smart_garage.exceptions.EntityNotFound;
-import com.company.web.smart_garage.exceptions.UnauthorizedOperation;
+import com.company.web.smart_garage.exceptions.EntityNotFoundException;
+import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.PasswordGenerator;
 import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.models.user.User;
@@ -25,8 +25,8 @@ public class UserServiceImpl implements UserService {
 
 
     private final UserRepository userRepository;
-    private RoleService roleService;
-    private RoleRepository roleRepository;
+    private final RoleService roleService;
+    private final RoleRepository roleRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, RoleService roleService, RoleRepository roleRepository) {
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User getUserById(long id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFound("User", id));
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
     }
 
     public User getByUsername(String username) {
@@ -146,15 +146,15 @@ public class UserServiceImpl implements UserService {
                 if (existingUser.getId() == user.getId()) {
                     duplicateExists = false;
                 }
-            } catch (EntityNotFound e) {
+            } catch (EntityNotFoundException e) {
                 duplicateExists = false;
             }
-            if (duplicateExists) throw new EntityNotFound("User", "username", user.getUsername());
+            if (duplicateExists) throw new EntityNotFoundException("User", "username", user.getUsername());
 
             userRepository.save(user);
             return;
         }
-        throw new UnauthorizedOperation("You must log in with the user that you're trying to update.");
+        throw new UnauthorizedOperationException("You must log in with the user that you're trying to update.");
     }
 
     public void delete(long id, User userPerformingAction) {
@@ -186,10 +186,10 @@ public class UserServiceImpl implements UserService {
     private void checkModifyPermissions(User userPerformingAction) {
         //TODO add a check is the userPerformingAction isAdmin
         if (userIsDeleted(userPerformingAction)) {
-            throw new UnauthorizedOperation(USER_IS_ALREADY_DELETED);
+            throw new UnauthorizedOperationException(USER_IS_ALREADY_DELETED);
         } else if (!userIsEmployee(userPerformingAction)) {
             System.out.println(userIsEmployee(userPerformingAction));
-            throw new UnauthorizedOperation(NOT_EMPLOYEES_OR_ADMINS_ERROR_MESSAGE);
+            throw new UnauthorizedOperationException(NOT_EMPLOYEES_OR_ADMINS_ERROR_MESSAGE);
         }
 
     }
@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
 
     private User throwIfUserDeleted(User user) {
         if (userIsDeleted(user)) {
-            throw new UnauthorizedOperation(USER_IS_ALREADY_DELETED);
+            throw new UnauthorizedOperationException(USER_IS_ALREADY_DELETED);
         }
         return user;
     }

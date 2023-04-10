@@ -19,4 +19,27 @@ public class Constants {
     public static final String INVALID_AUTHENTICATION_ERROR = "Invalid authentication.";
     public static final String INVALID_LOGIN_ERROR = "Invalid username or password.";
     public static final String USERNAME_DELETED_IS_INVALID = "Username " + DELETED + " cannot be used.";
+
+
+    //vehicles
+    public static final String VEHICLE_PLATE_REQUIRED = "Vehicle license plate is a required field.";
+    public static final String VEHICLE_VIN_REQUIRED = "Vehicle vin number is a required field.";
+    public static final String VEHICLE_PROD_YEAR_REQUIRED = "Vehicle production year is a required field.";
+    public static final String VEHICLE_MODEL_REQUIRED = "Vehicle model is a required field.";
+    public static final String VEHICLE_BRAND_REQUIRED = "Vehicle brand is a required field.";
+    public static final String VEHICLE_PLATE_INVALID_FORMAT = "Vehicle license plate must be in the format " +
+            "\"X(X) NNNN YY\".";
+    public static final String VEHICLE_VIN_INVALID_FORMAT = "Vehicle vin number must consist of 17 character/digits.";
+    public static final String VEHICLE_MODEL_INVALID_SIZE = "Vehicle model must be between 2 and 32 symbols.";
+    public static final String VEHICLE_BRAND_INVALID_SIZE = "Vehicle brand must be between 2 and 32 symbols.";
+    public static final String VEHICLE_PROD_YEAR_INVALID_FORMAT = "Production year is invalid. Please enter a number.";
+    public static final String VEHICLE_PROD_YEAR_INVALID = "Production year must be between 1886 and the present year.";
+    public static final String VEHICLE_PROD_YEAR_INTERVAL_INVALID = "Production year interval is invalid.";
+    public static final String VEHICLE_PLATE_INVALID_AREA_CODE = "License plate area code is invalid.";
+    public static final String VALID_AREA_CODES = "E,A,B,BT,BH,BP,EB,TX,K,KH,OB,M,PA,PK,EH,PB,PP,P,CC,CH,CM,CO," +
+            "C,CA,CB,CT,T,X,H,Y";
+    public static final String SORT_BY_INVALID = "Sort by parameter is invalid.";
+    public static final String SORT_ORDER_INVALID = "Sort order parameter is invalid.";
+    public static final String PAGE_INVALID = "Page number is invalid.";
+
 }

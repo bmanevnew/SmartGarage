@@ -1,14 +1,17 @@
-package com.company.web.smart_garage.models;
+package com.company.web.smart_garage.models.vehicle;
 
+import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.models.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,7 +21,7 @@ public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vehicle_id")
-    private long id;
+    private Long id;
 
     @Column(name = "license_plate")
     private String licensePlate;
@@ -27,7 +30,7 @@ public class Vehicle {
     private String vin;
 
     @Column(name = "production_year")
-    private short productionYear;
+    private Integer productionYear;
 
     @Column(name = "model")
     private String model;

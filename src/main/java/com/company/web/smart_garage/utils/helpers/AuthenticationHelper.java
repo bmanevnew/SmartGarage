@@ -1,8 +1,8 @@
 package com.company.web.smart_garage.utils.helpers;
 
 
-import com.company.web.smart_garage.exceptions.EntityNotFound;
-import com.company.web.smart_garage.exceptions.UnauthorizedOperation;
+import com.company.web.smart_garage.exceptions.EntityNotFoundException;
+import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -39,11 +39,11 @@ public class AuthenticationHelper {
             User user = userService.getByUsername(username);
 
             if (!user.getPassword().equals(password)) {
-                throw new UnauthorizedOperation(INVALID_AUTHENTICATION_ERROR);
+                throw new UnauthorizedOperationException(INVALID_AUTHENTICATION_ERROR);
             }
             return userService.getByUsername(username);
 
-        } catch (EntityNotFound e) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username");
         }
     }
@@ -52,7 +52,7 @@ public class AuthenticationHelper {
         String currentUsername = (String) session.getAttribute("currentUser");
 
         if (currentUsername == null) {
-            throw new UnauthorizedOperation(INVALID_AUTHENTICATION_ERROR);
+            throw new UnauthorizedOperationException(INVALID_AUTHENTICATION_ERROR);
         }
 
         return userService.getByUsername(currentUsername);
@@ -62,11 +62,11 @@ public class AuthenticationHelper {
         try {
             User user = userService.getByUsername(username);
             if (!user.getPassword().equals(password)) {
-                throw new UnauthorizedOperation(INVALID_LOGIN_ERROR);
+                throw new UnauthorizedOperationException(INVALID_LOGIN_ERROR);
             }
             return user;
-        } catch (EntityNotFound e) {
-            throw new UnauthorizedOperation(INVALID_LOGIN_ERROR);
+        } catch (EntityNotFoundException e) {
+            throw new UnauthorizedOperationException(INVALID_LOGIN_ERROR);
         }
     }
 
@@ -85,7 +85,7 @@ public class AuthenticationHelper {
     private String getUsername(String userInfo) {
         int firstSpace = userInfo.indexOf(" ");
         if (firstSpace == -1) {
-            throw new UnauthorizedOperation(INVALID_AUTHENTICATION_ERROR);
+            throw new UnauthorizedOperationException(INVALID_AUTHENTICATION_ERROR);
         }
 
         return userInfo.substring(0, firstSpace);
@@ -94,7 +94,7 @@ public class AuthenticationHelper {
     private String getPassword(String userInfo) {
         int firstSpace = userInfo.indexOf(" ");
         if (firstSpace == -1) {
-            throw new UnauthorizedOperation(INVALID_AUTHENTICATION_ERROR);
+            throw new UnauthorizedOperationException(INVALID_AUTHENTICATION_ERROR);
         }
 
         return userInfo.substring(firstSpace + 1);

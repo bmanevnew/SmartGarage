@@ -1,6 +1,6 @@
 package com.company.web.smart_garage.services.impl;
 
-import com.company.web.smart_garage.exceptions.EntityNotFound;
+import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.repositories.RoleRepository;
 import com.company.web.smart_garage.services.RoleService;
@@ -22,7 +22,7 @@ public class RoleServiceImpl implements RoleService {
     public Role getById(long id) {
         return roleRepository.
                 findById(id).
-                orElseThrow(() -> new EntityNotFound("User", id));
+                orElseThrow(() -> new EntityNotFoundException("User", id));
     }
 
     public Role getRoleByName(String name) {

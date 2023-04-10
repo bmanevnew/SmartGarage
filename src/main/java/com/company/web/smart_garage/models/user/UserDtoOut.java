@@ -1,14 +1,16 @@
 package com.company.web.smart_garage.models.user;
 
 import com.company.web.smart_garage.models.Role;
-import com.company.web.smart_garage.models.Vehicle;
+import com.company.web.smart_garage.models.vehicle.Vehicle;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDtoOut {
