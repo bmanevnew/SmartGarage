@@ -1,5 +1,6 @@
-package com.company.web.smart_garage.models;
+package com.company.web.smart_garage.models.visit;
 
+import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.vehicle.Vehicle;
 import jakarta.persistence.*;
@@ -22,7 +23,7 @@ public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "visit_id")
-    private long id;
+    private Long id;
 
     @Column(name = "date")
     private LocalDate date;
@@ -35,7 +36,7 @@ public class Visit {
     @JoinColumn(name = "user_id")
     private User visitor;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "visits_repairs",
             joinColumns = {@JoinColumn(name = "visit_id")},

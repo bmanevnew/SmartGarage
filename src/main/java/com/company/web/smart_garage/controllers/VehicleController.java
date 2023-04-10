@@ -37,22 +37,30 @@ public class VehicleController {
     }
 
     @GetMapping
-    public List<VehicleDto> getAll(@RequestParam(required = false, name = "owner-username") String username,
+    public List<VehicleDto> getAll(@RequestParam(required = false, name = "owner-id") Long ownerId,
+                                   @RequestParam(required = false, name = "owner-username") String username,
                                    @RequestParam(required = false, name = "owner-phone-number") String phoneNumber,
                                    @RequestParam(required = false, name = "model") String model,
                                    @RequestParam(required = false, name = "brand") String brand,
                                    @RequestParam(required = false, name = "prod-from") Integer prodYearFrom,
                                    @RequestParam(required = false, name = "prod-to") Integer prodYearTo,
                                    Pageable pageable) {
-        Long ownerId = null;
-        if (username != null) {
-            ownerId = userService.getByUsername(username).getId();
-        } else if (phoneNumber != null) {
-            ownerId = userService.getByPhoneNumber(phoneNumber).getId();
-        }
-        return vehicleService.getAll(ownerId, model, brand, prodYearFrom, prodYearTo, pageable).getContent()
+        Long actualOwnerId = getActualOwnerId(ownerId, username, phoneNumber);
+        return vehicleService.getAll(actualOwnerId, model, brand, prodYearFrom, prodYearTo, pageable).getContent()
                 .stream().map(vehicleMapper::vehicleToDto)
                 .collect(Collectors.toList());
+    }
+
+    private Long getActualOwnerId(Long ownerId, String username, String phoneNumber) {
+        Long actualId = null;
+        if (username != null) {
+            actualId = userService.getByUsername(username).getId();
+        } else if (ownerId != null) {
+            actualId = ownerId;
+        } else if (phoneNumber != null) {
+            actualId = userService.getByPhoneNumber(phoneNumber).getId();
+        }
+        return actualId;
     }
 
     @PostMapping

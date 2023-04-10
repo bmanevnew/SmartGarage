@@ -38,6 +38,10 @@ public class Constants {
     public static final String VEHICLE_VALID_AREA_CODES = "E,A,B,BT,BH,BP,EB,TX,K,KH,OB,M,PA,PK,EH,PB,PP,P,CC,CH,CM,CO," +
             "C,CA,CB,CT,T,X,H,Y";
 
+    //visits
+    public static final String VISIT_DATE_IN_FUTURE = "Date cannot be in the future.";
+    public static final String VISIT_DATE_INTERVAL_INVALID = "Date interval is invalid.";
+
     //general
     public static final String SORT_PROPERTY_S_IS_INVALID = "Sort property %s is invalid.";
     public static final String ID_MUST_BE_POSITIVE = "Id must be positive.";

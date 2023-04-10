@@ -16,12 +16,12 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     Optional<Vehicle> findFirstByVin(String vin);
 
     @Query("select v from Vehicle v where " +
-            "(:owner is null or v.owner.id = :owner) and " +
+            "(:ownerId is null or v.owner.id = :ownerId) and " +
             "(:model is null or v.model like %:model%) and " +
             "(:brand is null or v.brand like %:brand%) and " +
             "(:prodYearFrom is null or v.productionYear >= :prodYearFrom) and " +
             "(:prodYearTo is null or v.productionYear <= :prodYearTo)")
-    Page<Vehicle> findByParameters(@Param("owner") Long ownerId,
+    Page<Vehicle> findByParameters(@Param("ownerId") Long ownerId,
                                    @Param("model") String model,
                                    @Param("brand") String brand,
                                    @Param("prodYearFrom") Integer prodYearFrom,
