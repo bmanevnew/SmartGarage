@@ -1,7 +1,7 @@
 package com.company.web.smart_garage.models.vehicle;
 
+import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.visit.Visit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package com.company.web.smart_garage.models.visit;
+package com.company.web.smart_garage.models;
 
-import com.company.web.smart_garage.models.Repair;
+import com.company.web.smart_garage.models.repair.Repair;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.vehicle.Vehicle;
 import jakarta.persistence.*;
@@ -39,8 +39,8 @@ public class Visit {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "visits_repairs",
-            joinColumns = {@JoinColumn(name = "visit_id")},
-            inverseJoinColumns = {@JoinColumn(name = "repair_id")}
+            joinColumns = @JoinColumn(name = "visit_id"),
+            inverseJoinColumns = @JoinColumn(name = "repair_id")
     )
     private Set<Repair> repairs;
 }

@@ -1,8 +1,9 @@
 package com.company.web.smart_garage.controllers;
 
+import com.company.web.smart_garage.exceptions.InvalidParamException;
+import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.vehicle.Vehicle;
-import com.company.web.smart_garage.models.visit.Visit;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
@@ -41,7 +42,7 @@ public class VisitController {
         Long actualVisitorId = getActualVisitorId(visitorId, username, phoneNumber);
         Long actualVehicleId = getActualVehicleId(vehicleId, licensePlate, vin);
 
-        return visitService.getAll(actualVehicleId, actualVisitorId, dateFrom, dateTo, pageable).getContent();
+        return visitService.getAll(actualVisitorId, actualVehicleId, dateFrom, dateTo, pageable).getContent();
     }
 
     @PostMapping
@@ -53,9 +54,11 @@ public class VisitController {
                         @RequestParam(required = false, name = "vehicle-vin") String vin) {
         Long actualVisitorId = getActualVisitorId(visitorId, username, phoneNumber);
         Long actualVehicleId = getActualVehicleId(vehicleId, licensePlate, vin);
+        if (actualVisitorId == null || actualVehicleId == null)
+            throw new InvalidParamException("Invalid parameters for creation.");
         User visitor = userService.getUserById(actualVisitorId);
         Vehicle vehicle = vehicleService.getById(actualVehicleId);
-        return visitService.create(vehicle, visitor);
+        return visitService.create(visitor, vehicle);
     }
 
     @DeleteMapping("/{id}")
