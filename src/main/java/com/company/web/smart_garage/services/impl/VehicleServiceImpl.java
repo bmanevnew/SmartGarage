@@ -5,6 +5,7 @@ import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.vehicle.Vehicle;
 import com.company.web.smart_garage.repositories.VehicleRepository;
+import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     public static final int MIN_PROD_YEAR = 1886;
     private final VehicleRepository vehicleRepository;
+    private final UserService userService;
 
     @Override
     public Vehicle getById(long id) {
@@ -59,7 +61,15 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Vehicle create(Vehicle vehicle, User owner) {
+    public Vehicle create(Vehicle vehicle, String email) {
+        User owner;
+        try {
+            owner = userService.getByEmail(email);
+        } catch (EntityNotFoundException e) {
+            //TODO  should be implemented in user
+//            owner = userService.create(email);
+            owner = userService.getUserById(1);
+        }
         vehicle.setOwner(owner);
         validateLicensePlate(vehicle.getLicensePlate());
         validateProdYear(vehicle.getProductionYear());
@@ -75,9 +85,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public void delete(long id) {
+    public Vehicle delete(long id) {
         validateId(id);
+        Vehicle vehicle = getById(id);
         vehicleRepository.deleteById(id);
+        return vehicle;
     }
 
     private void validateId(Long id) {

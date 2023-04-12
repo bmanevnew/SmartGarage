@@ -7,18 +7,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface RepairRepository extends JpaRepository<Repair, Long> {
 
-    @Query("select r from Visit v join v.repairs r where " +
-            "(:visitId is null or v.id = :visitId) and " +
+    Optional<Repair> findFirstByName(String name);
+
+    @Query("select r from Repair r where " +
             "(:name is null or r.name like %:name%) and " +
             "(:priceFrom is null or r.price >= :priceFrom) and " +
-            "(:priceTo is null or r.price <= :priceTo) and " +
-            "(:isActive is null or r.isActive = :isActive)")
-    Page<Repair> findByParameters(@Param("visitId") Long visitId,
-                                  @Param("name") String name,
+            "(:priceTo is null or r.price <= :priceTo)")
+    Page<Repair> findByParameters(@Param("name") String name,
                                   @Param("priceFrom") Double priceFrom,
                                   @Param("priceTo") Double priceTo,
-                                  @Param("isActive") Boolean isActive,
                                   Pageable pageable);
 }

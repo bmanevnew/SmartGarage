@@ -4,18 +4,21 @@ import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.user.UserDtoIn;
 import com.company.web.smart_garage.models.user.UserDtoOut;
+import com.company.web.smart_garage.models.user.UserDtoOutSimple;
+import com.company.web.smart_garage.models.vehicle.VehicleDto;
 import com.company.web.smart_garage.services.RoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class UserMapper {
     private final RoleService roleService;
-
-    public UserMapper(RoleService roleService) {
-        this.roleService = roleService;
-    }
+    private final VehicleMapper vehicleMapper;
 
 
     public User dtoToUser(UserDtoIn dto) {
@@ -46,7 +49,9 @@ public class UserMapper {
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setRoles(user.getRoles());
-        userDto.setVehicles(user.getVehicles());
+        Set<VehicleDto> vehicleDtos = user.getVehicles().stream()
+                .map(vehicleMapper::vehicleToDto).collect(Collectors.toSet());
+        userDto.setVehicles(vehicleDtos);
 //        if (!user.getRoles().isEmpty()) {
 //            userDto.setRoles(getRoleNames(user.getRoles()));
 //        }
@@ -54,6 +59,16 @@ public class UserMapper {
 //            userDto.setRoles(Collections.singletonList(repository.getById(1).getRoleName()));
 //        }
 
+        return userDto;
+    }
+
+    public UserDtoOutSimple ObjectToDtoSimple(User user) {
+        UserDtoOutSimple userDto = new UserDtoOutSimple();
+        userDto.setUsername(user.getUsername());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+        userDto.setPhoneNumber(user.getPhoneNumber());
         return userDto;
     }
 

@@ -1,6 +1,5 @@
 package com.company.web.smart_garage.services;
 
-import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.vehicle.Vehicle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +15,9 @@ public interface VehicleService {
     Page<Vehicle> getAll(Long ownerId, String model, String brand, Integer prodYearFrom, Integer prodYearTo,
                          Pageable pageable);
 
-    Vehicle create(Vehicle vehicle, User owner);
+    Vehicle create(Vehicle vehicle, String email);
 
     Vehicle update(Vehicle vehicle);
 
-    void delete(long id);
+    Vehicle delete(long id);
 }

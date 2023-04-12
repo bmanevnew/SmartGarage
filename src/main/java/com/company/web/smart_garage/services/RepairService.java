@@ -8,11 +8,13 @@ public interface RepairService {
 
     Repair getById(long id);
 
-    Page<Repair> getAll(Long visitId, String name, Double priceFrom, Double priceTo, Boolean isActive, Pageable pageable);
+    Repair getByName(String name);
+
+    Page<Repair> getAll(String name, Double priceFrom, Double priceTo, Pageable pageable);
 
     Repair create(Repair repair);
 
     Repair update(Repair repair);
 
-    void delete(long id);
+    Repair delete(long id);
 }

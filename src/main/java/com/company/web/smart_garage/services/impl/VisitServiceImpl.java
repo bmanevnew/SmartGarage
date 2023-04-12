@@ -2,9 +2,7 @@ package com.company.web.smart_garage.services.impl;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
-import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.vehicle.Vehicle;
+import com.company.web.smart_garage.models.visit.Visit;
 import com.company.web.smart_garage.repositories.VisitRepository;
 import com.company.web.smart_garage.services.VisitService;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +41,7 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public Visit create(User visitor, Vehicle vehicle) {
-        Visit visit = new Visit();
-        visit.setVehicle(vehicle);
-        visit.setVisitor(visitor);
+    public Visit create(Visit visit) {
         visit.setDate(LocalDate.now());
         return visitRepository.save(visit);
     }
@@ -57,9 +52,11 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public void delete(long id) {
+    public Visit delete(long id) {
         validateId(id);
+        Visit visit = getById(id);
         visitRepository.deleteById(id);
+        return visit;
     }
 
     private void validateId(Long id) {

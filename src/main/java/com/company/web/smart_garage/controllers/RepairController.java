@@ -25,12 +25,11 @@ public class RepairController {
     }
 
     @GetMapping
-    public List<RepairDto> getAll(@RequestParam(required = false, name = "visitId") Long visitId,
-                                  @RequestParam(required = false, name = "name") String name,
+    public List<RepairDto> getAll(@RequestParam(required = false, name = "name") String name,
                                   @RequestParam(required = false, name = "priceFrom") Double priceFrom,
                                   @RequestParam(required = false, name = "priceTo") Double priceTo,
                                   Pageable pageable) {
-        return repairService.getAll(visitId, name, priceFrom, priceTo, true, pageable)
+        return repairService.getAll(name, priceFrom, priceTo, pageable)
                 .map(repairMapper::repairToDto).getContent();
     }
 
@@ -48,8 +47,6 @@ public class RepairController {
 
     @DeleteMapping("/{id}")
     public RepairDto delete(@PathVariable long id) {
-        Repair repair = repairService.getById(id);
-        repairService.delete(id);
-        return repairMapper.repairToDto(repair);
+        return repairMapper.repairToDto(repairService.delete(id));
     }
 }

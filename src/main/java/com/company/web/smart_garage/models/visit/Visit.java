@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.models;
+package com.company.web.smart_garage.models.visit;
 
 import com.company.web.smart_garage.models.repair.Repair;
 import com.company.web.smart_garage.models.user.User;

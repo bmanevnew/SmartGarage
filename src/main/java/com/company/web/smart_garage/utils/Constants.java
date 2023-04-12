@@ -38,13 +38,22 @@ public class Constants {
     public static final String VEHICLE_VALID_AREA_CODES = "E,A,B,BT,BH,BP,EB,TX,K,KH,OB,M,PA,PK,EH,PB,PP,P,CC,CH,CM,CO," +
             "C,CA,CB,CT,T,X,H,Y";
 
+
     //visits
     public static final String VISIT_DATE_IN_FUTURE = "Date cannot be in the future.";
     public static final String VISIT_DATE_INTERVAL_INVALID = "Date interval is invalid.";
+
+
+    //repairs
+    public static final String REPAIR_NAME_INVALID_SIZE = "Repair name must be between 2 and 32 symbols.";
+    public static final String PRICE_IS_INVALID = "Price is invalid.";
+    public static final String PRICE_IS_REQUIRED = "Price is a required field.";
+    public static final String NAME_IS_REQUIRED = "Name is a required field.";
+    public static final String PRICE_INTERVAL_IS_INVALID = "Price interval is invalid.";
+    public static final String REPAIR_WITH_NAME_S_ALREADY_EXISTS = "Repair with name %s already exists.";
 
     //general
     public static final String SORT_PROPERTY_S_IS_INVALID = "Sort property %s is invalid.";
     public static final String ID_MUST_BE_POSITIVE = "Id must be positive.";
     public static final String PAGE_IS_INVALID = "Page number is invalid.";
-
 }

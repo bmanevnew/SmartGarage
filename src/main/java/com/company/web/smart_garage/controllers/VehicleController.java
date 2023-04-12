@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,9 +45,8 @@ public class VehicleController {
                                    @RequestParam(required = false, name = "prod-to") Integer prodYearTo,
                                    Pageable pageable) {
         Long actualOwnerId = getActualOwnerId(ownerId, username, phoneNumber);
-        return vehicleService.getAll(actualOwnerId, model, brand, prodYearFrom, prodYearTo, pageable).getContent()
-                .stream().map(vehicleMapper::vehicleToDto)
-                .collect(Collectors.toList());
+        return vehicleService.getAll(actualOwnerId, model, brand, prodYearFrom, prodYearTo, pageable)
+                .map(vehicleMapper::vehicleToDto).getContent();
     }
 
     private Long getActualOwnerId(Long ownerId, String username, String phoneNumber) {
@@ -64,10 +62,9 @@ public class VehicleController {
     }
 
     @PostMapping
-    public VehicleDto create(@RequestBody VehicleDto dto) {
+    public VehicleDto create(@RequestBody VehicleDto dto, @RequestParam("owner-email") String email) {
         Vehicle vehicle = vehicleMapper.dtoToVehicle(dto);
-        //TODO remove hard coded user when proper authentication is implemented
-        return vehicleMapper.vehicleToDto(vehicleService.create(vehicle, userService.getUserById(1)));
+        return vehicleMapper.vehicleToDto(vehicleService.create(vehicle, email));
     }
 
     @PutMapping("/{id}")
@@ -78,8 +75,6 @@ public class VehicleController {
 
     @DeleteMapping("/{id}")
     public VehicleDto delete(@PathVariable long id) {
-        Vehicle vehicle = vehicleService.getById(id);
-        vehicleService.delete(id);
-        return vehicleMapper.vehicleToDto(vehicle);
+        return vehicleMapper.vehicleToDto(vehicleService.delete(id));
     }
 }

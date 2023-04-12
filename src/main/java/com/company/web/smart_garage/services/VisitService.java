@@ -1,8 +1,6 @@
 package com.company.web.smart_garage.services;
 
-import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.vehicle.Vehicle;
+import com.company.web.smart_garage.models.visit.Visit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,9 +12,9 @@ public interface VisitService {
 
     Page<Visit> getAll(Long visitorId, Long vehicleId, LocalDate dateFrom, LocalDate dateTo, Pageable pageable);
 
-    Visit create(User visitor, Vehicle vehicle);
+    Visit create(Visit visit);
 
     Visit update(Visit visit);
 
-    void delete(long id);
+    Visit delete(long id);
 }
