@@ -1,13 +1,13 @@
-create table smart_garage.repairs
+create table repairs
 (
-    repair_id bigint auto_increment
+    repair_id  bigint auto_increment
         primary key,
-    name      varchar(32)          not null,
-    price     double(10, 2)        not null,
-    is_active tinyint(1) default 1 not null
+    name       varchar(32)          not null,
+    price      double(10, 2)        not null,
+    is_deleted tinyint(1) default 0 not null
 );
 
-create table smart_garage.roles
+create table roles
 (
     role_id bigint auto_increment
         primary key,
@@ -16,7 +16,7 @@ create table smart_garage.roles
         unique (name)
 );
 
-create table smart_garage.users
+create table users
 (
     user_id      bigint auto_increment
         primary key,
@@ -34,18 +34,18 @@ create table smart_garage.users
         unique (phone_number)
 );
 
-create table smart_garage.users_roles
+create table users_roles
 (
     user_id bigint not null,
     role_id bigint not null,
     primary key (user_id, role_id),
     constraint users_roles_roles_role_id_fk
-        foreign key (role_id) references smart_garage.roles (role_id),
+        foreign key (role_id) references roles (role_id),
     constraint users_roles_users_user_id_fk
-        foreign key (user_id) references smart_garage.users (user_id)
+        foreign key (user_id) references users (user_id)
 );
 
-create table smart_garage.vehicles
+create table vehicles
 (
     vehicle_id      bigint auto_increment
         primary key,
@@ -60,32 +60,32 @@ create table smart_garage.vehicles
     constraint vehicles_pk3
         unique (vin),
     constraint vehicles_users_user_id_fk
-        foreign key (user_id) references smart_garage.users (user_id),
+        foreign key (user_id) references users (user_id),
     constraint check_production_year
         check (`production_year` >= 1886)
 );
 
-create table smart_garage.visits
+create table visits
 (
     visit_id   bigint auto_increment
         primary key,
-    date       date   not null,
-    vehicle_id bigint not null,
-    user_id    bigint not null,
+    date       datetime not null,
+    vehicle_id bigint   not null,
+    user_id    bigint   not null,
     constraint visits_users_user_id_fk
-        foreign key (user_id) references smart_garage.users (user_id),
+        foreign key (user_id) references users (user_id),
     constraint visits_vehicles_vehicle_id_fk
-        foreign key (vehicle_id) references smart_garage.vehicles (vehicle_id)
+        foreign key (vehicle_id) references vehicles (vehicle_id)
 );
 
-create table smart_garage.visits_repairs
+create table visits_repairs
 (
     visit_id  bigint not null,
     repair_id bigint not null,
     primary key (visit_id, repair_id),
     constraint visits_repairs_repairs_repair_id_fk
-        foreign key (repair_id) references smart_garage.repairs (repair_id),
+        foreign key (repair_id) references repairs (repair_id),
     constraint visits_repairs_visits_visit_id_fk
-        foreign key (visit_id) references smart_garage.visits (visit_id)
+        foreign key (visit_id) references visits (visit_id)
 );
 
