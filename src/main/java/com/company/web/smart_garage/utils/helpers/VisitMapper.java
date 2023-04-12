@@ -37,6 +37,12 @@ public class VisitMapper {
         dto.setDate(visit.getDate());
         return dto;
     }
+    public VisitDtoOut visitToDtoWOVisitor(Visit visit) {
+        VisitDtoOut dto = new VisitDtoOut();
+
+        dto.setDate(visit.getDate());
+        return dto;
+    }
 
     public Visit dtoToVisit(VisitDtoIn visitDto) {
         Visit visit = new Visit();

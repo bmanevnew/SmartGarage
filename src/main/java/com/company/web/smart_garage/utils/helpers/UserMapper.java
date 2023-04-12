@@ -5,20 +5,25 @@ import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.user.UserDtoIn;
 import com.company.web.smart_garage.models.user.UserDtoOut;
 import com.company.web.smart_garage.models.user.UserDtoOutSimple;
-import com.company.web.smart_garage.models.vehicle.VehicleDto;
 import com.company.web.smart_garage.services.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-@RequiredArgsConstructor
 @Component
 public class UserMapper {
     private final RoleService roleService;
     private final VehicleMapper vehicleMapper;
+    private final VisitMapper visitMapper;
+
+    public UserMapper(RoleService roleService, VehicleMapper vehicleMapper, @Lazy VisitMapper visitMapper) {
+        this.roleService = roleService;
+        this.vehicleMapper = vehicleMapper;
+        this.visitMapper = visitMapper;
+    }
 
 
     public User dtoToUser(UserDtoIn dto) {
@@ -41,7 +46,7 @@ public class UserMapper {
         return user;
     }
 
-    public UserDtoOut ObjectToDto(User user) {
+    public UserDtoOut objectToDto(User user) {
         UserDtoOut userDto = new UserDtoOut();
         userDto.setId(user.getId());
         userDto.setFirstName(user.getFirstName());
@@ -49,9 +54,9 @@ public class UserMapper {
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setRoles(user.getRoles());
-        Set<VehicleDto> vehicleDtos = user.getVehicles().stream()
-                .map(vehicleMapper::vehicleToDto).collect(Collectors.toSet());
-        userDto.setVehicles(vehicleDtos);
+        userDto.setVehicles(user.getVehicles().stream().map(vehicleMapper::vehicleToDto).collect(Collectors.toSet()));
+        // TODO make a simpleVisitsDTo
+        userDto.setVisits(user.getVisits().stream().map(visitMapper::visitToDtoWOVisitor).collect(Collectors.toSet()));
 //        if (!user.getRoles().isEmpty()) {
 //            userDto.setRoles(getRoleNames(user.getRoles()));
 //        }

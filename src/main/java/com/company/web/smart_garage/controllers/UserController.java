@@ -12,6 +12,8 @@ import com.company.web.smart_garage.utils.helpers.AuthenticationHelper;
 import com.company.web.smart_garage.utils.helpers.UserMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -31,9 +34,28 @@ public class UserController {
     private final RoleService roleService;
     private final AuthenticationHelper authenticationHelper;
 
+
     @GetMapping
-    public List<User> getAll() {
-        return userService.getAll();
+    public List<UserDtoOut> getAll(@RequestParam(required = false, name = "name") String name,
+                                      @RequestParam(required = false, name = "vehicle-model") String vehicleModel,
+                                      @RequestParam(required = false, name = "vehicle-brand") String vehicleMake,
+                                      @RequestParam(required = false, name = "visit-from-date") String visitFromDate,
+                                      @RequestParam(required = false, name = "visit-to-date") String visitToDate,
+                                      Pageable pageable) {
+
+        Page<User> users = userService.getFilteredUsers(name, vehicleModel, vehicleMake,
+                visitFromDate, visitToDate, pageable);
+        return users.getContent().stream().map(userMapper::objectToDto).collect(Collectors.toList());
+    }
+
+    @GetMapping(params = "email")
+    public UserDtoOut getByEmail(@RequestParam(name = "email") String email) {
+        return userMapper.objectToDto(userService.getByEmail(email));
+    }
+
+    @GetMapping(params = "phone-number")
+    public UserDtoOut getByPhoneNumber(@RequestParam(name = "phone-number") String phoneNumber) {
+        return userMapper.objectToDto(userService.getByPhoneNumber(phoneNumber));
     }
 
     @PostMapping
@@ -72,7 +94,7 @@ public class UserController {
             User updatedUser = userMapper.dtoToUser(userDtoIn);
             updatedUser.setId(id);
             userService.update(id, updatedUser, requester);
-            updatedUser = getUserById(id);
+            updatedUser = getById(id);
             return updatedUser;
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -85,9 +107,9 @@ public class UserController {
     public UserDtoOut delete(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {
             User user = authenticationHelper.tryGetUser(headers);
-            User deleteUser = getUserById(id);
+            User deleteUser = getById(id);
             userService.delete(id, user);
-            return userMapper.ObjectToDto(deleteUser);
+            return userMapper.objectToDto(deleteUser);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -95,22 +117,22 @@ public class UserController {
         }
     }
 
-    private User getUserById(long id) {
-        try {
-            return userService.getUserById(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
+//    private User getUserById(long id) {
+//        try {
+//            return userService.getUserById(id);
+//        } catch (EntityNotFoundException e) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+//        }
+//    }
 
     @GetMapping("/{id}/roles")
     public Set<Role> getRoles(@PathVariable int id) {
-        return getUserById(id).getRoles();
+        return getById(id).getRoles();
     }
 
     @GetMapping("/{id}/roles/{roleId}")
     public Role getRole(@PathVariable int id) {
-        return getUserById(id).getRoles()
+        return getById(id).getRoles()
                 .stream().filter(r -> r.getId() == id)
                 .findFirst().orElse(null);
     }
@@ -122,8 +144,8 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeEmployee(id, user);
-            User userToBeEmployed = getUserById(id);
-            return userMapper.ObjectToDto(userToBeEmployed);
+            User userToBeEmployed = getById(id);
+            return userMapper.objectToDto(userToBeEmployed);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -137,8 +159,8 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeAdmin(id, user);
-            User userToBeAdmin = getUserById(id);
-            return userMapper.ObjectToDto(userToBeAdmin);
+            User userToBeAdmin = getById(id);
+            return userMapper.objectToDto(userToBeAdmin);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -152,8 +174,8 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeUnemployed(id, user);
-            User userToBeEmployed = getUserById(id);
-            return userMapper.ObjectToDto(userToBeEmployed);
+            User userToBeEmployed = getById(id);
+            return userMapper.objectToDto(userToBeEmployed);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -167,8 +189,8 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeNotAdmin(id, user);
-            User userToBeAdmin = getUserById(id);
-            return userMapper.ObjectToDto(userToBeAdmin);
+            User userToBeAdmin = getById(id);
+            return userMapper.objectToDto(userToBeAdmin);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {

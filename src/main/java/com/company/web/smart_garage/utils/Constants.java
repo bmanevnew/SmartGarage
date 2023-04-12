@@ -19,7 +19,8 @@ public class Constants {
     public static final String INVALID_AUTHENTICATION_ERROR = "Invalid authentication.";
     public static final String INVALID_LOGIN_ERROR = "Invalid username or password.";
     public static final String USERNAME_DELETED_IS_INVALID = "Username " + DELETED + " cannot be used.";
-
+    public static final String USER_EMAIL_INVALID = "This is not a valid email";
+    public static final String USER_PHONE_INVALID = "This is not a valid phone number";
 
     //vehicles
     public static final String VEHICLE_PLATE_REQUIRED = "Vehicle license plate is a required field.";

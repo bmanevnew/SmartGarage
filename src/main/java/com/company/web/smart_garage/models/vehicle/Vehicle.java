@@ -2,6 +2,7 @@ package com.company.web.smart_garage.models.vehicle;
 
 import com.company.web.smart_garage.models.user.User;
 import com.company.web.smart_garage.models.visit.Visit;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,11 +38,11 @@ public class Vehicle {
 
     @Column(name = "brand")
     private String brand;
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "vehicle")
     private Set<Visit> visits;
 }

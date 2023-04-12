@@ -1,6 +1,7 @@
 package com.company.web.smart_garage.services.impl;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
+import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.PasswordGenerator;
 import com.company.web.smart_garage.models.Role;
@@ -10,8 +11,12 @@ import com.company.web.smart_garage.repositories.UserRepository;
 import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -48,12 +53,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getByEmail(String email) {
+        validateEmail(email);
         return userRepository.findFirstByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("User", "email", email));
     }
-
+    private void validateEmail(String email) {
+        if (email==null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new InvalidParamException(USER_EMAIL_INVALID);
+        }
+    }
+    private void validatePhoneNumber(String phoneNumber) {
+        int as = phoneNumber.length();
+        if (as!=10 ) {
+            throw new InvalidParamException(USER_PHONE_INVALID);
+        }
+    }
     @Override
     public User getByPhoneNumber(String phoneNumber) {
+        validatePhoneNumber(phoneNumber);
         return userRepository.findFirstByPhoneNumber(phoneNumber).orElseThrow(
                 () -> new EntityNotFoundException("User", "phone number", phoneNumber));
     }
@@ -62,7 +79,40 @@ public class UserServiceImpl implements UserService {
     public List<User> getAll() {
         return userRepository.findAll();
     }
+    //TODO Cloudinary
+    @Override
+    public Page<User> getFilteredUsers(String name, String vehicleModel,
+                                       String vehicleMake, String visitFromDate, String visitToDate,
+                                       Pageable pageable) {
+        LocalDate parsedFromDate = visitFromDate != null ? LocalDate.parse(visitFromDate) : null;
+        LocalDate parsedToDate = visitToDate != null ? LocalDate.parse(visitToDate) : null;
 
+
+        Page<User> users = userRepository.findByFilters(name, vehicleModel,
+                vehicleMake, parsedFromDate, parsedToDate, pageable);
+        if (pageable.getPageNumber() >= users.getTotalPages()) {
+            throw new InvalidParamException(PAGE_IS_INVALID);
+        }
+        return users;
+    }
+
+    private void validateSortProperties(String sortBy, String sortOrder) {
+        if (sortBy != null && !Arrays.asList("name", "visitDate").contains(sortBy)) {
+            throw new InvalidParamException("Invalid sort property.");
+        }
+
+        if (sortOrder != null && !Arrays.asList("asc", "desc").contains(sortOrder)) {
+            throw new InvalidParamException("Invalid sort order.");
+        }
+    }
+
+    private void validateSortingProperty(String property) {
+        switch (property) {
+            case "username", "email", "phoneNumber", "model", "brand", "date" -> {
+            }
+            default -> throw new InvalidParamException(String.format(SORT_PROPERTY_S_IS_INVALID, property));
+        }
+    }
     @Override
     public User create(User user) {
         user.setPassword(PasswordGenerator.generatePassword());
