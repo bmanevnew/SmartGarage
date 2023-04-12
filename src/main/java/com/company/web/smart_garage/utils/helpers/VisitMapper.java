@@ -34,13 +34,13 @@ public class VisitMapper {
                 .map(repairMapper::repairToDto)
                 .collect(Collectors.toSet());
         dto.setRepairs(repairDtos);
-        dto.setDate(visit.getDate());
+        dto.setDate(visit.getDate().toLocalDate());
         return dto;
     }
     public VisitDtoOut visitToDtoWOVisitor(Visit visit) {
         VisitDtoOut dto = new VisitDtoOut();
 
-        dto.setDate(visit.getDate());
+        dto.setDate(visit.getDate().toLocalDate());
         return dto;
     }
 

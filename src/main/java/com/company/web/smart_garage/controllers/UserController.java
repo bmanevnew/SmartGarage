@@ -35,17 +35,13 @@ public class UserController {
     private final AuthenticationHelper authenticationHelper;
 
 
-    @GetMapping
-    public List<UserDtoOut> getAll(@RequestParam(required = false, name = "name") String name,
-                                      @RequestParam(required = false, name = "vehicle-model") String vehicleModel,
-                                      @RequestParam(required = false, name = "vehicle-brand") String vehicleMake,
-                                      @RequestParam(required = false, name = "visit-from-date") String visitFromDate,
-                                      @RequestParam(required = false, name = "visit-to-date") String visitToDate,
-                                      Pageable pageable) {
-
-        Page<User> users = userService.getFilteredUsers(name, vehicleModel, vehicleMake,
-                visitFromDate, visitToDate, pageable);
-        return users.getContent().stream().map(userMapper::objectToDto).collect(Collectors.toList());
+    @GetMapping("/{id}")
+    public User getById(@PathVariable long id) {
+        try {
+            return userService.getUserById(id);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @GetMapping(params = "email")
@@ -58,21 +54,25 @@ public class UserController {
         return userMapper.objectToDto(userService.getByPhoneNumber(phoneNumber));
     }
 
+    @GetMapping
+    public List<UserDtoOut> getAll(@RequestParam(required = false, name = "name") String name,
+                                   @RequestParam(required = false, name = "vehicle-model") String vehicleModel,
+                                   @RequestParam(required = false, name = "vehicle-brand") String vehicleMake,
+                                   @RequestParam(required = false, name = "visit-from-date") String visitFromDate,
+                                   @RequestParam(required = false, name = "visit-to-date") String visitToDate,
+                                   Pageable pageable) {
+
+        Page<User> users = userService.getFilteredUsers(name, vehicleModel, vehicleMake,
+                visitFromDate, visitToDate, pageable);
+        return users.getContent().stream().map(userMapper::objectToDto).collect(Collectors.toList());
+    }
+
     @PostMapping
     public User create(@Valid @RequestBody UserDtoIn userDto) {
         User user = userMapper.dtoToUser(userDto);
         Role role = roleService.getById(1);
         user.setRoles(Collections.singleton(role));
         return userService.create(user);
-    }
-
-    @GetMapping("/{id}")
-    public User getById(@PathVariable long id) {
-        try {
-            return userService.getUserById(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
     }
 
 //    @PostMapping

@@ -10,6 +10,7 @@ import com.company.web.smart_garage.utils.helpers.VisitMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -49,12 +50,14 @@ public class VisitController {
                 .getContent();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public VisitDtoOut create(@Valid @RequestBody VisitDtoIn visitDto) {
         Visit visit = visitMapper.dtoToVisit(visitDto);
         return visitMapper.visitToDto(visitService.create(visit));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public VisitDtoOut delete(@PathVariable long id) {
         return visitMapper.visitToDto(visitService.delete(id));

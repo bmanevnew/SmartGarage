@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.company.web.smart_garage.utils.Constants.*;
 
@@ -42,7 +43,7 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public Visit create(Visit visit) {
-        visit.setDate(LocalDate.now());
+        visit.setDate(LocalDateTime.now());
         return visitRepository.save(visit);
     }
 

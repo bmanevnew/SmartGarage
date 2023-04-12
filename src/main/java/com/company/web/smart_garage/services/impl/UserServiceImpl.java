@@ -10,9 +10,10 @@ import com.company.web.smart_garage.repositories.RoleRepository;
 import com.company.web.smart_garage.repositories.UserRepository;
 import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,21 +25,15 @@ import java.util.Set;
 import static com.company.web.smart_garage.utils.AuthorizationUtils.*;
 import static com.company.web.smart_garage.utils.Constants.*;
 
+@RequiredArgsConstructor
 @Service
-
 public class UserServiceImpl implements UserService {
 
 
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final RoleRepository roleRepository;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.roleService = roleService;
-        this.roleRepository = roleRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
 
     public User getUserById(long id) {
@@ -57,17 +52,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.findFirstByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("User", "email", email));
     }
+
     private void validateEmail(String email) {
-        if (email==null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             throw new InvalidParamException(USER_EMAIL_INVALID);
         }
     }
-    private void validatePhoneNumber(String phoneNumber) {
-        int as = phoneNumber.length();
-        if (as!=10 ) {
-            throw new InvalidParamException(USER_PHONE_INVALID);
-        }
-    }
+
     @Override
     public User getByPhoneNumber(String phoneNumber) {
         validatePhoneNumber(phoneNumber);
@@ -75,10 +66,18 @@ public class UserServiceImpl implements UserService {
                 () -> new EntityNotFoundException("User", "phone number", phoneNumber));
     }
 
+    private void validatePhoneNumber(String phoneNumber) {
+        int as = phoneNumber.length();
+        if (as != 10) {
+            throw new InvalidParamException(USER_PHONE_INVALID);
+        }
+    }
+
     @Override
     public List<User> getAll() {
         return userRepository.findAll();
     }
+
     //TODO Cloudinary
     @Override
     public Page<User> getFilteredUsers(String name, String vehicleModel,
@@ -113,9 +112,12 @@ public class UserServiceImpl implements UserService {
             default -> throw new InvalidParamException(String.format(SORT_PROPERTY_S_IS_INVALID, property));
         }
     }
+
     @Override
     public User create(User user) {
-        user.setPassword(PasswordGenerator.generatePassword());
+        String originalPassword = PasswordGenerator.generatePassword();
+        String hash = passwordEncoder.encode(originalPassword);
+        user.setPassword(hash);
         return userRepository.save(user);
     }
 
