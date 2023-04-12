@@ -9,17 +9,19 @@ import lombok.Setter;
 
 import java.util.Set;
 
+import static com.company.web.smart_garage.utils.Constants.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class VisitDtoIn {
 
-    @NotNull
-    @Positive
+    @NotNull(message = USER_ID_IS_REQUIRED)
+    @Positive(message = USER_ID_MUST_BE_POSITIVE)
     private Long userId;
-    @NotNull
-    @Positive
+    @NotNull(message = VEHICLE_ID_IS_REQUIRED)
+    @Positive(message = VEHICLE_ID_MUST_BE_POSITIVE)
     private Long vehicleId;
     private Set<Long> repairIds;
 }

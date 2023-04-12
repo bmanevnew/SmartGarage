@@ -41,6 +41,10 @@ public class Constants {
 
 
     //visits
+    public static final String USER_ID_IS_REQUIRED = "User id is a required field.";
+    public static final String USER_ID_MUST_BE_POSITIVE = "User id must be positive.";
+    public static final String VEHICLE_ID_IS_REQUIRED = "Vehicle id is a required field.";
+    public static final String VEHICLE_ID_MUST_BE_POSITIVE = "Vehicle id must be positive.";
     public static final String VISIT_DATE_IN_FUTURE = "Date cannot be in the future.";
     public static final String VISIT_DATE_INTERVAL_INVALID = "Date interval is invalid.";
 
