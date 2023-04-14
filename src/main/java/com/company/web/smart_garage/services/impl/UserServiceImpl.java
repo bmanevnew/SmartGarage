@@ -16,10 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.*;
 import static com.company.web.smart_garage.utils.Constants.*;
@@ -27,14 +24,15 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @Service
 
 public class UserServiceImpl implements UserService {
-
+    private final EmailSenderService senderService;
 
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService, RoleRepository roleRepository) {
+    public UserServiceImpl(EmailSenderService senderService, UserRepository userRepository, RoleService roleService, RoleRepository roleRepository) {
+        this.senderService = senderService;
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.roleRepository = roleRepository;
@@ -121,6 +119,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         user.setPassword(PasswordGenerator.generatePassword());
+        sendMail(user);
         return userRepository.save(user);
     }
 
@@ -293,5 +292,18 @@ public class UserServiceImpl implements UserService {
                 throw new InvalidParamException(VISIT_DATE_INTERVAL_INVALID);
             }
         }
+    }
+
+    public void sendMail(User user) {
+        String toEmail = user.getEmail();
+        String subject = "Welcome to Smart Garage!";
+        String body = "Dear " + user.getUsername() + ",\n\n" +
+                "Welcome to Smart Garage! Here are your login details:\n\n" +
+                "Username: " + user.getUsername() + "\n" +
+                "Password: " + user.getPassword() + "\n\n" +
+                "Best regards,\n" +
+                "The Smart Garage Team";
+        senderService.sendEmail(toEmail,
+                subject, body);
     }
 }
