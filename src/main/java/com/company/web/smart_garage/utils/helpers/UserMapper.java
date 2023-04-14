@@ -9,6 +9,7 @@ import com.company.web.smart_garage.services.RoleService;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 @Component
 public class UserMapper {
@@ -33,27 +34,41 @@ public class UserMapper {
         return user;
     }
 
-    public User dtoToObject(UserDtoIn userDto) {
+    public User dtoToObject(UserDtoOut userDto) {
         User user = new User();
+        user.setId(userDto.getId());
         user.setUsername(userDto.getUsername());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+
         user.setEmail(userDto.getEmail());
         user.setPhoneNumber(userDto.getPhoneNumber());
-        Role role = roleService.getById(1);
-        user.setRoles(Collections.singleton(role));
+        if (userDto.getRoles()==null){
+            Role role = roleService.getById(1);
+            user.setRoles(Collections.singleton(role));
+        }else {
+            user.setRoles(userDto.getRoles());
+        }
         return user;
     }
 
     public UserDtoOut objectToDto(User user) {
         UserDtoOut userDto = new UserDtoOut();
-        userDto.setId(user.getId());
+        userDto.setId(Optional.ofNullable(user.getId()).orElse(0L));
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setRoles(user.getRoles());
-        userDto.setVehicles(user.getVehicles().stream().map(vehicleMapper::vehicleToDto).collect(Collectors.toSet()));
+        userDto.setPhoneNumber(user.getPhoneNumber());
+        if (user.getVisits() != null) {
+            userDto.setVisits(user.getVisits().stream().map(visitMapper::visitDtoOutSimple).collect(Collectors.toSet()));
+        }
         // TODO make a simpleVisitsDTo
-        userDto.setVisits(user.getVisits().stream().map(visitMapper::visitToDtoWOVisitor).collect(Collectors.toSet()));
+        if (user.getVehicles() != null) {
+            userDto.setVehicles(user.getVehicles().stream().map(vehicleMapper::vehicleToDto).collect(Collectors.toSet()));
+        }
+
 //        if (!user.getRoles().isEmpty()) {
 //            userDto.setRoles(getRoleNames(user.getRoles()));
 //        }

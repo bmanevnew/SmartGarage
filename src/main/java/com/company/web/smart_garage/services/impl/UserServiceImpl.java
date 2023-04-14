@@ -27,7 +27,9 @@ import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
 @Service
+
 public class UserServiceImpl implements UserService {
+
 
     private final UserRepository userRepository;
     private final RoleService roleService;
@@ -84,7 +86,7 @@ public class UserServiceImpl implements UserService {
                                        Pageable pageable) {
         LocalDate parsedFromDate = visitFromDate != null ? LocalDate.parse(visitFromDate) : null;
         LocalDate parsedToDate = visitToDate != null ? LocalDate.parse(visitToDate) : null;
-
+        validateDateInterval(parsedFromDate, parsedToDate);
 
         Page<User> users = userRepository.findByFilters(name, vehicleModel,
                 vehicleMake, parsedFromDate, parsedToDate, pageable);
@@ -121,11 +123,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void makeAdmin(int id, User userPerformingAction) {
+    public void makeAdmin(long id, User userPerformingAction) {
         User userToAdmin = getUserById(id);
         checkModifyPermissions(userPerformingAction);
         if (userIsDeleted(userToAdmin)) {
             throw new UnsupportedOperationException(USER_IS_ALREADY_DELETED);
+        } else if (userIsAdmin(userToAdmin)) {
+            throw new UnsupportedOperationException(USER_IS_ALREADY_ADMIN);
         }
 
         Set<Role> roles = userToAdmin.getRoles();
@@ -269,5 +273,23 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException(USER_IS_ALREADY_DELETED);
         }
         return user;
+    }
+
+    private boolean validateDate(LocalDate date) {
+        if (date != null) {
+            if (date.isAfter(LocalDate.now())) {
+                throw new InvalidParamException(VISIT_DATE_IN_FUTURE);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void validateDateInterval(LocalDate dateFrom, LocalDate dateTo) {
+        if (validateDate(dateFrom) & validateDate(dateTo)) {
+            if (dateFrom.isAfter(dateTo)) {
+                throw new InvalidParamException(VISIT_DATE_INTERVAL_INVALID);
+            }
+        }
     }
 }

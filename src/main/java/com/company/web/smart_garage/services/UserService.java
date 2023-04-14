@@ -30,7 +30,7 @@ public interface UserService {
 
     void delete(long id, User user);
 
-    void makeAdmin(int id, User user);
+    void makeAdmin(long id, User user);
 
     void makeEmployee(int id, User user);
 

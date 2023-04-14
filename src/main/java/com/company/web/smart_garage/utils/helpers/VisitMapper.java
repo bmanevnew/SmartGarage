@@ -58,4 +58,17 @@ public class VisitMapper {
         if (ids == null) return new HashSet<>();
         return ids.stream().map(repairService::getById).collect(Collectors.toSet());
     }
+
+    public VisitDtoOutSimple visitDtoOutSimple(Visit visit) {
+        VisitDtoOutSimple dto = new VisitDtoOutSimple();
+        dto.setLicensePlate(visit.getVehicle().getLicensePlate());
+        dto.setVin(visit.getVehicle().getVin());
+        Set<RepairDto> repairDtos = visit.getRepairs().stream()
+                .map(repair -> new RepairDto(repair.getName(), repair.getPrice()))
+                .collect(Collectors.toSet());
+        dto.setRepairs(repairDtos);
+        dto.setDate(visit.getDate());
+        dto.setGetTotalCost(visit.getTotalCost());
+        return dto;
+    }
 }
