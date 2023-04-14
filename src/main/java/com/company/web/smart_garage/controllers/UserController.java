@@ -9,7 +9,7 @@ import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.helpers.AuthenticationHelper;
-import com.company.web.smart_garage.utils.helpers.UserMapper;
+import com.company.web.smart_garage.utils.mappers.UserMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,12 +46,12 @@ public class UserController {
 
     @GetMapping(params = "email")
     public UserDtoOut getByEmail(@RequestParam(name = "email") String email) {
-        return userMapper.objectToDto(userService.getByEmail(email));
+        return userMapper.userToDto(userService.getByEmail(email));
     }
 
     @GetMapping(params = "phone-number")
     public UserDtoOut getByPhoneNumber(@RequestParam(name = "phone-number") String phoneNumber) {
-        return userMapper.objectToDto(userService.getByPhoneNumber(phoneNumber));
+        return userMapper.userToDto(userService.getByPhoneNumber(phoneNumber));
     }
 
     @GetMapping
@@ -64,7 +64,7 @@ public class UserController {
 //TODO visitDate searching to be fixed
         Page<User> users = userService.getFilteredUsers(name, vehicleModel, vehicleMake,
                 visitFromDate, visitToDate, pageable);
-        return users.getContent().stream().map(userMapper::objectToDto).collect(Collectors.toList());
+        return users.getContent().stream().map(userMapper::userToDto).collect(Collectors.toList());
     }
 
     @PostMapping
@@ -95,7 +95,7 @@ public class UserController {
             updatedUser.setId(id);
             userService.update(id, updatedUser, requester);
             updatedUser = getById(id);
-            return userMapper.objectToDto(updatedUser);
+            return userMapper.userToDto(updatedUser);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (EntityDuplicationException | UnsupportedOperationException e) {
@@ -109,7 +109,7 @@ public class UserController {
             User user = authenticationHelper.tryGetUser(headers);
             User deleteUser = getById(id);
             userService.delete(id, user);
-            return userMapper.objectToDto(deleteUser);
+            return userMapper.userToDto(deleteUser);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -145,7 +145,7 @@ public class UserController {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeEmployee(id, user);
             User userToBeEmployed = getById(id);
-            return userMapper.objectToDto(userToBeEmployed);
+            return userMapper.userToDto(userToBeEmployed);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -160,7 +160,7 @@ public class UserController {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeAdmin(id, user);
             User userToBeAdmin = getById(id);
-            return userMapper.objectToDto(userToBeAdmin);
+            return userMapper.userToDto(userToBeAdmin);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -175,7 +175,7 @@ public class UserController {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeUnemployed(id, user);
             User userToBeEmployed = getById(id);
-            return userMapper.objectToDto(userToBeEmployed);
+            return userMapper.userToDto(userToBeEmployed);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
@@ -190,7 +190,7 @@ public class UserController {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeNotAdmin(id, user);
             User userToBeAdmin = getById(id);
-            return userMapper.objectToDto(userToBeAdmin);
+            return userMapper.userToDto(userToBeAdmin);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnsupportedOperationException e) {
