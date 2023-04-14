@@ -6,7 +6,7 @@ import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
-import com.company.web.smart_garage.utils.helpers.VisitMapper;
+import com.company.web.smart_garage.utils.mappers.VisitMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -50,21 +50,21 @@ public class VisitController {
                 .getContent();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping
     public VisitDtoOut create(@Valid @RequestBody VisitDtoIn visitDto) {
         Visit visit = visitMapper.dtoToVisit(visitDto);
         return visitMapper.visitToDto(visitService.create(visit));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PutMapping("/{id}")
     public VisitDtoOut update(@PathVariable long id, @Valid @RequestBody VisitDtoIn visitDto) {
         Visit visit = visitMapper.dtoToVisit(visitDto, id);
         return visitMapper.visitToDto(visitService.update(visit));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public VisitDtoOut delete(@PathVariable long id) {
         return visitMapper.visitToDto(visitService.delete(id));

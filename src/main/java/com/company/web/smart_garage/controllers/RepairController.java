@@ -3,7 +3,7 @@ package com.company.web.smart_garage.controllers;
 import com.company.web.smart_garage.data_transfer_objects.RepairDto;
 import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.services.RepairService;
-import com.company.web.smart_garage.utils.helpers.RepairMapper;
+import com.company.web.smart_garage.utils.mappers.RepairMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -34,21 +34,21 @@ public class RepairController {
                 .map(repairMapper::repairToDto).getContent();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping
     public RepairDto create(@Valid @RequestBody RepairDto dto) {
         Repair repair = repairMapper.dtoToRepair(dto);
         return repairMapper.repairToDto(repairService.create(repair));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PutMapping("/{id}")
     public RepairDto update(@Valid @RequestBody RepairDto dto, @PathVariable long id) {
         Repair repair = repairMapper.dtoToRepair(dto, id);
         return repairMapper.repairToDto(repairService.update(repair));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public RepairDto delete(@PathVariable long id) {
         return repairMapper.repairToDto(repairService.delete(id));

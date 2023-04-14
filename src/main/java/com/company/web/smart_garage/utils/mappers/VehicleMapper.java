@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.utils.helpers;
+package com.company.web.smart_garage.utils.mappers;
 
 import com.company.web.smart_garage.data_transfer_objects.VehicleDto;
 import com.company.web.smart_garage.models.Vehicle;

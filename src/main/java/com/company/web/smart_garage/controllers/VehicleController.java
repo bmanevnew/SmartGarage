@@ -4,7 +4,7 @@ import com.company.web.smart_garage.data_transfer_objects.VehicleDto;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
-import com.company.web.smart_garage.utils.helpers.VehicleMapper;
+import com.company.web.smart_garage.utils.mappers.VehicleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,21 +62,21 @@ public class VehicleController {
         return actualId;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping
     public VehicleDto create(@RequestBody VehicleDto dto, @RequestParam("owner-email") String email) {
         Vehicle vehicle = vehicleMapper.dtoToVehicle(dto);
         return vehicleMapper.vehicleToDto(vehicleService.create(vehicle, email));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PutMapping("/{id}")
     public VehicleDto update(@PathVariable long id, @RequestBody VehicleDto dto) {
         Vehicle vehicle = vehicleMapper.dtoToVehicle(dto, id);
         return vehicleMapper.vehicleToDto(vehicleService.update(vehicle));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public VehicleDto delete(@PathVariable long id) {
         return vehicleMapper.vehicleToDto(vehicleService.delete(id));

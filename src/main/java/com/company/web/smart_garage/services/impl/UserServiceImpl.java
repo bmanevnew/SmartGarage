@@ -17,7 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.*;
 import static com.company.web.smart_garage.utils.Constants.*;
@@ -49,6 +52,12 @@ public class UserServiceImpl implements UserService {
         validateEmail(email);
         return userRepository.findFirstByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("User", "email", email));
+    }
+
+    @Override
+    public User getByUsernameOrEmail(String usernameOrEmail) {
+        return userRepository.findFirstByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User", "username or email", usernameOrEmail));
     }
 
     private void validateEmail(String email) {
@@ -240,16 +249,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userToBeDeleted);
 
     }
-
-//    private void checkModifyPermissions(User user, User userPerformingAction) {
-//        if (userIsDeleted(userPerformingAction) || !userIsAdmin(userPerformingAction)
-//                || !userIsEmployee(userPerformingAction)) {
-//            throw new UnauthorizedOperation(DELETED_NOT_EMPLOYEES_OR_NOT_ADMINS_ERROR_MESSAGE);
-//        }
-//        if (!(userIsAdmin(userPerformingAction) || user.equals(userPerformingAction))) {
-//            throw new UnauthorizedOperation(MODIFY_ENTITY_ERROR_MESSAGE);
-//        }
-//    }
 
     private void checkModifyPermissions(User userPerformingAction) {
         //TODO add a check is the userPerformingAction isAdmin

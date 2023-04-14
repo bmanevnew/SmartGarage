@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.utils.helpers;
+package com.company.web.smart_garage.utils.mappers;
 
 import com.company.web.smart_garage.data_transfer_objects.*;
 import com.company.web.smart_garage.models.Repair;
@@ -26,16 +26,10 @@ public class VisitMapper {
     public VisitDtoOut visitToDto(Visit visit) {
         VisitDtoOut dto = new VisitDtoOut();
         dto.setVehicleDto(modelMapper.map(visit.getVehicle(), VehicleDto.class));
-        dto.setUserDtoOut(modelMapper.map(visit.getVisitor(), UserDtoOutSimple.class));
+        dto.setUserDtoOut(modelMapper.map(visit.getVisitor(), UserDtoOut.class));
         dto.setRepairs(visit.getRepairs().stream()
                 .map(repair -> modelMapper.map(repair, RepairDto.class))
                 .collect(Collectors.toSet()));
-        dto.setDate(visit.getDate().toLocalDate());
-        return dto;
-    }
-
-    public VisitDtoOut visitToDtoWOVisitor(Visit visit) {
-        VisitDtoOut dto = new VisitDtoOut();
         dto.setDate(visit.getDate().toLocalDate());
         return dto;
     }
@@ -57,18 +51,5 @@ public class VisitMapper {
     private Set<Repair> getRepairsFromIds(Set<Long> ids) {
         if (ids == null) return new HashSet<>();
         return ids.stream().map(repairService::getById).collect(Collectors.toSet());
-    }
-
-    public VisitDtoOutSimple visitDtoOutSimple(Visit visit) {
-        VisitDtoOutSimple dto = new VisitDtoOutSimple();
-        dto.setLicensePlate(visit.getVehicle().getLicensePlate());
-        dto.setVin(visit.getVehicle().getVin());
-        Set<RepairDto> repairDtos = visit.getRepairs().stream()
-                .map(repair -> new RepairDto(repair.getName(), repair.getPrice()))
-                .collect(Collectors.toSet());
-        dto.setRepairs(repairDtos);
-        dto.setDate(visit.getDate().toLocalDate());
-        dto.setGetTotalCost(visit.getTotalCost());
-        return dto;
     }
 }

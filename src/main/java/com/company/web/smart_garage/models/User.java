@@ -47,9 +47,9 @@ public class User {
     )
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
     private Set<Vehicle> vehicles;
 
-    @OneToMany(mappedBy = "visitor", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "visitor", cascade = CascadeType.REMOVE)
     private Set<Visit> visits;
 }

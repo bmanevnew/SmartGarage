@@ -13,16 +13,14 @@ public interface UserService {
 
     User getByEmail(String email);
 
+    User getByUsernameOrEmail(String usernameOrEmail);
+
     User getByPhoneNumber(String phoneNumber);
 
     List<User> getAll();
 
-    Page<User> getFilteredUsers( String name,
-                                        String vehicleModel,
-                                        String vehicleMake, String visitFromDate,
-                                        String visitToDate, Pageable pageable) ;
-
-
+    Page<User> getFilteredUsers(String name, String vehicleModel, String vehicleMake, String visitFromDate,
+                                String visitToDate, Pageable pageable);
 
     User create(User user);
 

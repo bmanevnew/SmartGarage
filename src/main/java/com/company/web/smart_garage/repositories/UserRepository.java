@@ -33,7 +33,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByIdWithVehicles(@Param("userId") Long userId);
 
 
-
     @Query("SELECT u FROM User u LEFT JOIN u.vehicles v LEFT JOIN u.visits vi WHERE " +
             "(:name IS NULL OR u.firstName LIKE %:name%) " +
             "AND (:vehicleModel IS NULL OR v.model LIKE %:vehicleModel%) " +

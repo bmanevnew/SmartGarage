@@ -1,6 +1,10 @@
 package com.company.web.smart_garage.utils;
 
 public class Constants {
+
+    //users
+    public final static String EMAIL_IS_REQUIRED = "Email is a required field.";
+    public final static String PHONE_NUMBER_IS_REQUIRED = "Phone number is a required field.";
     public final static String USERNAME_INVALID_SIZE_MESSAGE = "Username must be between 2 and 20 symbols.";
     public final static String EMAIL_INVALID_MESSAGE = "Email must be a valid email.";
     public final static String USERNAME_IS_REQUIRED = "Username is a required field.";

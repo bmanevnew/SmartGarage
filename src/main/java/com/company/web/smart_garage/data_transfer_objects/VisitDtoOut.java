@@ -16,7 +16,7 @@ public class VisitDtoOut {
 
     private VehicleDto vehicleDto;
 
-    private UserDtoOutSimple userDtoOut;
+    private UserDtoOut userDtoOut;
 
     private Set<RepairDto> repairs;
 
