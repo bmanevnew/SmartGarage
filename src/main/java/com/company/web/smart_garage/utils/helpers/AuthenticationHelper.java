@@ -3,7 +3,7 @@ package com.company.web.smart_garage.utils.helpers;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
-import com.company.web.smart_garage.models.user.User;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;

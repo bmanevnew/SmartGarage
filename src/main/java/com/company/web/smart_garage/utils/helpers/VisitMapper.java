@@ -1,19 +1,16 @@
 package com.company.web.smart_garage.utils.helpers;
 
-import com.company.web.smart_garage.models.repair.Repair;
-import com.company.web.smart_garage.models.repair.RepairDto;
-import com.company.web.smart_garage.models.visit.Visit;
-import com.company.web.smart_garage.models.visit.VisitDtoIn;
-import com.company.web.smart_garage.models.visit.VisitDtoOut;
-import com.company.web.smart_garage.models.visit.VisitDtoOutSimple;
+import com.company.web.smart_garage.data_transfer_objects.*;
+import com.company.web.smart_garage.models.Repair;
+import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.services.RepairService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,29 +21,22 @@ public class VisitMapper {
     private final UserService userService;
     private final VehicleService vehicleService;
     private final RepairService repairService;
-    private final VehicleMapper vehicleMapper;
-    private final UserMapper userMapper;
-    private final RepairMapper repairMapper;
+    private final ModelMapper modelMapper;
 
     public VisitDtoOut visitToDto(Visit visit) {
         VisitDtoOut dto = new VisitDtoOut();
-        dto.setVehicleDto(vehicleMapper.vehicleToDto(visit.getVehicle()));
-        dto.setUserDtoOut(userMapper.ObjectToDtoSimple(visit.getVisitor()));
-        Set<RepairDto> repairDtos = visit.getRepairs().stream()
-                .map(repairMapper::repairToDto)
-                .collect(Collectors.toSet());
-        dto.setRepairs(repairDtos);
-        dto.setDate(visit.getDate());
+        dto.setVehicleDto(modelMapper.map(visit.getVehicle(), VehicleDto.class));
+        dto.setUserDtoOut(modelMapper.map(visit.getVisitor(), UserDtoOutSimple.class));
+        dto.setRepairs(visit.getRepairs().stream()
+                .map(repair -> modelMapper.map(repair, RepairDto.class))
+                .collect(Collectors.toSet()));
+        dto.setDate(visit.getDate().toLocalDate());
         return dto;
     }
 
     public VisitDtoOut visitToDtoWOVisitor(Visit visit) {
         VisitDtoOut dto = new VisitDtoOut();
-        Set<RepairDto> repairDtos = visit.getRepairs().stream()
-                .map(repairMapper::repairToDto)
-                .collect(Collectors.toSet());
-        dto.setRepairs(repairDtos);
-        dto.setDate(visit.getDate());
+        dto.setDate(visit.getDate().toLocalDate());
         return dto;
     }
 
@@ -55,6 +45,12 @@ public class VisitMapper {
         visit.setVisitor(userService.getUserById(visitDto.getUserId()));
         visit.setVehicle(vehicleService.getById(visitDto.getVehicleId()));
         visit.setRepairs(getRepairsFromIds(visitDto.getRepairIds()));
+        return visit;
+    }
+
+    public Visit dtoToVisit(VisitDtoIn visitDto, long id) {
+        Visit visit = dtoToVisit(visitDto);
+        visit.setId(id);
         return visit;
     }
 
@@ -71,7 +67,7 @@ public class VisitMapper {
                 .map(repair -> new RepairDto(repair.getName(), repair.getPrice()))
                 .collect(Collectors.toSet());
         dto.setRepairs(repairDtos);
-        dto.setDate(visit.getDate());
+        dto.setDate(visit.getDate().toLocalDate());
         dto.setGetTotalCost(visit.getTotalCost());
         return dto;
     }

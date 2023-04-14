@@ -1,8 +1,8 @@
 package com.company.web.smart_garage.controllers;
 
-import com.company.web.smart_garage.models.visit.Visit;
-import com.company.web.smart_garage.models.visit.VisitDtoIn;
-import com.company.web.smart_garage.models.visit.VisitDtoOut;
+import com.company.web.smart_garage.data_transfer_objects.VisitDtoIn;
+import com.company.web.smart_garage.data_transfer_objects.VisitDtoOut;
+import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
@@ -10,6 +10,7 @@ import com.company.web.smart_garage.utils.helpers.VisitMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -49,12 +50,21 @@ public class VisitController {
                 .getContent();
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
     @PostMapping
     public VisitDtoOut create(@Valid @RequestBody VisitDtoIn visitDto) {
         Visit visit = visitMapper.dtoToVisit(visitDto);
         return visitMapper.visitToDto(visitService.create(visit));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
+    @PutMapping("/{id}")
+    public VisitDtoOut update(@PathVariable long id, @Valid @RequestBody VisitDtoIn visitDto) {
+        Visit visit = visitMapper.dtoToVisit(visitDto, id);
+        return visitMapper.visitToDto(visitService.update(visit));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public VisitDtoOut delete(@PathVariable long id) {
         return visitMapper.visitToDto(visitService.delete(id));

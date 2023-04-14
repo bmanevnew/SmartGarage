@@ -2,7 +2,7 @@ package com.company.web.smart_garage.services.impl;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
-import com.company.web.smart_garage.models.visit.Visit;
+import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.repositories.VisitRepository;
 import com.company.web.smart_garage.services.VisitService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.company.web.smart_garage.utils.Constants.*;
 
@@ -42,19 +43,24 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public Visit create(Visit visit) {
-        visit.setDate(LocalDate.now());
+        visit.setDate(LocalDateTime.now());
         return visitRepository.save(visit);
     }
 
     @Override
     public Visit update(Visit visit) {
+        validateId(visit.getId());
+        Visit visitPersistent = getById(visit.getId());
+        visit.setVehicle(visitPersistent.getVehicle());
+        visit.setVisitor(visitPersistent.getVisitor());
         return visitRepository.save(visit);
     }
 
     @Override
     public Visit delete(long id) {
         validateId(id);
-        Visit visit = getById(id);
+        Visit visit = visitRepository.findByIdFetchRepairs(id)
+                .orElseThrow(() -> new EntityNotFoundException("Visit", id));
         visitRepository.deleteById(id);
         return visit;
     }

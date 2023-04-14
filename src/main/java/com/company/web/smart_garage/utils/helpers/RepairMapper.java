@@ -1,17 +1,19 @@
 package com.company.web.smart_garage.utils.helpers;
 
-import com.company.web.smart_garage.models.repair.Repair;
-import com.company.web.smart_garage.models.repair.RepairDto;
+import com.company.web.smart_garage.data_transfer_objects.RepairDto;
+import com.company.web.smart_garage.models.Repair;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class RepairMapper {
 
+    private final ModelMapper modelMapper;
+
     public Repair dtoToRepair(RepairDto dto) {
-        Repair repair = new Repair();
-        repair.setName(dto.getName());
-        repair.setPrice(dto.getPrice());
-        return repair;
+        return modelMapper.map(dto, Repair.class);
     }
 
     public Repair dtoToRepair(RepairDto dto, long id) {
@@ -21,9 +23,6 @@ public class RepairMapper {
     }
 
     public RepairDto repairToDto(Repair repair) {
-        RepairDto dto = new RepairDto();
-        dto.setName(repair.getName());
-        dto.setPrice(repair.getPrice());
-        return dto;
+        return modelMapper.map(repair, RepairDto.class);
     }
 }

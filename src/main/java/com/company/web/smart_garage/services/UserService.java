@@ -1,15 +1,10 @@
 package com.company.web.smart_garage.services;
 
-import com.company.web.smart_garage.exceptions.InvalidParamException;
-import com.company.web.smart_garage.models.user.User;
+import com.company.web.smart_garage.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
-import java.time.LocalDate;
 import java.util.List;
-
-import static com.company.web.smart_garage.utils.Constants.PAGE_IS_INVALID;
 
 public interface UserService {
     User getUserById(long id);
@@ -22,7 +17,7 @@ public interface UserService {
 
     List<User> getAll();
 
-    public Page<User> getFilteredUsers( String name,
+    Page<User> getFilteredUsers( String name,
                                         String vehicleModel,
                                         String vehicleMake, String visitFromDate,
                                         String visitToDate, Pageable pageable) ;

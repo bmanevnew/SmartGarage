@@ -1,15 +1,12 @@
-package com.company.web.smart_garage.models.visit;
+package com.company.web.smart_garage.models;
 
-import com.company.web.smart_garage.models.repair.Repair;
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.vehicle.Vehicle;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -26,7 +23,7 @@ public class Visit {
     private Long id;
 
     @Column(name = "date")
-    private LocalDate date;
+    private LocalDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
@@ -36,7 +33,7 @@ public class Visit {
     @JoinColumn(name = "user_id")
     private User visitor;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "visits_repairs",
             joinColumns = @JoinColumn(name = "visit_id"),

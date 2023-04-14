@@ -1,8 +1,5 @@
-package com.company.web.smart_garage.models.visit;
+package com.company.web.smart_garage.data_transfer_objects;
 
-import com.company.web.smart_garage.models.repair.RepairDto;
-import com.company.web.smart_garage.models.user.UserDtoOutSimple;
-import com.company.web.smart_garage.models.vehicle.VehicleDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

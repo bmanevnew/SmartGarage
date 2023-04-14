@@ -2,8 +2,8 @@ package com.company.web.smart_garage.services.impl;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.vehicle.Vehicle;
+import com.company.web.smart_garage.models.User;
+import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.repositories.VehicleRepository;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
@@ -78,6 +78,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Vehicle update(Vehicle vehicle) {
+        if (!vehicleRepository.existsById(vehicle.getId()))
+            throw new EntityNotFoundException("Vehicle", vehicle.getId());
         validateLicensePlate(vehicle.getLicensePlate());
         validateVin(vehicle.getVin());
         validateProdYear(vehicle.getProductionYear());
@@ -87,7 +89,8 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public Vehicle delete(long id) {
         validateId(id);
-        Vehicle vehicle = getById(id);
+        Vehicle vehicle = vehicleRepository.findByIdFetchVisits(id)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle", id));
         vehicleRepository.deleteById(id);
         return vehicle;
     }

@@ -1,7 +1,7 @@
 package com.company.web.smart_garage.utils;
 
 
-import com.company.web.smart_garage.models.user.User;
+import com.company.web.smart_garage.models.User;
 
 public class AuthorizationUtils {
 

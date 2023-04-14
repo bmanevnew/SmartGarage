@@ -1,7 +1,5 @@
-package com.company.web.smart_garage.models.vehicle;
+package com.company.web.smart_garage.models;
 
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.visit.Visit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
