@@ -48,6 +48,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<Error> handleApiException(APIException e, WebRequest webRequest){
+        Error error = new Error(LocalDateTime.now(),e.getMessage(),webRequest.getDescription(false));
+        return new ResponseEntity<>(error,e.getHttpStatus());
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
@@ -61,6 +67,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-
-
 }

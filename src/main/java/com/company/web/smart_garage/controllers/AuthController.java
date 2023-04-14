@@ -1,5 +1,6 @@
 package com.company.web.smart_garage.controllers;
 
+import com.company.web.smart_garage.data_transfer_objects.JwtAuthResponse;
 import com.company.web.smart_garage.data_transfer_objects.LoginDto;
 import com.company.web.smart_garage.services.AuthService;
 import jakarta.validation.Valid;
@@ -18,8 +19,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDto loginDto) {
-        String response = authService.login(loginDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginDto loginDto) {
+        String token = authService.login(loginDto);
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 }

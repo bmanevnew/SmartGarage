@@ -1,8 +1,8 @@
 package com.company.web.smart_garage.services.impl;
 
 import com.company.web.smart_garage.data_transfer_objects.LoginDto;
+import com.company.web.smart_garage.security.JwtTokenProvider;
 import com.company.web.smart_garage.services.AuthService;
-import com.company.web.smart_garage.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
-    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String login(LoginDto loginDto) {
@@ -24,6 +24,6 @@ public class AuthServiceImpl implements AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return "User logged in successfully!";
+        return jwtTokenProvider.generateToken(authentication);
     }
 }

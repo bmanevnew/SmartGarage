@@ -11,16 +11,14 @@ import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.PasswordUtility;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.*;
 import static com.company.web.smart_garage.utils.Constants.*;
@@ -122,6 +120,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
+        //TODO implement random username in a better way
+        String randomUsername;
+        do{
+            randomUsername = RandomStringUtils.randomAlphabetic(20);
+        }while(userRepository.existsByUsername(randomUsername));
+        user.setUsername(randomUsername);
+
         String originalPassword = PasswordUtility.generatePassword();
         user.setPassword(originalPassword);
         sendMail(user);
