@@ -4,6 +4,7 @@ import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.models.vehicle.VehicleDto;
 import com.company.web.smart_garage.models.visit.Visit;
 import com.company.web.smart_garage.models.visit.VisitDtoOut;
+import com.company.web.smart_garage.models.visit.VisitDtoOutSimple;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,8 @@ public class UserDtoOut {
     private String lastName;
     private String username;
     private String email;
+    private String phoneNumber;
     private Set<Role> roles;
     private Set<VehicleDto> vehicles;
-    private Set<VisitDtoOut> visits;
+    private Set<VisitDtoOutSimple> visits;
 }

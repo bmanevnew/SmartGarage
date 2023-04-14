@@ -43,4 +43,14 @@ public class Visit {
             inverseJoinColumns = @JoinColumn(name = "repair_id")
     )
     private Set<Repair> repairs;
+
+    public double getTotalCost() {
+        double totalCost = 0;
+        if (repairs != null && !repairs.isEmpty()) {
+            for (Repair repair : repairs) {
+                totalCost += repair.getPrice();
+            }
+        }
+        return totalCost;
+    }
 }

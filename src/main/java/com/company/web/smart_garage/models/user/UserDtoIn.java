@@ -20,10 +20,10 @@ public class UserDtoIn {
     @NotBlank
     @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
     private String username;
-    @NotBlank
+   // @NotBlank
     @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
     private String firstName;
-    @NotBlank
+   // @NotBlank
     @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
     private String lastName;
     @NotBlank

@@ -57,17 +57,20 @@ public class UserServiceImpl implements UserService {
         return userRepository.findFirstByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("User", "email", email));
     }
+
     private void validateEmail(String email) {
-        if (email==null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             throw new InvalidParamException(USER_EMAIL_INVALID);
         }
     }
+
     private void validatePhoneNumber(String phoneNumber) {
         int as = phoneNumber.length();
-        if (as!=10 ) {
+        if (as != 10) {
             throw new InvalidParamException(USER_PHONE_INVALID);
         }
     }
+
     @Override
     public User getByPhoneNumber(String phoneNumber) {
         validatePhoneNumber(phoneNumber);
@@ -79,6 +82,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getAll() {
         return userRepository.findAll();
     }
+
     //TODO Cloudinary
     @Override
     public Page<User> getFilteredUsers(String name, String vehicleModel,
@@ -86,7 +90,7 @@ public class UserServiceImpl implements UserService {
                                        Pageable pageable) {
         LocalDate parsedFromDate = visitFromDate != null ? LocalDate.parse(visitFromDate) : null;
         LocalDate parsedToDate = visitToDate != null ? LocalDate.parse(visitToDate) : null;
-
+        validateDateInterval(parsedFromDate, parsedToDate);
 
         Page<User> users = userRepository.findByFilters(name, vehicleModel,
                 vehicleMake, parsedFromDate, parsedToDate, pageable);
@@ -113,6 +117,7 @@ public class UserServiceImpl implements UserService {
             default -> throw new InvalidParamException(String.format(SORT_PROPERTY_S_IS_INVALID, property));
         }
     }
+
     @Override
     public User create(User user) {
         user.setPassword(PasswordGenerator.generatePassword());
@@ -120,11 +125,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void makeAdmin(int id, User userPerformingAction) {
+    public void makeAdmin(long id, User userPerformingAction) {
         User userToAdmin = getUserById(id);
         checkModifyPermissions(userPerformingAction);
         if (userIsDeleted(userToAdmin)) {
             throw new UnsupportedOperationException(USER_IS_ALREADY_DELETED);
+        } else if (userIsAdmin(userToAdmin)) {
+            throw new UnsupportedOperationException(USER_IS_ALREADY_ADMIN);
         }
 
         Set<Role> roles = userToAdmin.getRoles();
@@ -268,5 +275,23 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException(USER_IS_ALREADY_DELETED);
         }
         return user;
+    }
+
+    private boolean validateDate(LocalDate date) {
+        if (date != null) {
+            if (date.isAfter(LocalDate.now())) {
+                throw new InvalidParamException(VISIT_DATE_IN_FUTURE);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void validateDateInterval(LocalDate dateFrom, LocalDate dateTo) {
+        if (validateDate(dateFrom) & validateDate(dateTo)) {
+            if (dateFrom.isAfter(dateTo)) {
+                throw new InvalidParamException(VISIT_DATE_INTERVAL_INVALID);
+            }
+        }
     }
 }

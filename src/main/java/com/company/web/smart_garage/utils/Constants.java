@@ -11,6 +11,7 @@ public class Constants {
     public static final String MODIFY_ENTITY_ERROR_MESSAGE = "Only admin or entity creator can modify a entity.";
     public static final String NOT_ADMIN_ERROR_MESSAGE = "Only admins can perform this action.";
     public static final String USER_IS_ALREADY_DELETED = "This user is already deleted";
+    public static final String USER_IS_ALREADY_ADMIN = "This user is already admin";
     public static final String DELETED = "deleted";
     public static final String USER_IS_NOT_EMPLOYED = "This user is not employed.";
     public static final String USER_IS_NOT_ADMIN = "This user is not an admin.";
