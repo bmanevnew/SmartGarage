@@ -67,7 +67,7 @@ public class VisitMapper {
                 .map(repair -> new RepairDto(repair.getName(), repair.getPrice()))
                 .collect(Collectors.toSet());
         dto.setRepairs(repairDtos);
-        dto.setDate(visit.getDate());
+        dto.setDate(visit.getDate().toLocalDate());
         dto.setGetTotalCost(visit.getTotalCost());
         return dto;
     }

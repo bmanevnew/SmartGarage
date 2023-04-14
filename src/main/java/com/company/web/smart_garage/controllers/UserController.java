@@ -94,7 +94,7 @@ public class UserController {
             User updatedUser = userMapper.dtoToUser(userDtoIn);
             updatedUser.setId(id);
             userService.update(id, updatedUser, requester);
-            updatedUser = userMapper.dtoToObject(getById(id));
+            updatedUser = getById(id);
             return userMapper.objectToDto(updatedUser);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -107,7 +107,7 @@ public class UserController {
     public UserDtoOut delete(@RequestHeader HttpHeaders headers, @PathVariable int id) {
         try {
             User user = authenticationHelper.tryGetUser(headers);
-            User deleteUser = userMapper.dtoToObject(getById(id));
+            User deleteUser = getById(id);
             userService.delete(id, user);
             return userMapper.objectToDto(deleteUser);
         } catch (EntityNotFoundException e) {
@@ -144,7 +144,7 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeEmployee(id, user);
-            User userToBeEmployed = userMapper.dtoToObject(getById(id));
+            User userToBeEmployed = getById(id);
             return userMapper.objectToDto(userToBeEmployed);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -159,7 +159,7 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeAdmin(id, user);
-            User userToBeAdmin = userMapper.dtoToObject(getById(id));
+            User userToBeAdmin = getById(id);
             return userMapper.objectToDto(userToBeAdmin);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -174,7 +174,7 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeUnemployed(id, user);
-            User userToBeEmployed = userMapper.dtoToObject(getById(id));
+            User userToBeEmployed = getById(id);
             return userMapper.objectToDto(userToBeEmployed);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -189,7 +189,7 @@ public class UserController {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             userService.makeNotAdmin(id, user);
-            User userToBeAdmin = userMapper.dtoToObject(getById(id));
+            User userToBeAdmin = getById(id);
             return userMapper.objectToDto(userToBeAdmin);
         } catch (jakarta.persistence.EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
