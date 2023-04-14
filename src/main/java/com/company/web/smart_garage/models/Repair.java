@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.models.repair;
+package com.company.web.smart_garage.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

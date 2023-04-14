@@ -3,13 +3,13 @@ package com.company.web.smart_garage.services.impl;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
-import com.company.web.smart_garage.models.PasswordGenerator;
 import com.company.web.smart_garage.models.Role;
-import com.company.web.smart_garage.models.user.User;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.repositories.RoleRepository;
 import com.company.web.smart_garage.repositories.UserRepository;
 import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
+import com.company.web.smart_garage.utils.PasswordUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,6 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
-
 
     private final UserRepository userRepository;
     private final RoleService roleService;
@@ -115,7 +114,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        String originalPassword = PasswordGenerator.generatePassword();
+        String originalPassword = PasswordUtility.generatePassword();
         String hash = passwordEncoder.encode(originalPassword);
         user.setPassword(hash);
         return userRepository.save(user);

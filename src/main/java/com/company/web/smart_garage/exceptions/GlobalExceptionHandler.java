@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityDuplicationException.class)
     public ResponseEntity<Error> handleEntityDuplicationException(EntityDuplicationException e, WebRequest webRequest) {
         Error error = new Error(LocalDateTime.now(), e.getMessage(), webRequest.getDescription(false));

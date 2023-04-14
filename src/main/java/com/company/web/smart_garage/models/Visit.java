@@ -1,8 +1,5 @@
-package com.company.web.smart_garage.models.visit;
+package com.company.web.smart_garage.models;
 
-import com.company.web.smart_garage.models.repair.Repair;
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.vehicle.Vehicle;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +33,7 @@ public class Visit {
     @JoinColumn(name = "user_id")
     private User visitor;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "visits_repairs",
             joinColumns = @JoinColumn(name = "visit_id"),

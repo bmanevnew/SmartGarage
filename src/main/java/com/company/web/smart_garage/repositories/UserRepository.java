@@ -1,7 +1,7 @@
 package com.company.web.smart_garage.repositories;
 
 import com.company.web.smart_garage.models.Role;
-import com.company.web.smart_garage.models.user.User;
+import com.company.web.smart_garage.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

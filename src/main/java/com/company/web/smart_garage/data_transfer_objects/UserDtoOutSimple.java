@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.models.user;
+package com.company.web.smart_garage.data_transfer_objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

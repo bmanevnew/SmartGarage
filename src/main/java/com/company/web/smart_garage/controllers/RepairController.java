@@ -1,7 +1,7 @@
 package com.company.web.smart_garage.controllers;
 
-import com.company.web.smart_garage.models.repair.Repair;
-import com.company.web.smart_garage.models.repair.RepairDto;
+import com.company.web.smart_garage.data_transfer_objects.RepairDto;
+import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.services.RepairService;
 import com.company.web.smart_garage.utils.helpers.RepairMapper;
 import jakarta.validation.Valid;
@@ -34,21 +34,21 @@ public class RepairController {
                 .map(repairMapper::repairToDto).getContent();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_EMPLOYEE')")
     @PostMapping
     public RepairDto create(@Valid @RequestBody RepairDto dto) {
         Repair repair = repairMapper.dtoToRepair(dto);
         return repairMapper.repairToDto(repairService.create(repair));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
     @PutMapping("/{id}")
     public RepairDto update(@Valid @RequestBody RepairDto dto, @PathVariable long id) {
         Repair repair = repairMapper.dtoToRepair(dto, id);
         return repairMapper.repairToDto(repairService.update(repair));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public RepairDto delete(@PathVariable long id) {
         return repairMapper.repairToDto(repairService.delete(id));

@@ -1,11 +1,11 @@
 package com.company.web.smart_garage.controllers;
 
+import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
+import com.company.web.smart_garage.data_transfer_objects.UserDtoOut;
 import com.company.web.smart_garage.exceptions.EntityDuplicationException;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.models.Role;
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.user.UserDtoIn;
-import com.company.web.smart_garage.models.user.UserDtoOut;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.helpers.AuthenticationHelper;

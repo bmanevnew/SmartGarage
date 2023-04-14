@@ -3,11 +3,10 @@ package com.company.web.smart_garage.services.impl;
 import com.company.web.smart_garage.exceptions.EntityDuplicationException;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
-import com.company.web.smart_garage.models.repair.Repair;
+import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.repositories.RepairRepository;
 import com.company.web.smart_garage.services.RepairService;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
@@ -79,11 +78,11 @@ public class RepairServiceImpl implements RepairService {
     }
 
     //soft deletes updated repair and creates a new one with new data
-    @Transactional
     @Override
     public Repair update(Repair repair) {
         validateId(repair.getId());
         validatePrice(repair.getPrice());
+        if (!repairRepository.existsById(repair.getId())) throw new EntityNotFoundException("Repair", repair.getId());
 
         boolean nameAlreadyExists = true;
         try {

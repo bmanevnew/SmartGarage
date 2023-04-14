@@ -1,14 +1,11 @@
 package com.company.web.smart_garage.utils.helpers;
 
+import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
+import com.company.web.smart_garage.data_transfer_objects.UserDtoOut;
+import com.company.web.smart_garage.data_transfer_objects.UserDtoOutSimple;
 import com.company.web.smart_garage.models.Role;
-import com.company.web.smart_garage.models.user.User;
-import com.company.web.smart_garage.models.user.UserDtoIn;
-import com.company.web.smart_garage.models.user.UserDtoOut;
-import com.company.web.smart_garage.models.user.UserDtoOutSimple;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.services.RoleService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -19,7 +16,7 @@ public class UserMapper {
     private final VehicleMapper vehicleMapper;
     private final VisitMapper visitMapper;
 
-    public UserMapper(RoleService roleService, VehicleMapper vehicleMapper, @Lazy VisitMapper visitMapper) {
+    public UserMapper(RoleService roleService, VehicleMapper vehicleMapper, VisitMapper visitMapper) {
         this.roleService = roleService;
         this.vehicleMapper = vehicleMapper;
         this.visitMapper = visitMapper;

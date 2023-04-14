@@ -1,7 +1,7 @@
 package com.company.web.smart_garage.security;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
-import com.company.web.smart_garage.models.user.User;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

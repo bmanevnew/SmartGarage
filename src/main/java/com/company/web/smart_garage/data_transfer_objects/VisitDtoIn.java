@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.models.visit;
+package com.company.web.smart_garage.data_transfer_objects;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

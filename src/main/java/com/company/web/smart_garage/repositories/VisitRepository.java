@@ -1,6 +1,6 @@
 package com.company.web.smart_garage.repositories;
 
-import com.company.web.smart_garage.models.visit.Visit;
+import com.company.web.smart_garage.models.Visit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,8 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface VisitRepository extends JpaRepository<Visit, Long> {
+
+    @Query("select v from Visit v join fetch v.repairs where v.id = :id")
+    Optional<Visit> findByIdFetchRepairs(@Param("id") long id);
 
     @Query("select v from Visit v where " +
             "(:visitorId is null or v.visitor.id = :visitorId) and " +

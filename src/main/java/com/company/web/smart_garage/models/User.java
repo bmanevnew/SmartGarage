@@ -1,8 +1,5 @@
-package com.company.web.smart_garage.models.user;
+package com.company.web.smart_garage.models;
 
-import com.company.web.smart_garage.models.Role;
-import com.company.web.smart_garage.models.vehicle.Vehicle;
-import com.company.web.smart_garage.models.visit.Visit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,9 +47,9 @@ public class User {
     )
     private Set<Role> roles;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private Set<Vehicle> vehicles;
 
-    @OneToMany(mappedBy = "visitor")
+    @OneToMany(mappedBy = "visitor", cascade = CascadeType.ALL)
     private Set<Visit> visits;
 }

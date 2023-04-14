@@ -1,6 +1,6 @@
 package com.company.web.smart_garage.services;
 
-import com.company.web.smart_garage.models.visit.Visit;
+import com.company.web.smart_garage.models.Visit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
