@@ -20,18 +20,31 @@ create table users
 (
     user_id      bigint auto_increment
         primary key,
-    username     varchar(20)  not null,
-    email        varchar(255) not null,
-    phone_number char(10)     not null,
-    password     varchar(256) not null,
-    first_name   varchar(32)  null,
-    last_name    varchar(32)  null,
+    username     varchar(20)                 not null,
+    email        varchar(255)                not null,
+    phone_number char(10)                    not null,
+    password     char(60) collate latin1_bin not null,
+    first_name   varchar(32)                 null,
+    last_name    varchar(32)                 null,
     constraint users_pk
         unique (username),
     constraint users_pk2
         unique (email),
     constraint users_pk3
         unique (phone_number)
+);
+
+create table password_reset_tokens
+(
+    id          bigint auto_increment
+        primary key,
+    token       char(60) collate latin1_bin not null,
+    user_id     bigint                      not null,
+    expire_date datetime                    not null,
+    constraint password_reset_tokens_pk2
+        unique (user_id),
+    constraint password_reset_tokens_users_user_id_fk
+        foreign key (user_id) references users (user_id)
 );
 
 create table users_roles
