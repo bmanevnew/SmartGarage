@@ -7,10 +7,15 @@ import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.utils.mappers.VehicleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,18 +27,35 @@ public class VehicleController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public VehicleDto getById(@PathVariable long id) {
-        return vehicleMapper.vehicleToDto(vehicleService.getById(id));
+    public ResponseEntity<VehicleDto> getById(@PathVariable long id, Authentication authentication) {
+        Vehicle vehicle = vehicleService.getById(id);
+        if (!userIsAdminOrEmployee(authentication) &&
+                !vehicle.getOwner().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(vehicleMapper.vehicleToDto(vehicle));
     }
 
     @GetMapping(params = "license-plate")
-    public VehicleDto getByLicensePlate(@RequestParam(name = "license-plate") String licensePlate) {
-        return vehicleMapper.vehicleToDto(vehicleService.getByLicensePlate(licensePlate));
+    public ResponseEntity<VehicleDto> getByLicensePlate(@RequestParam(name = "license-plate") String licensePlate,
+                                                        Authentication authentication) {
+        Vehicle vehicle = vehicleService.getByLicensePlate(licensePlate);
+        if (!userIsAdminOrEmployee(authentication) &&
+                !vehicle.getOwner().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(vehicleMapper.vehicleToDto(vehicle));
     }
 
     @GetMapping(params = "vin")
-    public VehicleDto getByVin(@RequestParam(name = "vin") String vin) {
-        return vehicleMapper.vehicleToDto(vehicleService.getByVin(vin));
+    public ResponseEntity<VehicleDto> getByVin(@RequestParam(name = "vin") String vin, Authentication authentication) {
+
+        Vehicle vehicle = vehicleService.getByVin(vin);
+        if (!userIsAdminOrEmployee(authentication) &&
+                !vehicle.getOwner().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(vehicleMapper.vehicleToDto(vehicle));
     }
 
     @GetMapping
@@ -44,8 +66,14 @@ public class VehicleController {
                                    @RequestParam(required = false, name = "brand") String brand,
                                    @RequestParam(required = false, name = "prod-from") Integer prodYearFrom,
                                    @RequestParam(required = false, name = "prod-to") Integer prodYearTo,
+                                   Authentication authentication,
                                    Pageable pageable) {
-        Long actualOwnerId = getActualOwnerId(ownerId, username, phoneNumber);
+        Long actualOwnerId;
+        if (!userIsAdminOrEmployee(authentication)) {
+            actualOwnerId = userService.getByUsernameOrEmail(authentication.getName()).getId();
+        } else {
+            actualOwnerId = getActualOwnerId(ownerId, username, phoneNumber);
+        }
         return vehicleService.getAll(actualOwnerId, model, brand, prodYearFrom, prodYearTo, pageable)
                 .map(vehicleMapper::vehicleToDto).getContent();
     }

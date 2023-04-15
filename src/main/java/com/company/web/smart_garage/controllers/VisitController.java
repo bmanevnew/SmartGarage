@@ -10,11 +10,16 @@ import com.company.web.smart_garage.utils.mappers.VisitMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,8 +33,13 @@ public class VisitController {
 
 
     @GetMapping("/{id}")
-    public VisitDtoOut getById(@PathVariable long id) {
-        return visitMapper.visitToDto(visitService.getById(id));
+    public ResponseEntity<VisitDtoOut> getById(@PathVariable long id, Authentication authentication) {
+        Visit visit = visitService.getById(id);
+        if (!userIsAdminOrEmployee(authentication) &&
+                !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(visitMapper.visitToDto(visit));
     }
 
     @GetMapping
@@ -41,10 +51,16 @@ public class VisitController {
                                     @RequestParam(required = false, name = "vehicle-vin") String vin,
                                     @RequestParam(required = false, name = "date-from") LocalDate dateFrom,
                                     @RequestParam(required = false, name = "date-to") LocalDate dateTo,
+                                    Authentication authentication,
                                     Pageable pageable) {
-        Long actualVisitorId = getActualVisitorId(visitorId, username, phoneNumber);
-        Long actualVehicleId = getActualVehicleId(vehicleId, licensePlate, vin);
-
+        Long actualVisitorId;
+        Long actualVehicleId;
+        if (!userIsAdminOrEmployee(authentication)) {
+            actualVisitorId = userService.getByUsernameOrEmail(authentication.getName()).getId();
+        } else {
+            actualVisitorId = getActualVisitorId(visitorId, username, phoneNumber);
+        }
+        actualVehicleId = getActualVehicleId(vehicleId, licensePlate, vin);
         return visitService.getAll(actualVisitorId, actualVehicleId, dateFrom, dateTo, pageable)
                 .map(visitMapper::visitToDto)
                 .getContent();
