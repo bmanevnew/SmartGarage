@@ -9,6 +9,7 @@ public class Constants {
     public final static String EMAIL_INVALID_MESSAGE = "Email must be a valid email.";
     public final static String USERNAME_IS_REQUIRED = "Username is a required field.";
     public final static String PASSWORD_IS_REQUIRED = "Password is a required field.";
+    public final static String CONFIRM_PASSWORD_IS_REQUIRED = "Confirm password is a required field.";
     public final static String PHONE_NUMBER_INVALID_MESSAGE = "Phone number must be a valid phone number.";
     public static final String DELETED_NOT_EMPLOYEES_OR_NOT_ADMINS_ERROR_MESSAGE =
             "Deleted users, not admins or not employees  can not modify a entity.";

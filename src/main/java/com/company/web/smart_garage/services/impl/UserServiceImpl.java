@@ -18,7 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.*;
 import static com.company.web.smart_garage.utils.Constants.*;
@@ -27,7 +30,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @Service
 
 public class UserServiceImpl implements UserService {
-    private final EmailSenderService senderService;
+    private final EmailSenderServiceImpl senderService;
 
     private final UserRepository userRepository;
     private final RoleService roleService;
@@ -122,9 +125,9 @@ public class UserServiceImpl implements UserService {
     public User create(User user) {
         //TODO implement random username in a better way
         String randomUsername;
-        do{
+        do {
             randomUsername = RandomStringUtils.randomAlphabetic(20);
-        }while(userRepository.existsByUsername(randomUsername));
+        } while (userRepository.existsByUsername(randomUsername));
         user.setUsername(randomUsername);
 
         String originalPassword = PasswordUtility.generatePassword();

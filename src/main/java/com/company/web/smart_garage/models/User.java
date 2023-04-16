@@ -52,4 +52,7 @@ public class User {
 
     @OneToMany(mappedBy = "visitor", cascade = CascadeType.REMOVE)
     private Set<Visit> visits;
+
+    @OneToOne(mappedBy = "user")
+    private PasswordResetToken passResetToken;
 }
