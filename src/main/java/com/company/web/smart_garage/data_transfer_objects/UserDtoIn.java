@@ -17,9 +17,9 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @AllArgsConstructor
 public class UserDtoIn {
 
-    @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
+    @Size(min = 2, max = 20, message = FIRST_NAME_INVALID_SIZE_MESSAGE)
     private String firstName;
-    @Size(min = 2, max = 20, message = USERNAME_INVALID_SIZE_MESSAGE)
+    @Size(min = 2, max = 20, message = LAST_NAME_INVALID_SIZE_MESSAGE)
     private String lastName;
     private String password;
     @NotNull(message = EMAIL_IS_REQUIRED)

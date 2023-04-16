@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -40,8 +40,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findByFilters(@Param("name") String name,
                              @Param("vehicleModel") String vehicleModel,
                              @Param("vehicleMake") String vehicleMake,
-                             @Param("fromDate") LocalDate fromDate,
-                             @Param("toDate") LocalDate toDate,
+                             @Param("fromDate") LocalDateTime fromDate,
+                             @Param("toDate") LocalDateTime toDate,
                              Pageable pageable);
 }
 

@@ -18,7 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
@@ -83,8 +83,9 @@ public class UserServiceImpl implements UserService {
     public Page<User> getFilteredUsers(String name, String vehicleModel,
                                        String vehicleMake, String visitFromDate, String visitToDate,
                                        Pageable pageable) {
-        LocalDate parsedFromDate = visitFromDate != null ? LocalDate.parse(visitFromDate) : null;
-        LocalDate parsedToDate = visitToDate != null ? LocalDate.parse(visitToDate) : null;
+        LocalDateTime parsedFromDate = visitFromDate != null ? LocalDateTime.parse(visitFromDate + "T00:00:00") : null;
+        LocalDateTime parsedToDate = visitToDate != null ? LocalDateTime.parse(visitToDate + "T00:00:00") : null;
+
         validateDateInterval(parsedFromDate, parsedToDate);
         validateSortProperties(pageable.getSort());
 
@@ -154,7 +155,7 @@ public class UserServiceImpl implements UserService {
     public void makeEmployee(long id) {
         User userToEmployed = getById(id);
         if (userIsEmployee(userToEmployed)) {
-            throw new UnsupportedOperationException(USER_IS_ALREADY_EMPLOYEE);
+            throw new RoleConflictException(USER_IS_ALREADY_EMPLOYEE);
         }
 
         Set<Role> roles = userToEmployed.getRoles();
@@ -173,7 +174,7 @@ public class UserServiceImpl implements UserService {
         Role adminRole = roles.stream()
                 .filter(role -> role.getName().equals("ROLE_ADMIN"))
                 .findFirst()
-                .orElseThrow(() -> new UnsupportedOperationException(USER_IS_NOT_ADMIN));
+                .orElseThrow(() -> new RoleConflictException(USER_IS_NOT_ADMIN));
 
         roles.remove(adminRole);
 
@@ -243,9 +244,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(persistentUser);
     }
 
-    private boolean validateDate(LocalDate date) {
+    private boolean validateDate(LocalDateTime date) {
         if (date != null) {
-            if (date.isAfter(LocalDate.now())) {
+            if (date.isAfter(LocalDateTime.now())) {
                 throw new InvalidParamException(VISIT_DATE_IN_FUTURE);
             }
             return true;
@@ -253,7 +254,7 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    private void validateDateInterval(LocalDate dateFrom, LocalDate dateTo) {
+    private void validateDateInterval(LocalDateTime dateFrom, LocalDateTime dateTo) {
         if (validateDate(dateFrom) & validateDate(dateTo)) {
             if (dateFrom.isAfter(dateTo)) {
                 throw new InvalidParamException(VISIT_DATE_INTERVAL_INVALID);
