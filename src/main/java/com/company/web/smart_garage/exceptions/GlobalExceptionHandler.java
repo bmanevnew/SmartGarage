@@ -48,10 +48,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(RoleConflictException.class)
+    public ResponseEntity<Error> handleRoleConflictException(RoleConflictException e, WebRequest webRequest) {
+        Error error = new Error(LocalDateTime.now(), e.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<Error> handleApiException(APIException e, WebRequest webRequest){
-        Error error = new Error(LocalDateTime.now(),e.getMessage(),webRequest.getDescription(false));
-        return new ResponseEntity<>(error,e.getHttpStatus());
+    public ResponseEntity<Error> handleApiException(APIException e, WebRequest webRequest) {
+        Error error = new Error(LocalDateTime.now(), e.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(error, e.getHttpStatus());
     }
 
     @Override

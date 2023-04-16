@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import static com.company.web.smart_garage.utils.Constants.PASSWORD_TOO_WEAK;
 import static com.company.web.smart_garage.utils.PasswordUtility.validatePassword;
 
 @RequiredArgsConstructor
@@ -60,11 +61,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void changePassword(String token, String newPassword) {
-        if (!validatePassword(newPassword)) throw new InvalidParamException("Password too weak.");
+        if (!validatePassword(newPassword)) throw new InvalidParamException(PASSWORD_TOO_WEAK);
         PasswordResetToken resetToken = prtService.getPasswordResetToken(token);
         User user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
-        userService.update(user.getId(), user, user);
+        userService.update(user);
         prtService.deletePasswordResetToken(resetToken.getId());
     }
 }

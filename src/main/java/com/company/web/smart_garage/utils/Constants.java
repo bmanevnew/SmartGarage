@@ -1,5 +1,8 @@
 package com.company.web.smart_garage.utils;
 
+import static com.company.web.smart_garage.utils.PasswordUtility.MAX_PASSWORD_LENGTH;
+import static com.company.web.smart_garage.utils.PasswordUtility.MIN_PASSWORD_LENGTH;
+
 public class Constants {
 
     //users
@@ -11,24 +14,20 @@ public class Constants {
     public final static String PASSWORD_IS_REQUIRED = "Password is a required field.";
     public final static String CONFIRM_PASSWORD_IS_REQUIRED = "Confirm password is a required field.";
     public final static String PHONE_NUMBER_INVALID_MESSAGE = "Phone number must be a valid phone number.";
-    public static final String DELETED_NOT_EMPLOYEES_OR_NOT_ADMINS_ERROR_MESSAGE =
-            "Deleted users, not admins or not employees  can not modify a entity.";
-    public static final String NOT_EMPLOYEES_OR_ADMINS_ERROR_MESSAGE = "Only employees or admin can perform this action.";
-
-    public static final String MODIFY_ENTITY_ERROR_MESSAGE = "Only admin or entity creator can modify a entity.";
     public static final String NOT_ADMIN_ERROR_MESSAGE = "Only admins can perform this action.";
-    public static final String USER_IS_ALREADY_DELETED = "This user is already deleted";
+    public static final String USER_IS_ALREADY_EMPLOYEE = "This user is already an employee";
     public static final String USER_IS_ALREADY_ADMIN = "This user is already admin";
-    public static final String DELETED = "deleted";
     public static final String USER_IS_NOT_EMPLOYED = "This user is not employed.";
     public static final String USER_IS_NOT_ADMIN = "This user is not an admin.";
-
-    public static final String AUTHORIZATION_HEADER_NAME = "Authorization";
-    public static final String INVALID_AUTHENTICATION_ERROR = "Invalid authentication.";
     public static final String INVALID_LOGIN_ERROR = "Invalid username or password.";
-    public static final String USERNAME_DELETED_IS_INVALID = "Username " + DELETED + " cannot be used.";
     public static final String USER_EMAIL_INVALID = "This is not a valid email";
     public static final String USER_PHONE_INVALID = "This is not a valid phone number";
+    public static final String USER_WITH_EMAIL_S_ALREADY_EXISTS = "User with email %s already exists.";
+    public static final String USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS = "User with phone number %s already exists.";
+    public static final String PASSWORD_TOO_WEAK = "Password too weak. Must include one lowercase character," +
+            " one uppercase character, one digit and one special symbol. Length should be between " +
+            MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " symbols.";
+
 
     //vehicles
     public static final String VEHICLE_PLATE_REQUIRED = "Vehicle license plate is a required field.";
@@ -69,4 +68,6 @@ public class Constants {
     public static final String SORT_PROPERTY_S_IS_INVALID = "Sort property %s is invalid.";
     public static final String ID_MUST_BE_POSITIVE = "Id must be positive.";
     public static final String PAGE_IS_INVALID = "Page number is invalid.";
+    public static final String TOKEN_EXPIRED = "Token has expired.";
+    public static final String HASH_ALGORITHM_NOT_FOUND = "Hashing algorithm not found.";
 }

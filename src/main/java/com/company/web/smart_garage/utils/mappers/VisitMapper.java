@@ -36,7 +36,7 @@ public class VisitMapper {
 
     public Visit dtoToVisit(VisitDtoIn visitDto) {
         Visit visit = new Visit();
-        visit.setVisitor(userService.getUserById(visitDto.getUserId()));
+        visit.setVisitor(userService.getById(visitDto.getUserId()));
         visit.setVehicle(vehicleService.getById(visitDto.getVehicleId()));
         visit.setRepairs(getRepairsFromIds(visitDto.getRepairIds()));
         return visit;

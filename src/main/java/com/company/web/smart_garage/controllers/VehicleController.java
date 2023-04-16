@@ -1,6 +1,7 @@
 package com.company.web.smart_garage.controllers;
 
 import com.company.web.smart_garage.data_transfer_objects.VehicleDto;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
@@ -92,9 +93,14 @@ public class VehicleController {
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping
-    public VehicleDto create(@RequestBody VehicleDto dto, @RequestParam("owner-email") String email) {
+    public VehicleDto create(@RequestBody VehicleDto dto,
+                             @RequestParam("owner-email") String email,
+                             @RequestParam("owner-phone-number") String phoneNumber) {
         Vehicle vehicle = vehicleMapper.dtoToVehicle(dto);
-        return vehicleMapper.vehicleToDto(vehicleService.create(vehicle, email));
+        User user = new User();
+        user.setEmail(email);
+        user.setPhoneNumber(phoneNumber);
+        return vehicleMapper.vehicleToDto(vehicleService.create(vehicle, user));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")

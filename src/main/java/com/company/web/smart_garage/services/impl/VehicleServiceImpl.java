@@ -61,14 +61,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Vehicle create(Vehicle vehicle, String email) {
-        User owner;
+    public Vehicle create(Vehicle vehicle, User owner) {
         try {
-            owner = userService.getByEmail(email);
+            owner = userService.getByEmail(owner.getEmail());
         } catch (EntityNotFoundException e) {
-            //TODO  should be implemented in user
-//            owner = userService.create(email);
-            owner = userService.getUserById(1);
+            owner = userService.create(owner);
         }
         vehicle.setOwner(owner);
         validateLicensePlate(vehicle.getLicensePlate());

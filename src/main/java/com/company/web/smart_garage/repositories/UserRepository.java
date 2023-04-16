@@ -1,6 +1,5 @@
 package com.company.web.smart_garage.repositories;
 
-import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,14 +23,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findFirstByPhoneNumber(String phoneNumber);
 
-    List<User> findByFirstName(String firstName);
+    Page<User> findByFirstName(String firstName, Pageable pageable);
 
-    List<User> findByLastName(String lastName);
+    Page<User> findByLastName(String lastName, Pageable pageable);
 
-    List<User> findByRolesIn(List<Role> roles);
-
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.vehicles WHERE u.id = :userId")
-    User findByIdWithVehicles(@Param("userId") Long userId);
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.vehicles LEFT JOIN FETCH u.visits WHERE u.id = :userId")
+    Optional<User> findByIdFetchAll(@Param("userId") Long userId);
 
 
     @Query("SELECT u FROM User u LEFT JOIN u.vehicles v LEFT JOIN u.visits vi WHERE " +

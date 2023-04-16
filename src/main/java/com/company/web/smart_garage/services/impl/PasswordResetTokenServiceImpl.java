@@ -18,6 +18,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.UUID;
 
+import static com.company.web.smart_garage.utils.Constants.HASH_ALGORITHM_NOT_FOUND;
+import static com.company.web.smart_garage.utils.Constants.TOKEN_EXPIRED;
+
 @RequiredArgsConstructor
 @Service
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
@@ -34,8 +37,13 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         PasswordResetToken tokenObj = new PasswordResetToken();
         tokenObj.setUser(user);
         tokenObj.setExpiryDate(new Date(new Date().getTime() + prtExpirationTime));
-        String token = UUID.randomUUID().toString();
-        String tokenHash = hashToken(token);
+        String token;
+        String tokenHash;
+        do {
+            token = UUID.randomUUID().toString();
+            tokenHash = hashToken(token);
+        } while (prtRepository.existsByToken(tokenHash));
+
         tokenObj.setToken(tokenHash);
         prtRepository.save(tokenObj);
         return token;
@@ -46,7 +54,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         String tokenHash = hashToken(token);
         PasswordResetToken passToken = prtRepository.findByToken(tokenHash)
                 .orElseThrow(() -> new EntityNotFoundException("Password reset token", "token", token));
-        if (isTokenExpired(passToken)) throw new InvalidParamException("Token has expired.");
+        if (isTokenExpired(passToken)) throw new InvalidParamException(TOKEN_EXPIRED);
         return passToken;
     }
 
@@ -56,7 +64,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
             byte[] encodedHash = encoder.digest(token.getBytes(StandardCharsets.UTF_8));
             return bytesToHex(encodedHash);
         } catch (NoSuchAlgorithmException e) {
-            throw new APIException("Hash function failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new APIException(HASH_ALGORITHM_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

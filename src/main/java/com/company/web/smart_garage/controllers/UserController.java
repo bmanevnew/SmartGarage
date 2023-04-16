@@ -2,27 +2,23 @@ package com.company.web.smart_garage.controllers;
 
 import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
 import com.company.web.smart_garage.data_transfer_objects.UserDtoOut;
-import com.company.web.smart_garage.exceptions.EntityDuplicationException;
-import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.models.User;
-import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
-import com.company.web.smart_garage.utils.helpers.AuthenticationHelper;
 import com.company.web.smart_garage.utils.mappers.UserMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
 
 @AllArgsConstructor
 @RestController
@@ -31,22 +27,29 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
-    private final RoleService roleService;
-    private final AuthenticationHelper authenticationHelper;
-
 
     @GetMapping("/{id}")
-    public User getById(@PathVariable long id) {
-        try {
-            return userService.getUserById(id);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
+    public UserDtoOut getByIdDto(@PathVariable long id) {
+        return userMapper.userToDto(getById(id));
+    }
+
+    private User getById(long id) {
+        return userService.getById(id);
+    }
+
+    @GetMapping(params = "username")
+    public UserDtoOut getByUsername(@RequestParam(name = "username") String username) {
+        return userMapper.userToDto(userService.getByUsername(username));
     }
 
     @GetMapping(params = "email")
     public UserDtoOut getByEmail(@RequestParam(name = "email") String email) {
         return userMapper.userToDto(userService.getByEmail(email));
+    }
+
+    @GetMapping(params = {"usernameOrEmail"})
+    public UserDtoOut getByUsernameOrEmail(@RequestParam(name = "usernameOrEmail") String usernameOrEmail) {
+        return userMapper.userToDto(userService.getByUsernameOrEmail(usernameOrEmail));
     }
 
     @GetMapping(params = "phone-number")
@@ -61,140 +64,75 @@ public class UserController {
                                    @RequestParam(required = false, name = "visit-from-date") String visitFromDate,
                                    @RequestParam(required = false, name = "visit-to-date") String visitToDate,
                                    Pageable pageable) {
-//TODO visitDate searching to be fixed
-        Page<User> users = userService.getFilteredUsers(name, vehicleModel, vehicleMake,
-                visitFromDate, visitToDate, pageable);
-        return users.getContent().stream().map(userMapper::userToDto).collect(Collectors.toList());
+//        TODO visitDate searching to be fixed
+        return userService.getFilteredUsers(name, vehicleModel, vehicleMake, visitFromDate, visitToDate, pageable)
+                .map(userMapper::userToDto).toList();
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping
-    public User create(@Valid @RequestBody UserDtoIn userDto) {
+    public UserDtoOut create(@Valid @RequestBody UserDtoIn userDto) {
         User user = userMapper.dtoToUser(userDto);
-        Role role = roleService.getById(1);
-        user.setRoles(Collections.singleton(role));
-        return userService.create(user);
+        return userMapper.userToDto(userService.create(user));
     }
 
-//    @PostMapping
-//    public UserDtoOut createUser(@RequestHeader HttpHeaders headers, @Valid @RequestBody UserDtoIn userDto) {
-//
-//            User user = userMapper.dtoToObject(userDto);
-//            userService.create(user);
-//            return userMapper.ObjectToDto(user);
-
-    //        catch (EntityDuplicationException | UnsupportedOperationException e) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-//        }
-    //  }
     @PutMapping("/{id}")
-    public UserDtoOut update(@RequestHeader HttpHeaders headers, @PathVariable long id,
-                       @Valid @RequestBody UserDtoIn userDtoIn) {
-        try {
-            User requester = authenticationHelper.tryGetUser(headers);
-            User updatedUser = userMapper.dtoToUser(userDtoIn);
-            updatedUser.setId(id);
-            userService.update(id, updatedUser, requester);
-            updatedUser = getById(id);
-            return userMapper.userToDto(updatedUser);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (EntityDuplicationException | UnsupportedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+    public ResponseEntity<UserDtoOut> update(@PathVariable long id,
+                                             @Valid @RequestBody UserDtoIn userDtoIn,
+                                             Authentication authentication) {
+        //regular customer can only update his own account
+        if (!userIsAdminOrEmployee(authentication) &&
+                !(id == (userService.getByUsernameOrEmail(authentication.getName()).getId()))) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
+        User updatedUser = userMapper.dtoToUser(userDtoIn, id);
+        return ResponseEntity.ok(userMapper.userToDto(userService.update(updatedUser)));
     }
 
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
-    public UserDtoOut delete(@RequestHeader HttpHeaders headers, @PathVariable int id) {
-        try {
-            User user = authenticationHelper.tryGetUser(headers);
-            User deleteUser = getById(id);
-            userService.delete(id, user);
-            return userMapper.userToDto(deleteUser);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (UnsupportedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
+    public UserDtoOut delete(@PathVariable int id) {
+        return userMapper.userToDto(userService.delete(id));
     }
 
-//    private User getUserById(long id) {
-//        try {
-//            return userService.getUserById(id);
-//        } catch (EntityNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-//        }
-//    }
+    //--------------------------------ROLES-------------------------------------
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}/roles")
     public Set<Role> getRoles(@PathVariable int id) {
         return getById(id).getRoles();
     }
 
-    @GetMapping("/{id}/roles/{roleId}")
-    public Role getRole(@PathVariable int id) {
-        return getById(id).getRoles()
-                .stream().filter(r -> r.getId() == id)
-                .findFirst().orElse(null);
-    }
-    //--------------------------------ROLES-------------------------------------
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}/makeEmployee")
-    public UserDtoOut makeEmployee(@RequestHeader HttpHeaders headers,
-                                   @PathVariable int id) {
-        try {
-            User user = authenticationHelper.tryGetUser(headers);
-            userService.makeEmployee(id, user);
-            User userToBeEmployed = getById(id);
-            return userMapper.userToDto(userToBeEmployed);
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (UnsupportedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
+    public UserDtoOut makeEmployee(@PathVariable int id) {
+        User user = getById(id);
+        userService.makeEmployee(id);
+        return userMapper.userToDto(user);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}/makeAdmin")
-    public UserDtoOut makeAdmin(@RequestHeader HttpHeaders headers,
-                                @PathVariable long id) {
-        try {
-            User user = authenticationHelper.tryGetUser(headers);
-            userService.makeAdmin(id, user);
-            User userToBeAdmin = getById(id);
-            return userMapper.userToDto(userToBeAdmin);
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (UnsupportedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
+    public UserDtoOut makeAdmin(@PathVariable long id) {
+        User user = getById(id);
+        userService.makeAdmin(id);
+        return userMapper.userToDto(user);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}/makeUnemployed")
-    public UserDtoOut makeUnemployed(@RequestHeader HttpHeaders headers,
-                                     @PathVariable int id) {
-        try {
-            User user = authenticationHelper.tryGetUser(headers);
-            userService.makeUnemployed(id, user);
-            User userToBeEmployed = getById(id);
-            return userMapper.userToDto(userToBeEmployed);
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (UnsupportedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
+    public UserDtoOut makeUnemployed(@PathVariable int id) {
+        User user = getById(id);
+        userService.makeUnemployed(id);
+        return userMapper.userToDto(user);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}/makeNotAdmin")
-    public UserDtoOut makeNotAdmin(@RequestHeader HttpHeaders headers,
-                                   @PathVariable int id) {
-        try {
-            User user = authenticationHelper.tryGetUser(headers);
-            userService.makeNotAdmin(id, user);
-            User userToBeAdmin = getById(id);
-            return userMapper.userToDto(userToBeAdmin);
-        } catch (jakarta.persistence.EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (UnsupportedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
+    public UserDtoOut makeNotAdmin(@PathVariable int id) {
+        User user = getById(id);
+        userService.makeNotAdmin(id);
+        return userMapper.userToDto(user);
     }
 }
