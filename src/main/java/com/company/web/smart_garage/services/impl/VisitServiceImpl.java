@@ -24,6 +24,7 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public Visit getById(long id) {
+        validateId(id);
         return visitRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Visit", id));
     }
 
@@ -49,7 +50,7 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public Visit update(Visit visit) {
-        validateId(visit.getId());
+        if (visit.getId() == null || visit.getId() <= 0) throw new InvalidParamException("Id is required.");
         Visit visitPersistent = getById(visit.getId());
         visit.setVehicle(visitPersistent.getVehicle());
         visit.setVisitor(visitPersistent.getVisitor());

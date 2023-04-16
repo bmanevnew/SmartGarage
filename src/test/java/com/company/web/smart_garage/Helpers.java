@@ -12,6 +12,7 @@ public class Helpers {
 
     public static User createMockUser() {
         User mockUser = new User();
+        mockUser.setId(1L);
         mockUser.setUsername("Username");
         mockUser.setPassword("Password1234");
         mockUser.setEmail("FirstName_LastName@email.abc");
@@ -24,6 +25,7 @@ public class Helpers {
 
     public static User createMockEmployee() {
         User mockEmployee = new User();
+        mockEmployee.setId(1L);
         mockEmployee.setUsername("EmployeeUsername");
         mockEmployee.setPassword("EmployeePassword1234");
         mockEmployee.setEmail("Employee_FirstName_LastName@email.abc");
@@ -36,6 +38,7 @@ public class Helpers {
 
     public static User createMockAdmin() {
         User mockAdmin = new User();
+        mockAdmin.setId(1L);
         mockAdmin.setUsername("AdminUsername");
         mockAdmin.setPassword("AdminPassword1234");
         mockAdmin.setEmail("Admin_FirstName_LastName@email.abc");
@@ -70,6 +73,7 @@ public class Helpers {
 
     public static Visit createMockVisit() {
         Visit mockVisit = new Visit();
+        mockVisit.setId(1L);
         mockVisit.setVisitor(createMockUser());
         mockVisit.setVehicle(createMockVehicle());
         mockVisit.setDate(dateTime);
@@ -78,6 +82,7 @@ public class Helpers {
 
     public static Vehicle createMockVehicle() {
         Vehicle mockVehicle = new Vehicle();
+        mockVehicle.setId(1L);
         mockVehicle.setLicensePlate("CA 2131 KH");
         mockVehicle.setVin("5YJSA1DG9DFP14705");
         mockVehicle.setOwner(createMockUser());
@@ -86,6 +91,7 @@ public class Helpers {
 
     public static Repair createMockRepair() {
         Repair repair = new Repair();
+        repair.setId(1L);
         repair.setName("Oil change");
         repair.setPrice(29.99);
         return repair;
