@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
-import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
+import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdmin;
 
 @AllArgsConstructor
 @RestController
@@ -81,7 +81,7 @@ public class UserController {
                                              @Valid @RequestBody UserDtoIn userDtoIn,
                                              Authentication authentication) {
         //regular customer can only update his own account
-        if (!userIsAdminOrEmployee(authentication) &&
+        if (!userIsAdmin(authentication) &&
                 !(id == (userService.getByUsernameOrEmail(authentication.getName()).getId()))) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }

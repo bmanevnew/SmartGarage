@@ -14,7 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -29,7 +28,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final EmailSenderService emailSenderService;
-    private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenService prtService;
 
     @Override
@@ -64,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
         if (!validatePassword(newPassword)) throw new InvalidParamException(PASSWORD_TOO_WEAK);
         PasswordResetToken resetToken = prtService.getPasswordResetToken(token);
         User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(newPassword);
         userService.update(user);
         prtService.deletePasswordResetToken(resetToken.getId());
     }

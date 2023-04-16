@@ -4,10 +4,13 @@ import com.company.web.smart_garage.data_transfer_objects.JwtAuthResponse;
 import com.company.web.smart_garage.data_transfer_objects.LoginDto;
 import com.company.web.smart_garage.data_transfer_objects.PasswordDto;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.services.AuthService;
+import com.company.web.smart_garage.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
     @PostMapping(value = {"/login", "/signin"})
     public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginDto loginDto) {
@@ -38,6 +42,18 @@ public class AuthController {
             throw new InvalidParamException("Password confirmation does not match.");
         }
         authService.changePassword(token, passwordDto.getNewPassword());
+        return ResponseEntity.ok("Successfully changed your password.");
+    }
+
+    @PostMapping("/change_password_auth")
+    public ResponseEntity<String> changePasswordAuth(@Valid @RequestBody PasswordDto passwordDto,
+                                                     Authentication authentication) {
+        if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
+            throw new InvalidParamException("Password confirmation does not match.");
+        }
+        User user = userService.getByUsernameOrEmail(authentication.getName());
+        user.setPassword(passwordDto.getNewPassword());
+        userService.update(user);
         return ResponseEntity.ok("Successfully changed your password.");
     }
 }

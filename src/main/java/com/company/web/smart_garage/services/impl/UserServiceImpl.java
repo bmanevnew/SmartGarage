@@ -28,7 +28,6 @@ import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
 @Service
-
 public class UserServiceImpl implements UserService {
     private final EmailSenderServiceImpl senderService;
     private final UserRepository userRepository;
@@ -206,6 +205,14 @@ public class UserServiceImpl implements UserService {
         persistentUser.setPhoneNumber(user.getPhoneNumber());
         persistentUser.setFirstName(user.getFirstName());
         persistentUser.setLastName(user.getLastName());
+        if (user.getPassword() != null) {
+            if (PasswordUtility.validatePassword(user.getPassword())) {
+                String hash = passwordEncoder.encode(user.getPassword());
+                persistentUser.setPassword(hash);
+            } else {
+                throw new InvalidParamException(PASSWORD_TOO_WEAK);
+            }
+        }
 
         //throws exception if email duplication occurs
         boolean duplicateEmailExists = true;
