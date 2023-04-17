@@ -84,6 +84,8 @@ public class Helpers {
         Vehicle mockVehicle = new Vehicle();
         mockVehicle.setId(1L);
         mockVehicle.setLicensePlate("CA 2131 KH");
+        mockVehicle.setBrand("Dodge");
+        mockVehicle.setModel("Ram");
         mockVehicle.setVin("5YJSA1DG9DFP14705");
         mockVehicle.setOwner(createMockUser());
         return mockVehicle;

@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(long id) {
+        validateId(id);
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
     }
 
@@ -59,8 +60,22 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User", "username or email", usernameOrEmail));
     }
 
-    private void validateEmail(String email) {
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+    public void validateEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new InvalidParamException(USER_EMAIL_INVALID);
+        }
+
+        String[] emailParts = email.split("@");
+        if (emailParts.length != 2) {
+            throw new InvalidParamException(USER_EMAIL_INVALID);
+        }
+
+        String[] domainParts = emailParts[1].split("\\.");
+        if (domainParts.length < 2) {
+            throw new InvalidParamException(USER_EMAIL_INVALID);
+        }
+
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             throw new InvalidParamException(USER_EMAIL_INVALID);
         }
     }
@@ -72,7 +87,7 @@ public class UserServiceImpl implements UserService {
                 () -> new EntityNotFoundException("User", "phone number", phoneNumber));
     }
 
-    private void validatePhoneNumber(String phoneNumber) {
+    public void validatePhoneNumber(String phoneNumber) {
         if (phoneNumber != null && !phoneNumber.matches("^\\d{10}$")) {
             throw new InvalidParamException(USER_PHONE_INVALID);
         }
@@ -111,6 +126,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
+        if (userRepository.findFirstByEmail(user.getEmail()).isPresent()) {
+            throw new EntityDuplicationException(String.format(USER_WITH_EMAIL_S_ALREADY_EXISTS, user.getEmail()));
+        }
+        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+            throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
+        }
         //TODO implement random username in a better way
         String randomUsername;
         do {
@@ -259,6 +280,11 @@ public class UserServiceImpl implements UserService {
             if (dateFrom.isAfter(dateTo)) {
                 throw new InvalidParamException(VISIT_DATE_INTERVAL_INVALID);
             }
+        }
+    }
+    private void validateId(Long id) {
+        if (id != null && id <= 0) {
+            throw new InvalidParamException(ID_MUST_BE_POSITIVE);
         }
     }
 
