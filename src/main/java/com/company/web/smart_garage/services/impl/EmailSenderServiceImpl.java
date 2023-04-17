@@ -25,7 +25,6 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         message.setText(body);
         message.setSubject(subject);
         mailSender.send(message);
-        //  System.out.println("Mail Sent successfully");
     }
 
     public void sendEmailWithAttachment(String toEmail, String subject, String body, String attachment)
@@ -40,6 +39,6 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         FileSystemResource fileSystemResource = new FileSystemResource(new File(attachment));
         mimeMessageHelper.addAttachment(fileSystemResource.getFilename(), fileSystemResource);
         mailSender.send(mimeMailMessage);
-        //System.out.println("Mail Sent successfully");
+
     }
 }

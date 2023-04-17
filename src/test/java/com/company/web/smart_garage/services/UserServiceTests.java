@@ -41,44 +41,30 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTests {
 
-    @Mock
-    private EmailSenderServiceImpl emailSenderService;
+
     @Mock
     private UserRepository mockRepository;
-    @Mock
-    private RoleService roleService;
-    @Mock
-    private RoleRepository roleRepository;
-    @Mock
-    private PasswordUtility passwordUtility;
+
     @Mock
     private PasswordEncoder passwordEncoder;
-    private AuthorizationUtils authorizationUtils;
+
 
     @InjectMocks
     private UserServiceImpl userService;
 
     private User mockUser;
     private Vehicle mockVehicle;
-    private Visit mockVisit;
-    private User mockEmployee;
-    private User mockAdmin;
-    private Role role;
     Pageable pageable;
     private String dateFrom;
     private String dateTo;
 
     private User user;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
+    private User mockAdmin;
+    private Visit mockVisit;
 
     @BeforeEach
     public void beforeEach() {
         user = new User();
-//        user.setFirstName("John");
-//        user.setLastName("Doe");
         user.setEmail("john.doe@example.com");
         user.setPhoneNumber("0000000000");
         mockUser = createMockUser();
