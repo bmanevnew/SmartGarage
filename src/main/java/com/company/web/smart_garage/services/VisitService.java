@@ -1,9 +1,12 @@
 package com.company.web.smart_garage.services;
 
 import com.company.web.smart_garage.models.Visit;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 public interface VisitService {
@@ -17,4 +20,6 @@ public interface VisitService {
     Visit update(Visit visit);
 
     Visit delete(long id);
+
+    void generatePdf(HttpServletResponse response, Visit visit) throws IOException, MessagingException;
 }

@@ -2,13 +2,18 @@ package com.company.web.smart_garage.controllers;
 
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoIn;
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoOut;
+import com.company.web.smart_garage.models.VisitPdfExporter;
 import com.company.web.smart_garage.models.Visit;
+import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
 import com.company.web.smart_garage.utils.mappers.VisitMapper;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +21,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
@@ -30,6 +41,7 @@ public class VisitController {
     private final UserService userService;
     private final VehicleService vehicleService;
     private final VisitMapper visitMapper;
+    private final EmailSenderService emailSenderService;
 
 
     @GetMapping("/{id}")
@@ -39,6 +51,19 @@ public class VisitController {
                 !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
+        return ResponseEntity.ok(visitMapper.visitToDto(visit));
+    }
+
+    @GetMapping("/{id}/export/pdf")
+    public ResponseEntity<VisitDtoOut> getPdfReport(@PathVariable long id, Authentication authentication, HttpServletResponse response) throws IOException, MessagingException {
+        Visit visit = visitService.getById(id);
+        if (!userIsAdminOrEmployee(authentication) &&
+                !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        visitService.generatePdf(response, visit);
+
+
         return ResponseEntity.ok(visitMapper.visitToDto(visit));
     }
 

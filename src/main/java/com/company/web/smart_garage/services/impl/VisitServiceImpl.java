@@ -3,16 +3,25 @@ package com.company.web.smart_garage.services.impl;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.models.Visit;
+import com.company.web.smart_garage.models.VisitPdfExporter;
 import com.company.web.smart_garage.repositories.VisitRepository;
 import com.company.web.smart_garage.services.VisitService;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static com.company.web.smart_garage.utils.Constants.*;
 
@@ -21,6 +30,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 public class VisitServiceImpl implements VisitService {
 
     private final VisitRepository visitRepository;
+    private final EmailSenderServiceImpl emailSenderService;
 
     @Override
     public Visit getById(long id) {
@@ -64,6 +74,27 @@ public class VisitServiceImpl implements VisitService {
                 .orElseThrow(() -> new EntityNotFoundException("Visit", id));
         visitRepository.deleteById(id);
         return visit;
+    }
+
+    @Override
+    public void generatePdf(HttpServletResponse response, Visit visit) throws IOException, MessagingException {
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+        String currentDateTime = dateFormat.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=booking_" + currentDateTime + ".pdf";
+        response.setHeader(headerKey, headerValue);
+        VisitPdfExporter exporter = new VisitPdfExporter(visit);
+        ByteArrayOutputStream baos = exporter.export(response);
+
+        ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
+
+        String fileName = "visit_" + visit.getId() + ".pdf";
+        String toEmail = "manev_boris@yahoo.com";
+        // String toEmail = visit.getVisitor().getEmail();
+        String subject = String.format("Visit Report #%d", visit.getId());
+        String body = String.format("Please find attached the report for visit #%d.", visit.getId());
+        emailSenderService.sendEmailWithAttachment(toEmail, subject, body, fileName, resource);
     }
 
     private void validateId(Long id) {

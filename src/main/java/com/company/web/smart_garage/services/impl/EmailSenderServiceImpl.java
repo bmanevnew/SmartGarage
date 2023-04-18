@@ -4,6 +4,7 @@ import com.company.web.smart_garage.services.EmailSenderService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,8 +28,8 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         mailSender.send(message);
     }
 
-    public void sendEmailWithAttachment(String toEmail, String subject, String body, String attachment)
-            throws MessagingException {
+    public void sendEmailWithAttachment(String toEmail, String subject, String body, String attachmentFilename,
+                                        ByteArrayResource attachmentResource) throws MessagingException {
         MimeMessage mimeMailMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
 
@@ -36,9 +37,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         mimeMessageHelper.setTo(toEmail);
         mimeMessageHelper.setText(body);
         mimeMessageHelper.setSubject(subject);
-        FileSystemResource fileSystemResource = new FileSystemResource(new File(attachment));
-        mimeMessageHelper.addAttachment(fileSystemResource.getFilename(), fileSystemResource);
+        mimeMessageHelper.addAttachment(attachmentFilename, attachmentResource);
         mailSender.send(mimeMailMessage);
-
     }
 }

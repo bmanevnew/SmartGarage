@@ -47,6 +47,10 @@ class UserServiceTests {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private RoleService roleService;
+    @Mock
+    private EmailSenderServiceImpl emailSenderService;
 
 
     @InjectMocks
@@ -268,8 +272,20 @@ class UserServiceTests {
     @Test
     public void create_Should_CallRepository_When_EverythingIsValid() {
         when(mockRepository.save(user)).thenReturn(user);
+        when(mockRepository.findFirstByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+        when(mockRepository.findFirstByPhoneNumber(Mockito.anyString())).thenReturn(Optional.empty());
+        when(mockRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
+
+
+        doNothing().when(emailSenderService).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+
+        UserServiceImpl userService = new UserServiceImpl(emailSenderService, mockRepository, roleService, passwordEncoder);
+
         User createdUser = userService.create(user);
+
         assertEquals(user, createdUser);
+        verify(emailSenderService, times(1)).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        verify(mockRepository, times(1)).save(Mockito.any(User.class));
     }
 
     @Test
@@ -337,6 +353,7 @@ class UserServiceTests {
         mockUser = createMockUser();
         mockUser.setId(1L);
         Mockito.when(mockRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockUser));
+        Mockito.when(roleService.getByName(Mockito.anyString())).thenReturn((createMockAdminRole()));
 
         userService.makeAdmin(1L);
 
@@ -358,8 +375,9 @@ class UserServiceTests {
     public void makeEmployee_Should_AddAdminRole_When_UserIsNotEmployee() {
         mockUser = createMockUser();
         mockUser.setId(1L);
+        createMockAdminRole();
         Mockito.when(mockRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockUser));
-
+        Mockito.when(roleService.getByName(Mockito.anyString())).thenReturn((createMockEmployeeRole()));
         userService.makeEmployee(1L);
 
         Mockito.verify(mockRepository, Mockito.times(1)).save(mockUser);
