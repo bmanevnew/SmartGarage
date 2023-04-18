@@ -164,6 +164,7 @@ public class UserServiceImpl implements UserService {
             throw new RoleConflictException(USER_IS_ALREADY_ADMIN);
         }
 
+        //TODO Add addRole method
         Set<Role> roles = userToAdmin.getRoles();
         Role role = roleService.getByName("ROLE_ADMIN");
         roles.add(role);
@@ -276,7 +277,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateDateInterval(LocalDateTime dateFrom, LocalDateTime dateTo) {
-        if (validateDate(dateFrom) & validateDate(dateTo)) {
+        if (validateDate(dateFrom) && validateDate(dateTo)) {
             if (dateFrom.isAfter(dateTo)) {
                 throw new InvalidParamException(VISIT_DATE_INTERVAL_INVALID);
             }
