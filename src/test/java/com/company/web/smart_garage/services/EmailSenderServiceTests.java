@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -54,9 +55,12 @@ public class EmailSenderServiceTests {
         JavaMailSender mailSender = mock(JavaMailSender.class);
         MimeMessage mimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+        byte[] attachmentData = "This is the attachment content".getBytes();
+        ByteArrayResource attachmentResource = new ByteArrayResource(attachmentData);
 
         EmailSenderServiceImpl emailSenderService = new EmailSenderServiceImpl(mailSender);
-        emailSenderService.sendEmailWithAttachment("test@example.com", "Test Email", "Test Body", "/path/to/file.txt");
+        emailSenderService.sendEmailWithAttachment("test@example.com", "Test Email",
+                "Test Body", "/path/to/file.txt", attachmentResource);
 
         verify(mailSender, times(1)).send(mimeMessage);
         verify(mimeMessage, times(1)).setContent(any(Multipart.class));
