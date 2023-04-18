@@ -299,5 +299,4 @@ public class VehicleServiceTests {
         assertThrows(EntityNotFoundException.class, () -> vehicleService.delete(1L));
         verify(vehicleRepository, never()).deleteById(1L);
     }
-
 }

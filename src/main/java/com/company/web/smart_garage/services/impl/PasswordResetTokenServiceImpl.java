@@ -18,8 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.UUID;
 
-import static com.company.web.smart_garage.utils.Constants.HASH_ALGORITHM_NOT_FOUND;
-import static com.company.web.smart_garage.utils.Constants.TOKEN_EXPIRED;
+import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
 @Service
@@ -82,6 +81,8 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
     @Override
     public void deletePasswordResetToken(long id) {
+        if (id <= 0) throw new InvalidParamException(ID_MUST_BE_POSITIVE);
+        if (!prtRepository.existsById(id)) throw new EntityNotFoundException("Token", id);
         prtRepository.deleteById(id);
     }
 

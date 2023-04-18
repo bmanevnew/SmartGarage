@@ -12,6 +12,7 @@ import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import static com.company.web.smart_garage.utils.Constants.*;
@@ -56,6 +57,7 @@ public class RepairServiceImpl implements RepairService {
         filter.setParameter("isDeleted", false);
 
         validatePriceRange(priceFrom, priceTo);
+        validateSortProperties(pageable.getSort());
 
         Page<Repair> page = repairRepository.findByParameters(name, priceFrom, priceTo, pageable);
         if (pageable.getPageNumber() >= page.getTotalPages()) {
@@ -106,6 +108,18 @@ public class RepairServiceImpl implements RepairService {
         Repair repair = getById(id);
         repairRepository.deleteById(id);
         return repair;
+    }
+
+    private void validateSortProperties(Sort sort) {
+        sort.get().forEach(order -> validateSortingProperty(order.getProperty()));
+    }
+
+    private void validateSortingProperty(String property) {
+        switch (property) {
+            case "name", "price" -> {
+            }
+            default -> throw new InvalidParamException(String.format(SORT_PROPERTY_S_IS_INVALID, property));
+        }
     }
 
     private void validateId(Long id) {
