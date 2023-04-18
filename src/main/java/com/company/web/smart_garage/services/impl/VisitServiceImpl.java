@@ -50,7 +50,7 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public Visit update(Visit visit) {
-        if (visit.getId() == null || visit.getId() <= 0) throw new InvalidParamException("Id is required.");
+        if (visit.getId() == null || visit.getId() <= 0) throw new InvalidParamException("Id is invalid.");
         Visit visitPersistent = getById(visit.getId());
         visit.setVehicle(visitPersistent.getVehicle());
         visit.setVisitor(visitPersistent.getVisitor());

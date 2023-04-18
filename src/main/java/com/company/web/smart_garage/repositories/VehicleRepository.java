@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     @Query("select v from Vehicle v join fetch v.visits where v.id = :id")
-    Optional<Vehicle> findByIdFetchVisits(@Param("id") long id);
+    Optional<Vehicle> findByIdFetchAll(@Param("id") long id);
 
     Optional<Vehicle> findFirstByLicensePlate(String licensePlate);
 

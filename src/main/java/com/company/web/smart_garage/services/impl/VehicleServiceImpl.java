@@ -63,8 +63,10 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public Vehicle create(Vehicle vehicle, User owner) {
         try {
+            if (owner == null || owner.getEmail() == null) throw new InvalidParamException("Invalid owner.");
             owner = userService.getByEmail(owner.getEmail());
         } catch (EntityNotFoundException e) {
+            if (owner == null || owner.getPhoneNumber() == null) throw new InvalidParamException("Invalid owner.");
             owner = userService.create(owner);
         }
         vehicle.setOwner(owner);
@@ -75,18 +77,24 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Vehicle update(Vehicle vehicle) {
-        if (!vehicleRepository.existsById(vehicle.getId()))
-            throw new EntityNotFoundException("Vehicle", vehicle.getId());
+        Vehicle persistentVehicle = getById(vehicle.getId());
+
         validateLicensePlate(vehicle.getLicensePlate());
+        persistentVehicle.setLicensePlate(vehicle.getLicensePlate());
         validateVin(vehicle.getVin());
+        persistentVehicle.setVin(vehicle.getVin());
         validateProdYear(vehicle.getProductionYear());
-        return vehicleRepository.save(vehicle);
+        persistentVehicle.setProductionYear(vehicle.getProductionYear());
+        persistentVehicle.setBrand(vehicle.getBrand());
+        persistentVehicle.setModel(vehicle.getModel());
+
+        return vehicleRepository.save(persistentVehicle);
     }
 
     @Override
     public Vehicle delete(long id) {
         validateId(id);
-        Vehicle vehicle = vehicleRepository.findByIdFetchVisits(id)
+        Vehicle vehicle = vehicleRepository.findByIdFetchAll(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle", id));
         vehicleRepository.deleteById(id);
         return vehicle;
