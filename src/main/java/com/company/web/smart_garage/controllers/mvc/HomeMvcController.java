@@ -12,4 +12,19 @@ public class HomeMvcController {
     public String showHomePage() {
         return "index";
     }
+
+    @GetMapping("/about")
+    public String showAboutPage() {
+        return "about";
+    }
+
+    @GetMapping("/contact")
+    public String showContactPage() {
+        return "contact";
+    }
+
+//    @GetMapping("/login")
+//    public String showLoginPage() {
+//        return "login";
+//    }
 }

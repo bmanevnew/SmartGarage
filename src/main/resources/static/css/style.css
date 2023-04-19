@@ -264,6 +264,7 @@ h6,
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 40px;
 }
 
 .vendor-carousel .owl-dot,
