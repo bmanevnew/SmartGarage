@@ -42,7 +42,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/auth/change_password_auth").authenticated()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/**").authenticated()
+                                .anyRequest().permitAll()
                 ).exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
                 ).sessionManagement(session -> session

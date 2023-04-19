@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.controllers;
+package com.company.web.smart_garage.controllers.rest;
 
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoIn;
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoOut;
