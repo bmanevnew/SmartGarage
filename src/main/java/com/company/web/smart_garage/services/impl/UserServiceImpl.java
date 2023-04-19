@@ -10,8 +10,9 @@ import com.company.web.smart_garage.repositories.UserRepository;
 import com.company.web.smart_garage.services.RoleService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.PasswordUtility;
+import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -93,7 +94,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //TODO Cloudinary
     @Override
     public Page<User> getFilteredUsers(String name, String vehicleModel,
                                        String vehicleMake, String visitFromDate, String visitToDate,
@@ -132,11 +132,11 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
             throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
         }
-        //TODO implement random username in a better way
+
         String randomUsername;
         do {
-            randomUsername = RandomStringUtils.randomAlphabetic(20);
-        } while (userRepository.existsByUsername(randomUsername));
+            randomUsername = generateRandomUsername();
+        } while (randomUsername.length() > 20 || userRepository.existsByUsername(randomUsername));
         user.setUsername(randomUsername);
 
         String originalPassword = PasswordUtility.generatePassword();
@@ -146,6 +146,13 @@ public class UserServiceImpl implements UserService {
         user.setPassword(hash);
 
         return userRepository.save(user);
+    }
+
+    private String generateRandomUsername() {
+        Faker faker = new Faker();
+        return (WordUtils.capitalizeFully(faker.color().name()) +
+                WordUtils.capitalizeFully(faker.animal().name()))
+                .replace(" ", "") + faker.number().digits(2);
     }
 
     @Override
@@ -283,6 +290,7 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+
     private void validateId(Long id) {
         if (id != null && id <= 0) {
             throw new InvalidParamException(ID_MUST_BE_POSITIVE);
