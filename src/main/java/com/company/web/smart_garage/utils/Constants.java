@@ -72,4 +72,5 @@ public class Constants {
     public static final String PAGE_IS_INVALID = "Page number is invalid.";
     public static final String TOKEN_EXPIRED = "Token has expired.";
     public static final String HASH_ALGORITHM_NOT_FOUND = "Hashing algorithm not found.";
+    public static final String JWT_COOKIE_NAME = "JwtCookie";
 }

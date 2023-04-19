@@ -1,9 +1,11 @@
 package com.company.web.smart_garage.controllers.mvc;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/")
 public class HomeMvcController {
@@ -22,9 +24,4 @@ public class HomeMvcController {
     public String showContactPage() {
         return "contact";
     }
-
-//    @GetMapping("/login")
-//    public String showLoginPage() {
-//        return "login";
-//    }
 }

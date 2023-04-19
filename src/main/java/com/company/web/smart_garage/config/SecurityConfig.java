@@ -40,10 +40,14 @@ public class SecurityConfig {
 
         http.csrf().disable()
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/auth/change_password_auth").authenticated()
-                                .requestMatchers("/api/**").authenticated()
-                                .anyRequest().permitAll()
+                        {
+                            authorize.requestMatchers("/api/auth/change_password_auth").authenticated()
+                                    .requestMatchers("/api/auth/**").permitAll()
+                                    .requestMatchers("/api/**").authenticated()
+                                    .requestMatchers("/auth/login").anonymous()
+                                    .requestMatchers("/auth/logout").authenticated()
+                                    .anyRequest().permitAll();
+                        }
                 ).exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
                 ).sessionManagement(session -> session
