@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
@@ -9,7 +9,7 @@
     <meta content="Free HTML Templates" name="description">
 
     <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <link href="../static/img/favicon.ico" th:href="@{/img/favicon.ico}" rel="icon">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -20,14 +20,16 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet"/>
+    <link href="../static/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"
+          th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}">
+    <link href="../static/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+          th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}" rel="stylesheet"/>
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 
 <body>
@@ -279,28 +281,28 @@
     <div class="container py-5">
         <div class="owl-carousel vendor-carousel">
             <div class="bg-light p-4">
-                <img src="img/vendor-1.png" alt="">
+                <img src="../static/img/vendor-1.png" alt="" th:src="@{/img/vendor-1.png}">
             </div>
             <div class="bg-light p-4">
-                <img src="img/vendor-2.png" alt="">
+                <img src="../static/img/vendor-2.png" alt="" th:src="@{/img/vendor-2.png}">
             </div>
             <div class="bg-light p-4">
-                <img src="img/vendor-3.png" alt="">
+                <img src="../static/img/vendor-3.png" alt="" th:src="@{/img/vendor-3.png}">
             </div>
             <div class="bg-light p-4">
-                <img src="img/vendor-4.png" alt="">
+                <img src="../static/img/vendor-4.png" alt="" th:src="@{/img/vendor-4.png}">
             </div>
             <div class="bg-light p-4">
-                <img src="img/vendor-5.png" alt="">
+                <img src="../static/img/vendor-5.png" alt="" th:src="@{/img/vendor-5.png}">
             </div>
             <div class="bg-light p-4">
-                <img src="img/vendor-6.png" alt="">
+                <img src="../static/img/vendor-6.png" alt="" th:src="@{/img/vendor-6.png}">
             </div>
             <div class="bg-light p-4">
-                <img src="img/vendor-7.png" alt="">
+                <img src="../static/img/vendor-7.png" alt="" th:src="@{/img/vendor-7.png}">
             </div>
             <div class="bg-light p-4">
-                <img src="img/vendor-8.png" alt="">
+                <img src="../static/img/vendor-8.png" alt="" th:src="@{/img/vendor-8.png}">
             </div>
         </div>
     </div>
@@ -341,22 +343,28 @@
             <h4 class="text-uppercase text-light mb-4">Car Gallery</h4>
             <div class="row mx-n1">
                 <div class="col-4 px-1 mb-2">
-                    <a href=""><img class="w-100" src="img/gallery-1.jpg" alt=""></a>
+                    <a href=""><img class="w-100" src="../static/img/gallery-1.jpg" th:src="@{/img/gallery-1.jpg}"
+                                    alt=""></a>
                 </div>
                 <div class="col-4 px-1 mb-2">
-                    <a href=""><img class="w-100" src="img/gallery-2.jpg" alt=""></a>
+                    <a href=""><img class="w-100" src="../static/img/gallery-2.jpg" th:src="@{/img/gallery-2.jpg}"
+                                    alt=""></a>
                 </div>
                 <div class="col-4 px-1 mb-2">
-                    <a href=""><img class="w-100" src="img/gallery-3.jpg" alt=""></a>
+                    <a href=""><img class="w-100" src="../static/img/gallery-3.jpg" th:src="@{/img/gallery-3.jpg}"
+                                    alt=""></a>
                 </div>
                 <div class="col-4 px-1 mb-2">
-                    <a href=""><img class="w-100" src="img/gallery-4.jpg" alt=""></a>
+                    <a href=""><img class="w-100" src="../static/img/gallery-4.jpg" th:src="@{/img/gallery-4.jpg}"
+                                    alt=""></a>
                 </div>
                 <div class="col-4 px-1 mb-2">
-                    <a href=""><img class="w-100" src="img/gallery-5.jpg" alt=""></a>
+                    <a href=""><img class="w-100" src="../static/img/gallery-5.jpg" th:src="@{/img/gallery-5.jpg}"
+                                    alt=""></a>
                 </div>
                 <div class="col-4 px-1 mb-2">
-                    <a href=""><img class="w-100" src="img/gallery-6.jpg" alt=""></a>
+                    <a href=""><img class="w-100" src="../static/img/gallery-6.jpg" th:src="@{/img/gallery-6.jpg}"
+                                    alt=""></a>
                 </div>
             </div>
         </div>
@@ -391,15 +399,17 @@
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-<script src="lib/easing/easing.min.js"></script>
-<script src="lib/waypoints/waypoints.min.js"></script>
-<script src="lib/owlcarousel/owl.carousel.min.js"></script>
-<script src="lib/tempusdominus/js/moment.min.js"></script>
-<script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-<script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="../static/lib/easing/easing.min.js" th:src="@{/lib/easing/easing.min.js}"></script>
+<script src="../static/lib/waypoints/waypoints.min.js" th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+<script src="../static/lib/owlcarousel/owl.carousel.min.js" th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/moment.min.js" th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/moment-timezone.min.js"
+        th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"
+        th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
 
 <!-- Template Javascript -->
-<script src="js/main.js"></script>
+<script src="../static/js/main.js" th:src="@{/js/main.js}"></script>
 </body>
 
 </html>
