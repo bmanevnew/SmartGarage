@@ -53,7 +53,7 @@ public class AuthenticationMvcController {
             return "login";
         }
         setTokenAsCookie(response, token);
-        return "index";
+        return "redirect:/";
     }
 
     @GetMapping("/logout")
