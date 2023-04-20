@@ -1,6 +1,9 @@
 package com.company.web.smart_garage.controllers.mvc;
 
 import com.company.web.smart_garage.data_transfer_objects.LoginDto;
+import com.company.web.smart_garage.data_transfer_objects.PasswordDto;
+import com.company.web.smart_garage.exceptions.EntityNotFoundException;
+import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.services.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,10 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import static com.company.web.smart_garage.utils.Constants.INVALID_LOGIN_ERROR;
 import static com.company.web.smart_garage.utils.Constants.JWT_COOKIE_NAME;
@@ -56,6 +56,57 @@ public class AuthenticationMvcController {
     public String logout(HttpServletResponse response) {
         deleteTokenCookie(response);
         return "redirect:/";
+    }
+
+    @GetMapping("/forgot_password")
+    public String showForgotPasswordPage(Model model) {
+        model.addAttribute("loginEmail", new LoginDto());
+        return "forgotPassword";
+    }
+
+    @PostMapping("/forgot_password")
+    public String resetPassword(@ModelAttribute("loginEmail") LoginDto loginDto,
+                                Model model) {
+        String email = loginDto.getUsernameOrEmail();
+        String response = "Successfully sent reset link.";
+        try {
+            authService.resetPassword(email, "/auth/change_password");
+        } catch (EntityNotFoundException e) {
+            response = String.format("User with email %s does not exist.", email);
+        }
+        model.addAttribute("response", response);
+        return "forgotPassword";
+    }
+
+    @GetMapping("/change_password")
+    public String getChangePasswordPage(@RequestParam(name = "token") String token,
+                                        Model model) {
+        model.addAttribute("passwordDto", new PasswordDto());
+        model.addAttribute("token", token);
+        return "updatePassword";
+    }
+
+    @PostMapping("/change_password")
+    public String changePassword(@RequestParam(name = "token") String token,
+                                 @Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
+                                 BindingResult bindingResult,
+                                 Model model) {
+        model.addAttribute("token", token);
+        if (bindingResult.hasErrors()) {
+            return "updatePassword";
+        }
+        if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
+            bindingResult.rejectValue("confirmNewPassword", "password_error",
+                    "Password confirmation does not match.");
+            return "updatePassword";
+        }
+        try {
+            authService.changePassword(token, passwordDto.getNewPassword());
+        } catch (EntityNotFoundException | InvalidParamException e) {
+            bindingResult.rejectValue("confirmNewPassword", "password_error", e.getMessage());
+            return "updatePassword";
+        }
+        return "redirect:/auth/login";
     }
 
 
