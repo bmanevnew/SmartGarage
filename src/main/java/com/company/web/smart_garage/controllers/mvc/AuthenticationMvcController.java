@@ -115,6 +115,7 @@ public class AuthenticationMvcController {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setMaxAge((int) jwtExpirationDate / 1000);
+        cookie.setPath("/");
 
         response.addCookie(cookie);
     }
@@ -124,6 +125,7 @@ public class AuthenticationMvcController {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setMaxAge(0);
+        cookie.setPath("/");
 
         response.addCookie(cookie);
     }
