@@ -21,40 +21,42 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @Service
 public class RepairServiceImpl implements RepairService {
 
+    public static final String FILTER_NAME = "deletedRepairFilter";
+    public static final String FILTER_PARAM = "isDeleted";
     private final RepairRepository repairRepository;
     private final EntityManager entityManager;
 
     @Override
     public Repair getById(long id) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedRepairFilter");
-        filter.setParameter("isDeleted", false);
+        Filter filter = session.enableFilter(FILTER_NAME);
+        filter.setParameter(FILTER_PARAM, false);
 
         validateId(id);
         Repair repair = repairRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Repair", id));
 
-        session.disableFilter("deletedRepairFilter");
+        session.disableFilter(FILTER_NAME);
         return repair;
     }
 
     @Override
     public Repair getByName(String name) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedRepairFilter");
-        filter.setParameter("isDeleted", false);
+        Filter filter = session.enableFilter(FILTER_NAME);
+        filter.setParameter(FILTER_PARAM, false);
 
         Repair repair = repairRepository.findFirstByName(name).orElseThrow(
                 () -> new EntityNotFoundException("Repair", "name", name));
 
-        session.disableFilter("deletedRepairFilter");
+        session.disableFilter(FILTER_NAME);
         return repair;
     }
 
     @Override
     public Page<Repair> getAll(String name, Double priceFrom, Double priceTo, Pageable pageable) {
         Session session = entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedRepairFilter");
-        filter.setParameter("isDeleted", false);
+        Filter filter = session.enableFilter(FILTER_NAME);
+        filter.setParameter(FILTER_PARAM, false);
 
         validatePriceRange(priceFrom, priceTo);
         validateSortProperties(pageable.getSort());
@@ -64,7 +66,7 @@ public class RepairServiceImpl implements RepairService {
             throw new InvalidParamException(PAGE_IS_INVALID);
         }
 
-        session.disableFilter("deletedRepairFilter");
+        session.disableFilter(FILTER_NAME);
         return page;
     }
 

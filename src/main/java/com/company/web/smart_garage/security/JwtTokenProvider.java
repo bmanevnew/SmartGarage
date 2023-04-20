@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 
+import static com.company.web.smart_garage.utils.Constants.*;
+
 @Component
 public class JwtTokenProvider {
 
@@ -57,13 +59,13 @@ public class JwtTokenProvider {
                     .parse(token);
             return true;
         } catch (MalformedJwtException e) {
-            throw new APIException("Invalid JWT token.", HttpStatus.BAD_REQUEST);
+            throw new APIException(TOKEN_INVALID, HttpStatus.BAD_REQUEST);
         } catch (ExpiredJwtException e) {
-            throw new APIException("Expired JWT token.", HttpStatus.BAD_REQUEST);
+            throw new APIException(TOKEN_EXPIRED, HttpStatus.BAD_REQUEST);
         } catch (UnsupportedJwtException e) {
-            throw new APIException("Unsupported JWT token.", HttpStatus.BAD_REQUEST);
+            throw new APIException(TOKEN_UNSUPPORTED, HttpStatus.BAD_REQUEST);
         } catch (IllegalArgumentException e) {
-            throw new APIException("JWT claims string is empty.", HttpStatus.BAD_REQUEST);
+            throw new APIException(TOKEN_EMPTY, HttpStatus.BAD_REQUEST);
         }
     }
 }

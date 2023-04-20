@@ -2,7 +2,6 @@ package com.company.web.smart_garage.controllers.rest;
 
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoIn;
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoOut;
-import com.company.web.smart_garage.models.VisitPdfExporter;
 import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
@@ -13,7 +12,6 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;

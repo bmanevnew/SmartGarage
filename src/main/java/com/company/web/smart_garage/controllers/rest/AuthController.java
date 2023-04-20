@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import static com.company.web.smart_garage.utils.Constants.*;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
@@ -32,28 +34,28 @@ public class AuthController {
     @PostMapping("/reset_password")
     public ResponseEntity<String> resetPassword(@RequestParam("email") String email) {
         authService.resetPassword(email, "/api/auth/change_password");
-        return ResponseEntity.ok("Password reset email successfully sent.");
+        return ResponseEntity.ok(SUCCESSFUL_RESET);
     }
 
     @PostMapping("/change_password")
     public ResponseEntity<String> changePassword(@RequestParam(name = "token") String token,
                                                  @Valid @RequestBody PasswordDto passwordDto) {
         if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
-            throw new InvalidParamException("Password confirmation does not match.");
+            throw new InvalidParamException(PASSWORD_DOES_NOT_MATCH);
         }
         authService.changePassword(token, passwordDto.getNewPassword());
-        return ResponseEntity.ok("Successfully changed your password.");
+        return ResponseEntity.ok(PASSWORD_SUCCESSFULLY_CHANGED);
     }
 
     @PostMapping("/change_password_auth")
     public ResponseEntity<String> changePasswordAuth(@Valid @RequestBody PasswordDto passwordDto,
                                                      Authentication authentication) {
         if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
-            throw new InvalidParamException("Password confirmation does not match.");
+            throw new InvalidParamException(PASSWORD_DOES_NOT_MATCH);
         }
         User user = userService.getByUsernameOrEmail(authentication.getName());
         user.setPassword(passwordDto.getNewPassword());
         userService.update(user);
-        return ResponseEntity.ok("Successfully changed your password.");
+        return ResponseEntity.ok(PASSWORD_SUCCESSFULLY_CHANGED);
     }
 }

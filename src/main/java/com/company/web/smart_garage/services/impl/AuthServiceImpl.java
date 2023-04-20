@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import static com.company.web.smart_garage.utils.Constants.PASSWORD_TOO_WEAK;
+import static com.company.web.smart_garage.utils.Constants.*;
 import static com.company.web.smart_garage.utils.PasswordUtility.validatePassword;
 
 @RequiredArgsConstructor
@@ -50,11 +50,8 @@ public class AuthServiceImpl implements AuthService {
         builder.queryParam("token", token);
         String url = builder.toUriString();
 
-        emailSenderService.sendEmail(email, "Password reset for Smart Garage.",
-                "Dear " + user.getUsername() + ",\n\n" +
-                        "Use the following url to reset your password: " + url + "\n\n" +
-                        "Best regards,\n" +
-                        "The Smart Garage Team");
+        emailSenderService.sendEmail(email, PASSWORD_RESET_SUBJECT,
+                String.format(PASSWORD_RESET_BODY_FORMAT, user.getUsername(), url));
     }
 
     @Override

@@ -10,6 +10,8 @@ public class PasswordUtility {
 
     public static final int MIN_PASSWORD_LENGTH = 8;
     public static final int MAX_PASSWORD_LENGTH = 36;
+    public static final String INSUFFICIENT_SPECIAL = "INSUFFICIENT_SPECIAL";
+    public static final String SPECIAL_SYMBOLS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
     public static String generatePassword() {
         PasswordGenerator gen = new PasswordGenerator();
@@ -40,12 +42,12 @@ public class PasswordUtility {
         CharacterRule specialCharacterRule = new CharacterRule(new CharacterData() {
             @Override
             public String getErrorCode() {
-                return "INSUFFICIENT_SPECIAL";
+                return INSUFFICIENT_SPECIAL;
             }
 
             @Override
             public String getCharacters() {
-                return " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+                return SPECIAL_SYMBOLS;
             }
         });
         specialCharacterRule.setNumberOfCharacters(1);
@@ -72,12 +74,12 @@ public class PasswordUtility {
         CharacterRule specialCharacterRule = new CharacterRule(new CharacterData() {
             @Override
             public String getErrorCode() {
-                return "INSUFFICIENT_SPECIAL";
+                return INSUFFICIENT_SPECIAL;
             }
 
             @Override
             public String getCharacters() {
-                return " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+                return SPECIAL_SYMBOLS;
             }
         });
         specialCharacterRule.setNumberOfCharacters(1);

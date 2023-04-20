@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static com.company.web.smart_garage.utils.Constants.CONTACT_EMAIL_FORMAT;
+
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/")
@@ -44,7 +46,7 @@ public class HomeMvcController {
         if (bindingResult.hasErrors()) {
             return "contact";
         }
-        String emailBody = String.format("Name: %s\nContact email: %s\n\n%s",
+        String emailBody = String.format(CONTACT_EMAIL_FORMAT,
                 contactDto.getName(), contactDto.getEmail(), contactDto.getMessage());
         emailService.sendEmail(email, contactDto.getSubject(), emailBody);
         return "redirect:/contact";

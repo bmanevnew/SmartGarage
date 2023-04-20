@@ -36,26 +36,31 @@ public class UserController {
     private User getById(long id) {
         return userService.getById(id);
     }
+
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping(params = "username")
     public UserDtoOut getByUsername(@RequestParam(name = "username") String username) {
         return userMapper.userToDto(userService.getByUsername(username));
     }
+
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping(params = "email")
     public UserDtoOut getByEmail(@RequestParam(name = "email") String email) {
         return userMapper.userToDto(userService.getByEmail(email));
     }
+
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping(params = {"usernameOrEmail"})
     public UserDtoOut getByUsernameOrEmail(@RequestParam(name = "usernameOrEmail") String usernameOrEmail) {
         return userMapper.userToDto(userService.getByUsernameOrEmail(usernameOrEmail));
     }
+
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping(params = "phone-number")
     public UserDtoOut getByPhoneNumber(@RequestParam(name = "phone-number") String phoneNumber) {
         return userMapper.userToDto(userService.getByPhoneNumber(phoneNumber));
     }
+
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping
     public List<UserDtoOut> getAll(@RequestParam(required = false, name = "name") String name,

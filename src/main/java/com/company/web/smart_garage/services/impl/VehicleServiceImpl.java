@@ -63,10 +63,10 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public Vehicle create(Vehicle vehicle, User owner) {
         try {
-            if (owner == null || owner.getEmail() == null) throw new InvalidParamException("Invalid owner.");
+            if (owner == null || owner.getEmail() == null) throw new InvalidParamException(INVALID_OWNER);
             owner = userService.getByEmail(owner.getEmail());
         } catch (EntityNotFoundException e) {
-            if (owner == null || owner.getPhoneNumber() == null) throw new InvalidParamException("Invalid owner.");
+            if (owner == null || owner.getPhoneNumber() == null) throw new InvalidParamException(INVALID_OWNER);
             owner = userService.create(owner);
         }
         vehicle.setOwner(owner);

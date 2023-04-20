@@ -16,14 +16,18 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.company.web.smart_garage.utils.Constants.INVALID_LOGIN_ERROR;
-import static com.company.web.smart_garage.utils.Constants.JWT_COOKIE_NAME;
+import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/auth")
 public class AuthenticationMvcController {
 
+    public static final String CONFIRM_PASSWORD_FIELD = "confirmNewPassword";
+    public static final String PASSWORD_ERROR = "password_error";
+    public static final String AUTH_ERROR = "auth_error";
+    public static final String PASSWORD_FIELD = "password";
+    public static final String CHANGE_PASSWORD_ENDPOINT = "/auth/change_password";
     private final AuthService authService;
     @Value("${app.jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
@@ -45,7 +49,7 @@ public class AuthenticationMvcController {
         try {
             token = authService.login(login);
         } catch (AuthenticationException e) {
-            bindingResult.rejectValue("password", "auth_error", INVALID_LOGIN_ERROR);
+            bindingResult.rejectValue(PASSWORD_FIELD, AUTH_ERROR, INVALID_LOGIN_ERROR);
             return "login";
         }
         setTokenAsCookie(response, token);
@@ -68,11 +72,11 @@ public class AuthenticationMvcController {
     public String resetPassword(@ModelAttribute("loginEmail") LoginDto loginDto,
                                 Model model) {
         String email = loginDto.getUsernameOrEmail();
-        String response = "Successfully sent reset link.";
+        String response = SUCCESSFUL_RESET;
         try {
-            authService.resetPassword(email, "/auth/change_password");
+            authService.resetPassword(email, CHANGE_PASSWORD_ENDPOINT);
         } catch (EntityNotFoundException e) {
-            response = String.format("User with email %s does not exist.", email);
+            response = String.format(USER_WITH_EMAIL_S_DOES_NOT_EXIST, email);
         }
         model.addAttribute("response", response);
         return "forgotPassword";
@@ -96,14 +100,14 @@ public class AuthenticationMvcController {
             return "updatePassword";
         }
         if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
-            bindingResult.rejectValue("confirmNewPassword", "password_error",
-                    "Password confirmation does not match.");
+            bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR,
+                    PASSWORD_DOES_NOT_MATCH);
             return "updatePassword";
         }
         try {
             authService.changePassword(token, passwordDto.getNewPassword());
         } catch (EntityNotFoundException | InvalidParamException e) {
-            bindingResult.rejectValue("confirmNewPassword", "password_error", e.getMessage());
+            bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, e.getMessage());
             return "updatePassword";
         }
         return "redirect:/auth/login";

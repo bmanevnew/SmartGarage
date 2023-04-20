@@ -60,7 +60,7 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public Visit update(Visit visit) {
-        if (visit.getId() == null || visit.getId() <= 0) throw new InvalidParamException("Id is invalid.");
+        if (visit.getId() == null || visit.getId() <= 0) throw new InvalidParamException(ID_INVALID);
         Visit visitPersistent = getById(visit.getId());
         visit.setVehicle(visitPersistent.getVehicle());
         visit.setVisitor(visitPersistent.getVisitor());
@@ -78,22 +78,21 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public void generatePdf(HttpServletResponse response, Visit visit) throws IOException, MessagingException {
-        response.setContentType("application/pdf");
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+        response.setContentType(CONTENT_TYPE);
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         String currentDateTime = dateFormat.format(new Date());
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=booking_" + currentDateTime + ".pdf";
-        response.setHeader(headerKey, headerValue);
+        String headerValue = String.format(HEADER_VALUE, currentDateTime);
+        response.setHeader(HEADER_KEY, headerValue);
         VisitPdfExporter exporter = new VisitPdfExporter(visit);
         ByteArrayOutputStream baos = exporter.export(response);
 
         ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
 
-        String fileName = "visit_" + visit.getId() + ".pdf";
-        String toEmail = "manev_boris@yahoo.com";
-        // String toEmail = visit.getVisitor().getEmail();
-        String subject = String.format("Visit Report #%d", visit.getId());
-        String body = String.format("Please find attached the report for visit #%d.", visit.getId());
+        String fileName = String.format(FILE_NAME, visit.getId());
+//        String toEmail = "manev_boris@yahoo.com";
+        String toEmail = visit.getVisitor().getEmail();
+        String subject = String.format(REPORT_EMAIL_SUBJECT_FORMAT, visit.getId());
+        String body = String.format(REPORT_EMAIL_BODY_FORMAT, visit.getId());
         emailSenderService.sendEmailWithAttachment(toEmail, subject, body, fileName, resource);
     }
 
