@@ -3,17 +3,12 @@ package com.company.web.smart_garage.services;
 import com.company.web.smart_garage.exceptions.EntityDuplicationException;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
-import com.company.web.smart_garage.models.Role;
 import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.repositories.RoleRepository;
 import com.company.web.smart_garage.repositories.UserRepository;
 import com.company.web.smart_garage.services.impl.EmailSenderServiceImpl;
 import com.company.web.smart_garage.services.impl.UserServiceImpl;
-import com.company.web.smart_garage.utils.AuthorizationUtils;
-import com.company.web.smart_garage.utils.PasswordUtility;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,19 +17,17 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static com.company.web.smart_garage.Helpers.*;
-import static com.company.web.smart_garage.Helpers.createMockAdminRole;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -275,6 +268,7 @@ class UserServiceTests {
         when(mockRepository.findFirstByEmail(Mockito.anyString())).thenReturn(Optional.empty());
         when(mockRepository.findFirstByPhoneNumber(Mockito.anyString())).thenReturn(Optional.empty());
         when(mockRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
+        when(roleService.getByName(anyString())).thenReturn(createMockDefaultRole());
 
 
         doNothing().when(emailSenderService).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());

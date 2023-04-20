@@ -145,6 +145,8 @@ public class UserServiceImpl implements UserService {
         String hash = passwordEncoder.encode(originalPassword);
         user.setPassword(hash);
 
+        user.setRoles(Set.of(roleService.getByName("ROLE_CUSTOMER")));
+
         return userRepository.save(user);
     }
 
