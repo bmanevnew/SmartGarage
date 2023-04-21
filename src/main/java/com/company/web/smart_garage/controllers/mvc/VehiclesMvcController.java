@@ -2,6 +2,7 @@ package com.company.web.smart_garage.controllers.mvc;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
+import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.models.filters.VehicleFilterOptionsDto;
 import com.company.web.smart_garage.services.UserService;
@@ -29,7 +30,15 @@ public class VehiclesMvcController {
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleNotFound(EntityNotFoundException e, Model model) {
         model.addAttribute("errorMessage", e.getMessage());
-        return "notFound";
+        model.addAttribute("httpCode", "404 Not Found");
+        return "error";
+    }
+
+    @ExceptionHandler(UnauthorizedOperationException.class)
+    public String handleUnauthorized(UnauthorizedOperationException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+        model.addAttribute("httpCode", "401 Unauthorized");
+        return "error";
     }
 
     @GetMapping("/{id}")
@@ -40,7 +49,7 @@ public class VehiclesMvcController {
         if (!userIsAdminOrEmployee(authentication) &&
                 !vehicle.getOwner().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
             //Todo change view to show user was unauthorized to access resource
-            return "notFound";
+            throw new UnauthorizedOperationException("Access denied.");
         }
         model.addAttribute("vehicle", vehicle);
         return "vehicle";

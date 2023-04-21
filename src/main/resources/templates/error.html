@@ -37,7 +37,7 @@
 
 
 <div class="container-fluid page-not-found">
-    <h1 class="display-3 text-uppercase text-white mb-3">404 Not Found</h1>
+    <h1 class="display-3 text-uppercase text-white mb-3" th:text="${httpCode}">404 Not Found</h1>
     <div class="d-inline-flex text-white">
         <h6 class="text-uppercase text-white m-0" th:text="${errorMessage}">Error description</h6>
     </div>
