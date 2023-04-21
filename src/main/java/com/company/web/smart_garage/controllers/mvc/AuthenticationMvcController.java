@@ -120,6 +120,7 @@ public class AuthenticationMvcController {
         cookie.setSecure(true);
         cookie.setMaxAge((int) jwtExpirationDate / 1000);
         cookie.setPath("/");
+        cookie.setAttribute("SameSite", "lax");
 
         response.addCookie(cookie);
     }
@@ -130,6 +131,7 @@ public class AuthenticationMvcController {
         cookie.setSecure(true);
         cookie.setMaxAge(0);
         cookie.setPath("/");
+        cookie.setAttribute("SameSite", "lax");
 
         response.addCookie(cookie);
     }

@@ -103,7 +103,6 @@
         loop: true,
         margin: 30,
         dots: true,
-        loop: true,
         center: true,
         autoplay: true,
         smartSpeed: 1000,
@@ -125,6 +124,7 @@
             }
         }
     });
+
 
 })(jQuery);
 

@@ -46,6 +46,7 @@ public class SecurityConfig {
                                     .requestMatchers("/api/**").authenticated()
                                     .requestMatchers("/auth/login").anonymous()
                                     .requestMatchers("/auth/logout").authenticated()
+                                    .requestMatchers("/vehicles/**").authenticated()
                                     .anyRequest().permitAll();
                         }
                 ).exceptionHandling(ex -> ex

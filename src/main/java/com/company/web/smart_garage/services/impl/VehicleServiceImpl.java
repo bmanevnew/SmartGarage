@@ -54,7 +54,7 @@ public class VehicleServiceImpl implements VehicleService {
         validateSortProperties(pageable.getSort());
 
         Page<Vehicle> page = vehicleRepository.findByParameters(ownerId, model, brand, prodYearFrom, prodYearTo, pageable);
-        if (pageable.getPageNumber() >= page.getTotalPages()) {
+        if (pageable.getPageNumber() >= page.getTotalPages() && pageable.getPageNumber() != 0) {
             throw new InvalidParamException(PAGE_IS_INVALID);
         }
         return page;

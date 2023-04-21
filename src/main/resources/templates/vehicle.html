@@ -35,31 +35,10 @@
 <!-- Navbar -->
 <div th:replace="~{fragments/navbar.html :: navbar}">Navigation bar fragment</div>
 
-<div class="container-fluid py-5">
-    <div class="container pt-5 pb-3">
-        <h1 class="display-4 text-uppercase text-center mb-5">Change password</h1>
-        <div>
-            <div class="h-100 d-flex align-items-center justify-content-center">
-                <form class="w-50" action="#" th:action="@{/auth/change_password?token=__${token}__}"
-                      th:object="${passwordDto}" method="post">
-                    <div class="form-group my-1">
-                        <input th:field="*{newPassword}" type="password" class="form-control p-4"
-                               placeholder="New Password" required="required">
-                    </div>
-                    <div class="error" th:errors="*{newPassword}">Password is required.</div>
-                    <div class="form-group mt-4 mb-1">
-                        <input th:field="*{confirmNewPassword}" type="password" class="form-control p-4"
-                               placeholder="Confirm password" required="required">
-                    </div>
-                    <div class="error mb-3" th:errors="*{confirmNewPassword}">A password is required.</div>
-                    <div class="mt-4">
-                        <button class="btn btn-primary py-3 px-5" type="submit">Change Password</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+
+
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer.html :: footer}">Footer fragment</div>
