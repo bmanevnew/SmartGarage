@@ -45,8 +45,10 @@ public class VisitServiceImpl implements VisitService {
         validateDateInterval(dateFrom, dateTo);
         validateSortProperties(pageable.getSort());
 
-        Page<Visit> page = visitRepository.findByParameters(visitorId, vehicleId, dateFrom, dateTo, pageable);
-        if (pageable.getPageNumber() >= page.getTotalPages()) {
+        Page<Visit> page = visitRepository.findByParameters(visitorId, vehicleId,
+                (dateFrom == null ? null : java.sql.Date.valueOf(dateFrom)),
+                (dateTo == null ? null : java.sql.Date.valueOf(dateTo)), pageable);
+        if (pageable.getPageNumber() >= page.getTotalPages() && pageable.getPageNumber() != 0) {
             throw new InvalidParamException(PAGE_IS_INVALID);
         }
         return page;

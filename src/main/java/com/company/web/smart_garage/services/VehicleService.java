@@ -21,4 +21,6 @@ public interface VehicleService {
     Vehicle update(Vehicle vehicle);
 
     Vehicle delete(long id);
+
+    Vehicle getByLicensePlateOrVin(String licensePlateOrVin);
 }

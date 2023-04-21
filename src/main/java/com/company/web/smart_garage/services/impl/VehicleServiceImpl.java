@@ -47,6 +47,12 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
+    public Vehicle getByLicensePlateOrVin(String licensePlateOrVin) {
+        return vehicleRepository.findFirstByLicensePlateOrVin(licensePlateOrVin, licensePlateOrVin)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle", "license plate or vin", licensePlateOrVin));
+    }
+
+    @Override
     public Page<Vehicle> getAll(Long ownerId, String model, String brand, Integer prodYearFrom, Integer prodYearTo,
                                 Pageable pageable) {
         validateId(ownerId);

@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>ROYAL CARS - Car Rental HTML Template</title>
+    <title>Smart Garage</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
@@ -38,42 +38,39 @@
 
 
 <!-- Search Start -->
-<form href="" th:action="@{/vehicles}" th:object="${vehicleFilterOptions}" method="get" id="vehicle-filter-form">
+<form href="" th:action="@{/visits}" th:object="${visitFilterOptions}" method="get">
     <div class="container-fluid bg-white pt-3 px-lg-5">
-        <div class="row mx-2">
+        <div class="row mx-2 justify-content-center">
             <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <input th:field="*{owner}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Owner">
+                <input th:field="*{visitor}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Owner">
             </div>
             <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <input th:field="*{model}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Model">
+                <input th:field="*{vehicle}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Vehicle">
             </div>
             <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <input th:field="*{brand}" class="custom-range px-4 mb-3" style="height: 50px;" placeholder="Brand">
+                <div class="date mb-3" id="dateFrom" data-target-input="nearest">
+                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Date from"
+                           data-target="#dateFrom" data-toggle="datetimepicker" th:field="*{dateFrom}"/>
+                </div>
             </div>
             <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <input th:field="*{prodYearFrom}" class="custom-range px-4 mb-3" style="height: 50px;"
-                       placeholder="Year from">
+                <div class="date mb-3" id="dateTo" data-target-input="nearest">
+                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Date to"
+                           data-target="#dateTo" data-toggle="datetimepicker" th:field="*{dateTo}"/>
+                </div>
             </div>
             <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <input th:field="*{prodYearTo}" class="custom-range px-4 mb-3" style="height: 50px;"
-                       placeholder="Year to">
-            </div>
-            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-1 col-lg-2 col-md-3 px-2">
-                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
-            </div>
-            <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
-            </div>
-            <div class="col-xl-1 col-lg-2 col-md-3 px-2">
                 <select th:field="*{sort}" class="custom-select px-4 mb-3" style="height: 50px;">
                     <option value="" selected>Sort</option>
-                    <option value="productionYear,desc">Year H>L</option>
-                    <option value="productionYear">Year L>H</option>
-                    <option value="model">Model A>Z</option>
-                    <option value="model,desc">Model Z>A</option>
-                    <option value="brand">Brand A>Z</option>
-                    <option value="brand,desc">Brand Z>A</option>
+                    <option value="date,desc">Date H>L</option>
+                    <option value="date">Date L>H</option>
                 </select>
+            </div>
+            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
+            </div>
+            <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="col-xl-2 col-lg-4 col-md-12 px-2">
+                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
             </div>
         </div>
         <div class="row mx-2 my-4 justify-content-center">
@@ -85,65 +82,67 @@
 
 <!-- Page Header Start -->
 <div class="container-fluid page-header mb-0">
-    <h1 class="display-3 text-uppercase text-white mb-3">Vehicles</h1>
+    <h1 class="display-3 text-uppercase text-white mb-3">Visits</h1>
     <div class="d-inline-flex text-white">
         <h6 class="text-uppercase m-0"><a class="text-white" href="" th:href="@{/}">Home</a></h6>
         <h6 class="text-body m-0 px-3">/</h6>
-        <h6 class="text-uppercase text-body m-0">Vehicles</h6>
+        <h6 class="text-uppercase text-body m-0">Visits</h6>
     </div>
 </div>
 <!-- Page Header Start -->
 
 
-<div th:if="${vehicles!=null && not vehicles.isEmpty()}" class="container-fluid py-5">
+<div th:if="${visits!=null && not visits.isEmpty()}" class="container-fluid py-5">
     <div class="container pt-5 pb-3">
-        <h1 class="display-4 text-uppercase text-center mb-5">Vehicles</h1>
+        <h1 class="display-4 text-uppercase text-center mb-5">Visits</h1>
         <a class="text-decoration-none text-dark" href=""
-           th:each="vehicle: ${vehicles}" th:href="@{/vehicles/__${vehicle.getId()}__}">
+           th:each="visit: ${visits}" th:href="@{/visits/__${visit.getId()}__}">
             <div class="row py-4 my-4 border border-secondary bg-light">
-                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'License plate: '+${vehicle.getLicensePlate()}"></p>
-                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Vin: '+${vehicle.getVin()}"></p>
-                <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Brand: '+${vehicle.getBrand()}"></p>
-                <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Model: '+${vehicle.getModel()}"></p>
-                <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Prod. year: '+${vehicle.getProductionYear()}"></p>
+                <p class="m-0 col-xl-3 col-lg-6 col-md-6"
+                   th:text="'Vehicle: '+${visit.getVehicle().getLicensePlate()}"></p>
+                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Visitor: '+${visit.getVisitor().getEmail()}"></p>
+                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Date: '+
+                ${#temporals.format(visit.getDate(), 'dd-MM-yyyy')}"></p>
+                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Cost: '+
+                ${#numbers.formatDecimal(visit.getTotalCost(),0,2)}"></p>
             </div>
         </a>
-        <div class="justify-content-center row mt-5" th:object="${vehicleFilterOptions}">
+        <div class="justify-content-center row mt-5">
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
                 <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
-                   th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',vehicles.getNumber()-1)
+                   th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',visits.getNumber()-1)
                    .replaceQueryParam('size',pageSize).toUriString().replaceAll('%25','%')}">
                     <button class="btn btn-primary btn-block" type="submit"
-                            style="height: 50px;" th:if="${vehicles.hasPrevious()}">Previous
+                            style="height: 50px;" th:if="${visits.hasPrevious()}">Previous
                     </button>
                 </a>
                 <button class="btn btn-primary btn-block disabled" type="submit" disabled
-                        style="height: 50px;" th:if="${not vehicles.hasPrevious()}">Previous
+                        style="height: 50px;" th:if="${not visits.hasPrevious()}">Previous
                 </button>
             </div>
             <div class="col-1 px-2">
-                <h3 class="text-center pt-2" th:text="${vehicles.getNumber() + 1}">3</h3>
+                <h3 class="text-center pt-2" th:text="${visits.getNumber() + 1}">3</h3>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
                 <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
-                   th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',vehicles.getNumber()+1)
+                   th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',visits.getNumber()+1)
                    .replaceQueryParam('size',pageSize).toUriString().replaceAll('%25','%')}">
                     <button class="btn btn-primary btn-block" type="submit"
-                            style="height: 50px;" th:if="${vehicles.hasNext()}">Next
+                            style="height: 50px;" th:if="${visits.hasNext()}">Next
                     </button>
                 </a>
                 <button class="btn btn-primary btn-block disabled" type="submit" disabled
-                        style="height: 50px;" th:if="${not vehicles.hasNext()}">Next
+                        style="height: 50px;" th:if="${not visits.hasNext()}">Next
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<div th:if="${vehicles!=null && vehicles.isEmpty()}" class="container-fluid py-5">
+<div th:if="${visits!=null && visits.isEmpty()}" class="container-fluid py-5">
     <div class="container pt-5 pb-3">
-        <h1 class="display-4 text-uppercase text-center mb-5">Vehicles</h1>
-        <h3 class="text-center">No vehicles</h3>
+        <h1 class="display-4 text-uppercase text-center mb-5">Visits</h1>
+        <h3 class="text-center">No visits</h3>
     </div>
 </div>
 

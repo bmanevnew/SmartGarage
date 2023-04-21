@@ -18,6 +18,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     Optional<Vehicle> findFirstByVin(String vin);
 
+    Optional<Vehicle> findFirstByLicensePlateOrVin(String licensePlate, String vin);
+
     @Query("select v from Vehicle v where " +
             "(:ownerId is null or v.owner.id = :ownerId) and " +
             "(:model is null or v.model like %:model%) and " +

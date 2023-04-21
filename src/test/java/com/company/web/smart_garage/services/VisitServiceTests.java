@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
@@ -71,11 +72,13 @@ public class VisitServiceTests {
     @Test
     public void getAll_Should_ReturnPage_When_ParametersAreValid() {
         Page<Visit> expectedPage = new PageImpl<>(Collections.emptyList());
-        when(visitRepository.findByParameters(visitorId, vehicleId, dateFrom, dateTo, pageable)).thenReturn(expectedPage);
+        when(visitRepository.findByParameters(visitorId, vehicleId, Date.valueOf(dateFrom), Date.valueOf(dateTo),
+                pageable)).thenReturn(expectedPage);
 
         Page<Visit> actualPage = visitService.getAll(visitorId, vehicleId, dateFrom, dateTo, pageable);
 
-        verify(visitRepository).findByParameters(visitorId, vehicleId, dateFrom, dateTo, pageable);
+        verify(visitRepository).findByParameters(visitorId, vehicleId, Date.valueOf(dateFrom), Date.valueOf(dateTo),
+                pageable);
         assertEquals(expectedPage, actualPage);
     }
 
