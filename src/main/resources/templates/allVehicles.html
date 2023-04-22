@@ -108,7 +108,7 @@
                 <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Prod. year: '+${vehicle.getProductionYear()}"></p>
             </div>
         </a>
-        <div class="justify-content-center row mt-5" th:object="${vehicleFilterOptions}">
+        <div th:if="${vehicles.hasPrevious() || vehicles.hasNext()}" class="justify-content-center row mt-5">
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
                 <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
                    th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',vehicles.getNumber()-1)

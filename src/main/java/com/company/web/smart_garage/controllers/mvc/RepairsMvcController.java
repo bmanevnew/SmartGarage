@@ -1,10 +1,10 @@
 package com.company.web.smart_garage.controllers.mvc;
 
+import com.company.web.smart_garage.data_transfer_objects.filters.RepairFilterOptionsDto;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.Repair;
-import com.company.web.smart_garage.models.filters.RepairFilterOptionsDto;
 import com.company.web.smart_garage.services.RepairService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

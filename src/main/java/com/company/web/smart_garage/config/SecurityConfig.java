@@ -44,6 +44,9 @@ public class SecurityConfig {
                                     .requestMatchers("/auth/login").anonymous()
                                     .requestMatchers("/auth/logout").authenticated()
                                     .requestMatchers("/vehicles/**").authenticated()
+                                    .requestMatchers("/visits/**").authenticated()
+                                    .requestMatchers("/repairs/**").authenticated()
+                                    .requestMatchers("/users/**").authenticated()
                                     .anyRequest().permitAll();
                         }
                 ).exceptionHandling(ex -> ex
