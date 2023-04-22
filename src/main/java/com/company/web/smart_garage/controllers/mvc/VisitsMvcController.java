@@ -29,7 +29,7 @@ import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminO
 @RequestMapping("/visits")
 public class VisitsMvcController {
 
-    public static final int DEFAULT_PAGE_SIZE = 2;
+    public static final int DEFAULT_PAGE_SIZE = 5;
     private final VisitService visitService;
     private final UserService userService;
     private final VehicleService vehicleService;

@@ -24,6 +24,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @Service
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
 
+    public static final String SHA_256 = "SHA-256";
     private final PasswordResetTokenRepository prtRepository;
     @Value("${password-reset-token-expiration-milliseconds}")
     private long prtExpirationTime;
@@ -59,7 +60,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
     private String hashToken(String token) {
         try {
-            MessageDigest encoder = MessageDigest.getInstance("SHA-256");
+            MessageDigest encoder = MessageDigest.getInstance(SHA_256);
             byte[] encodedHash = encoder.digest(token.getBytes(StandardCharsets.UTF_8));
             return bytesToHex(encodedHash);
         } catch (NoSuchAlgorithmException e) {

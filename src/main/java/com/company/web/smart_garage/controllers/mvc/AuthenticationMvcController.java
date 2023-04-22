@@ -28,6 +28,9 @@ public class AuthenticationMvcController {
     public static final String AUTH_ERROR = "auth_error";
     public static final String PASSWORD_FIELD = "password";
     public static final String CHANGE_PASSWORD_ENDPOINT = "/auth/change_password";
+    public static final String SAME_SITE = "SameSite";
+    public static final String SAME_SITE_LAX = "lax";
+    public static final String ROOT_PATH = "/";
     private final AuthService authService;
     @Value("${app.jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
@@ -75,7 +78,7 @@ public class AuthenticationMvcController {
         String response = SUCCESSFUL_RESET;
         try {
             authService.resetPassword(email, CHANGE_PASSWORD_ENDPOINT);
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException | InvalidParamException e) {
             response = String.format(USER_WITH_EMAIL_S_DOES_NOT_EXIST, email);
         }
         model.addAttribute("response", response);
@@ -118,9 +121,10 @@ public class AuthenticationMvcController {
         Cookie cookie = new Cookie(JWT_COOKIE_NAME, token);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
+        //convert milliseconds to seconds
         cookie.setMaxAge((int) jwtExpirationDate / 1000);
-        cookie.setPath("/");
-        cookie.setAttribute("SameSite", "lax");
+        cookie.setPath(ROOT_PATH);
+        cookie.setAttribute(SAME_SITE, SAME_SITE_LAX);
 
         response.addCookie(cookie);
     }
@@ -130,8 +134,8 @@ public class AuthenticationMvcController {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setMaxAge(0);
-        cookie.setPath("/");
-        cookie.setAttribute("SameSite", "lax");
+        cookie.setPath(ROOT_PATH);
+        cookie.setAttribute(SAME_SITE, SAME_SITE_LAX);
 
         response.addCookie(cookie);
     }
