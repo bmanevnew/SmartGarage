@@ -1,11 +1,11 @@
 package com.company.web.smart_garage.controllers.mvc;
 
+import com.company.web.smart_garage.data_transfer_objects.filters.VisitFilterOptionsDto;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.models.filters.VisitFilterOptionsDto;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;

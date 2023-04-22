@@ -98,16 +98,16 @@
         <a class="text-decoration-none text-dark" href=""
            th:each="visit: ${visits}" th:href="@{/visits/__${visit.getId()}__}">
             <div class="row py-4 my-4 border border-secondary bg-light">
-                <p class="m-0 col-xl-3 col-lg-6 col-md-6"
+                <p class="m-0 col-xl-4 col-lg-6 col-md-6"
                    th:text="'Vehicle: '+${visit.getVehicle().getLicensePlate()}"></p>
-                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Visitor: '+${visit.getVisitor().getEmail()}"></p>
-                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Date: '+
+                <p class="m-0 col-xl-4 col-lg-6 col-md-6" th:text="'Visitor: '+${visit.getVisitor().getEmail()}"></p>
+                <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Date: '+
                 ${#temporals.format(visit.getDate(), 'dd-MM-yyyy')}"></p>
-                <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Cost: '+
+                <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Cost: '+
                 ${#numbers.formatDecimal(visit.getTotalCost(),0,2)}"></p>
             </div>
         </a>
-        <div class="justify-content-center row mt-5">
+        <div th:if="${visits.hasPrevious() || visits.hasNext()}" class="justify-content-center row mt-5">
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
                 <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
                    th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',visits.getNumber()-1)

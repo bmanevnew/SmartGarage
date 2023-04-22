@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
@@ -108,12 +107,17 @@ public class UserServiceImpl implements UserService {
         validateDateInterval(dateFrom, dateTo);
         validateSortProperties(pageable.getSort());
 
-        Page<User> users = userRepository.findByFilters(name, vehicleModel,
-                vehicleMake, (dateFrom == null ? null : java.sql.Date.valueOf(dateFrom)),
-                (dateTo == null ? null : java.sql.Date.valueOf(dateTo)), pageable);
+        if (name != null && name.isBlank()) name = null;
+        if (vehicleMake != null && vehicleMake.isBlank()) vehicleMake = null;
+        if (vehicleModel != null && vehicleModel.isBlank()) vehicleModel = null;
+
+        Page<User> users = userRepository.findByFilters(name, vehicleModel, vehicleMake,
+                (dateFrom == null ? null : java.sql.Date.valueOf(dateFrom)),
+                (dateTo == null ? null : java.sql.Date.valueOf(dateTo)),
+                pageable);
 
 
-        if (pageable.getPageNumber() >= users.getTotalPages()) {
+        if (pageable.getPageNumber() >= users.getTotalPages() && pageable.getPageNumber() != 0) {
             throw new InvalidParamException(PAGE_IS_INVALID);
         }
         return users;

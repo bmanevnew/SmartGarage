@@ -90,11 +90,12 @@
         <a class="text-decoration-none text-dark" href=""
            th:each="repair: ${repairs}" th:href="@{/repairs/__${repair.getId()}__}">
             <div class="row py-4 my-4 border border-secondary bg-light">
-                <p class="m-0 col-lg-10 col-md-9" th:text="'License plate: '+${repair.getName()}"></p>
-                <p class="m-0 col-lg-2 col-md-3" th:text="'Vin: '+${repair.getPrice()}"></p>
+                <p class="m-0 col-lg-10 col-md-9" th:text="'Name: '+${repair.getName()}"></p>
+                <p class="m-0 col-lg-2 col-md-3" th:text="'Price: '+${repair.getPrice()}"></p>
             </div>
         </a>
-        <div class="justify-content-center row mt-5" th:object="${repairFilterOptions}">
+
+        <div th:if="${repairs.hasPrevious() || repairs.hasNext()}" class="justify-content-center row mt-5">
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
                 <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
                    th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',repairs.getNumber()-1)
@@ -123,6 +124,7 @@
                 </button>
             </div>
         </div>
+
     </div>
 </div>
 

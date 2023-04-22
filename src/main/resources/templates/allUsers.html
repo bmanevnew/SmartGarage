@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+>
 
 <head>
     <meta charset="utf-8">
@@ -41,49 +41,51 @@
 <form href="" th:action="@{/users}" th:object="${filterOptionsDto}" method="get" id="vehicle-filter-form">
     <div class="container-fluid bg-white pt-3 px-lg-5">
         <div class="row mx-2">
-            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+            <div class="col-lg-3 px-2">
                 <input th:field="*{firstName}" class="custom-range px-4 mb-3" style="height: 50px"
                        placeholder="First Name">
             </div>
-            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+            <div class="col-lg-3 px-2">
                 <input th:field="*{email}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Email">
             </div>
-            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+            <div class="col-lg-3 px-2">
                 <input th:field="*{phoneNumber}" class="custom-range px-4 mb-3" style="height: 50px"
                        placeholder="Phone Number">
             </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <input th:field="*{model}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Model">
+            <div class="col-lg-3 px-2">
+                <input th:field="*{model}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Owns Model">
             </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <input th:field="*{brand}" class="custom-range px-4 mb-3" style="height: 50px;" placeholder="Brand">
+            <div class="col-lg-3 px-2">
+                <input th:field="*{brand}" class="custom-range px-4 mb-3" style="height: 50px;"
+                       placeholder="Owns Brand">
             </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <div class="date mb-3" id="dateFrom" data-target-input="nearest">
-                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Date from"
-                           data-target="#dateFrom" data-toggle="datetimepicker" th:field="*{dateFrom}"/>
+            <div class="col-lg-3 px-2">
+                <div class="date mb-3" id="dateFromUser" data-target-input="nearest">
+                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Visited from"
+                           data-target="#dateFromUser" data-toggle="datetimepicker" th:field="*{dateFrom}"/>
                 </div>
             </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <div class="date mb-3" id="dateTo" data-target-input="nearest">
-                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Date to"
-                           data-target="#dateTo" data-toggle="datetimepicker" th:field="*{dateTo}"/>
+            <div class="col-lg-3 px-2">
+                <div class="date mb-3" id="dateToUser" data-target-input="nearest">
+                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Visited to"
+                           data-target="#dateToUser" data-toggle="datetimepicker" th:field="*{dateTo}"/>
                 </div>
             </div>
-            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-1 col-lg-2 col-md-3 px-2">
-                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
-            </div>
-            <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
-            </div>
-            <div class="col-xl-1 col-lg-2 col-md-3 px-2">
+            <div class="col-lg-2 px-2">
                 <select th:field="*{sort}" class="custom-select px-4 mb-3" style="height: 50px;">
                     <option value="" selected>Sort</option>
-                    <option value="dateFrom, desc">Date H>L</option>
-                    <option value="dateFrom">Date L>H</option>
-                    <option value="firstName">First Name</option>
+                    <option value="email">Email A>Z</option>
+                    <option value="email,desc">Email Z>A</option>
+                    <option value="firstName">First Name A>Z</option>
+                    <option value="firstName,desc">First Name Z>A</option>
+                    <option value="username">Username A>Z</option>
+                    <option value="username,desc">Username Z>A</option>
                 </select>
             </div>
+            <div class="col-lg-1 px-2">
+                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
+            </div>
+
         </div>
         <div class="row mx-2 my-4 justify-content-center">
             <h5 class="text-center error" th:text="${paramError}">Error</h5>
@@ -107,18 +109,19 @@
 <div th:if="${users!=null && not users.isEmpty()}" class="container-fluid py-5">
     <div class="container pt-5 pb-3">
         <h1 class="display-4 text-uppercase text-center mb-5">Users</h1>
-        <div class="row py-4 my-4 border border-secondary bg-light" th:each="user: ${users}">
-            <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'First Name: '+${user.getFirstName()}"></p>
-            <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Email: '+${user.getEmail()}"></p>
-            <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Username: '+${user.getUsername()}"></p>
-            <!--            <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Model: '+${vehicle.getModel()}"></p>-->
-            <!--            <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Brand: '+${vehicle.getModel()}"></p>-->
-        </div>
-        <div class="justify-content-center row mt-5" th:object="${filterOptionsDto}">
+        <a class="text-decoration-none text-dark" th:href="@{/users/__${user.getId()}__}" th:each="user : ${users}">
+            <div class="row py-4 my-4 border border-secondary bg-light">
+                <p class="m-0 col-md-4" th:text="'Email: '+${user.getEmail()}"></p>
+                <p class="m-0 col-md-4" th:text="'Username: '+${user.getUsername()}"></p>
+                <p th:if="${user.getFirstName()!=null}" class="m-0 col-md-4"
+                   th:text="'First Name: '+${user.getFirstName()}"></p>
+            </div>
+        </a>
+        <div th:if="${users.hasPrevious() || users.hasNext()}" class="justify-content-center row mt-5">
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
                 <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
                    th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',users.getNumber()-1)
-                   .replaceQueryParam('size',pageSize).toUriString()}">
+                   .replaceQueryParam('size',pageSize).toUriString().replaceAll('%25','%')}">
                     <button class="btn btn-primary btn-block" type="submit"
                             style="height: 50px;" th:if="${users.hasPrevious()}">Previous
                     </button>
@@ -133,7 +136,7 @@
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
                 <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
                    th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',users.getNumber()+1)
-                   .replaceQueryParam('size',pageSize).toUriString()}">
+                   .replaceQueryParam('size',pageSize).toUriString().replaceAll('%25','%')}">
                     <button class="btn btn-primary btn-block" type="submit"
                             style="height: 50px;" th:if="${users.hasNext()}">Next
                     </button>

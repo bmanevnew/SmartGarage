@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.models.filters;
+package com.company.web.smart_garage.data_transfer_objects.filters;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

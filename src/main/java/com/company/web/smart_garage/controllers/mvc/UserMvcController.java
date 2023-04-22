@@ -1,7 +1,6 @@
 package com.company.web.smart_garage.controllers.mvc;
 
 import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
-import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
@@ -35,8 +34,21 @@ public class UserMvcController {
 
     public static final int DEFAULT_PAGE_SIZE = 5;
     private final UserService userService;
-    private final UserMapper userMapper;
-    private final EmailSenderService emailSenderService;
+
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public String handleNotFound(EntityNotFoundException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+        model.addAttribute("httpCode", "404 Not Found");
+        return "error";
+    }
+
+    @ExceptionHandler(UnauthorizedOperationException.class)
+    public String handleUnauthorized(UnauthorizedOperationException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+        model.addAttribute("httpCode", "401 Unauthorized");
+        return "error";
+    }
 
     @GetMapping("/{id}")
     public String getById(@PathVariable long id, Authentication authentication, Model model) {
@@ -45,7 +57,6 @@ public class UserMvcController {
         user = userService.getById(id);
         if (!userIsAdminOrEmployee(authentication) &&
                 !user.getId().equals(userService.getByUsername(authentication.getName()).getId())) {
-            //Todo change view to show user was unauthorized to access resource
             throw new UnauthorizedOperationException("Access denied.");
         }
         model.addAttribute("user", user);
@@ -58,7 +69,7 @@ public class UserMvcController {
                          Authentication authentication, Model viewModel) {
 
         if (!userIsAdminOrEmployee(authentication)) {
-            throw new AccessDeniedException("Access denied");
+            throw new UnauthorizedOperationException("Access denied.");
         }
 
         viewModel.addAttribute("pageSize", pageable.getPageSize());
