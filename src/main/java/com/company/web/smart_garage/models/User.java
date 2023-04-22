@@ -53,6 +53,6 @@ public class User {
     @OneToMany(mappedBy = "visitor", cascade = CascadeType.REMOVE)
     private Set<Visit> visits;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private PasswordResetToken passResetToken;
 }
