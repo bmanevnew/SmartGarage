@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+    <meta charset="utf-8">
+    <title>ROYAL CARS - Car Rental HTML Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="../static/img/favicon.ico" th:href="@{/img/favicon.ico}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="../static/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"
+          th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}">
+    <link href="../static/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+          th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}" rel="stylesheet"/>
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar.html :: navbar}">Navigation bar fragment</div>
+
+
+<!-- Search Start -->
+<form href="" th:action="@{/users}" th:object="${filterOptionsDto}" method="get" id="vehicle-filter-form">
+    <div class="container-fluid bg-white pt-3 px-lg-5">
+        <div class="row mx-2">
+            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <input th:field="*{firstName}" class="custom-range px-4 mb-3" style="height: 50px"
+                       placeholder="First Name">
+            </div>
+            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <input th:field="*{email}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Email">
+            </div>
+            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <input th:field="*{phoneNumber}" class="custom-range px-4 mb-3" style="height: 50px"
+                       placeholder="Phone Number">
+            </div>
+            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <input th:field="*{model}" class="custom-range px-4 mb-3" style="height: 50px" placeholder="Model">
+            </div>
+            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <input th:field="*{brand}" class="custom-range px-4 mb-3" style="height: 50px;" placeholder="Brand">
+            </div>
+            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <div class="date mb-3" id="dateFrom" data-target-input="nearest">
+                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Date from"
+                           data-target="#dateFrom" data-toggle="datetimepicker" th:field="*{dateFrom}"/>
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <div class="date mb-3" id="dateTo" data-target-input="nearest">
+                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Date to"
+                           data-target="#dateTo" data-toggle="datetimepicker" th:field="*{dateTo}"/>
+                </div>
+            </div>
+            <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="col-xl-1 col-lg-2 col-md-3 px-2">
+                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
+            </div>
+            <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="col-xl-2 col-lg-4 col-md-6 px-2">
+                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
+            </div>
+            <div class="col-xl-1 col-lg-2 col-md-3 px-2">
+                <select th:field="*{sort}" class="custom-select px-4 mb-3" style="height: 50px;">
+                    <option value="" selected>Sort</option>
+                    <option value="dateFrom, desc">Date H>L</option>
+                    <option value="dateFrom">Date L>H</option>
+                    <option value="firstName">First Name</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mx-2 my-4 justify-content-center">
+            <h5 class="text-center error" th:text="${paramError}">Error</h5>
+        </div>
+    </div>
+</form>
+<!-- Search End -->
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header mb-0">
+    <h1 class="display-3 text-uppercase text-white mb-3">Users</h1>
+    <div class="d-inline-flex text-white">
+        <h6 class="text-uppercase m-0"><a class="text-white" href="" th:href="@{/}">Home</a></h6>
+        <h6 class="text-body m-0 px-3">/</h6>
+        <h6 class="text-uppercase text-body m-0">Users</h6>
+    </div>
+</div>
+<!-- Page Header Start -->
+
+
+<div th:if="${users!=null && not users.isEmpty()}" class="container-fluid py-5">
+    <div class="container pt-5 pb-3">
+        <h1 class="display-4 text-uppercase text-center mb-5">Users</h1>
+        <div class="row py-4 my-4 border border-secondary bg-light" th:each="user: ${users}">
+            <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'First Name: '+${user.getFirstName()}"></p>
+            <p class="m-0 col-xl-3 col-lg-6 col-md-6" th:text="'Email: '+${user.getEmail()}"></p>
+            <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Username: '+${user.getUsername()}"></p>
+            <!--            <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Model: '+${vehicle.getModel()}"></p>-->
+            <!--            <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Brand: '+${vehicle.getModel()}"></p>-->
+        </div>
+        <div class="justify-content-center row mt-5" th:object="${filterOptionsDto}">
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
+                <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
+                   th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',users.getNumber()-1)
+                   .replaceQueryParam('size',pageSize).toUriString()}">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            style="height: 50px;" th:if="${users.hasPrevious()}">Previous
+                    </button>
+                </a>
+                <button class="btn btn-primary btn-block disabled" type="submit" disabled
+                        style="height: 50px;" th:if="${not users.hasPrevious()}">Previous
+                </button>
+            </div>
+            <div class="col-1 px-2">
+                <h3 class="text-center pt-2" th:text="${users.getNumber() + 1}">2</h3>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5 px-2">
+                <a th:with="uriBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder)}"
+                   th:href="${uriBuilder.fromCurrentRequest().replaceQueryParam('page',users.getNumber()+1)
+                   .replaceQueryParam('size',pageSize).toUriString()}">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            style="height: 50px;" th:if="${users.hasNext()}">Next
+                    </button>
+                </a>
+                <button class="btn btn-primary btn-block disabled" type="submit" disabled
+                        style="height: 50px;" th:if="${not users.hasNext()}">Next
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:if="${users!=null && users.isEmpty()}" class="container-fluid py-5">
+    <div class="container pt-5 pb-3">
+        <h1 class="display-4 text-uppercase text-center mb-5">Users</h1>
+        <h3 class="text-center">No users</h3>
+    </div>
+</div>
+
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer.html :: footer}">Footer fragment</div>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="../static/lib/easing/easing.min.js" th:src="@{/lib/easing/easing.min.js}"></script>
+<script src="../static/lib/waypoints/waypoints.min.js" th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+<script src="../static/lib/owlcarousel/owl.carousel.min.js" th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/moment.min.js" th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/moment-timezone.min.js"
+        th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"
+        th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+<!-- Template Javascript -->
+<script src="../static/js/main.js" th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

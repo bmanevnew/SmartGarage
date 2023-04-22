@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -66,8 +67,8 @@ public class UserController {
     public List<UserDtoOut> getAll(@RequestParam(required = false, name = "name") String name,
                                    @RequestParam(required = false, name = "vehicle-model") String vehicleModel,
                                    @RequestParam(required = false, name = "vehicle-brand") String vehicleMake,
-                                   @RequestParam(required = false, name = "visit-from-date") String visitFromDate,
-                                   @RequestParam(required = false, name = "visit-to-date") String visitToDate,
+                                   @RequestParam(required = false, name = "visit-from-date") LocalDate visitFromDate,
+                                   @RequestParam(required = false, name = "visit-to-date") LocalDate visitToDate,
                                    Pageable pageable) {
 
         return userService.getFilteredUsers(name, vehicleModel, vehicleMake, visitFromDate, visitToDate, pageable)

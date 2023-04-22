@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -96,16 +97,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getFilteredUsers(String name, String vehicleModel,
-                                       String vehicleMake, String visitFromDate, String visitToDate,
+                                       String vehicleMake, LocalDate dateFrom, LocalDate dateTo,
                                        Pageable pageable) {
-        LocalDateTime parsedFromDate = visitFromDate != null ? LocalDateTime.parse(visitFromDate + "T00:00:00") : null;
-        LocalDateTime parsedToDate = visitToDate != null ? LocalDateTime.parse(visitToDate + "T00:00:00") : null;
 
-        validateDateInterval(parsedFromDate, parsedToDate);
+//        LocalDateTime parsedFromDate = visitFromDate != null ? LocalDate.parse(visitFromDate).atStartOfDay() :
+//                LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+//        LocalDateTime parsedToDate = visitToDate != null ? LocalDate.parse(visitToDate).atStartOfDay() :
+//                LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        validateDateInterval(dateFrom, dateTo);
         validateSortProperties(pageable.getSort());
 
         Page<User> users = userRepository.findByFilters(name, vehicleModel,
-                vehicleMake, parsedFromDate, parsedToDate, pageable);
+                vehicleMake, (dateFrom == null ? null : java.sql.Date.valueOf(dateFrom)),
+                (dateTo == null ? null : java.sql.Date.valueOf(dateTo)), pageable);
+
+
         if (pageable.getPageNumber() >= users.getTotalPages()) {
             throw new InvalidParamException(PAGE_IS_INVALID);
         }
@@ -118,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
     private void validateSortingProperty(String property) {
         switch (property) {
-            case "username", "email", "phoneNumber", "firstName", "lastName" -> {
+            case "username", "email", "phoneNumber", "firstName", "lastName", "dateFrom", "model", "brand" -> {
             }
             default -> throw new InvalidParamException(String.format(SORT_PROPERTY_S_IS_INVALID, property));
         }
@@ -275,9 +282,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(persistentUser);
     }
 
-    private boolean validateDate(LocalDateTime date) {
+    private boolean validateDate(LocalDate date) {
         if (date != null) {
-            if (date.isAfter(LocalDateTime.now())) {
+            if (date.isAfter(LocalDate.now())) {
                 throw new InvalidParamException(VISIT_DATE_IN_FUTURE);
             }
             return true;
@@ -285,8 +292,8 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    private void validateDateInterval(LocalDateTime dateFrom, LocalDateTime dateTo) {
-        if (validateDate(dateFrom) && validateDate(dateTo)) {
+    private void validateDateInterval(LocalDate dateFrom, LocalDate dateTo) {
+        if (validateDate(dateFrom) & validateDate(dateTo)) {
             if (dateFrom.isAfter(dateTo)) {
                 throw new InvalidParamException(VISIT_DATE_INTERVAL_INVALID);
             }

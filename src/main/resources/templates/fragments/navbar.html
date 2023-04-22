@@ -92,8 +92,8 @@
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Users</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="" class="dropdown-item">Search users</a>
-                                <a href="" class="dropdown-item">Add user</a>
+                                <a href="" th:href="@{/users}" class="dropdown-item">Search users</a>
+                                <a href="" th:href="@{/users/createUser}" class="dropdown-item">Add user</a>
                             </div>
                         </div>
                         <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="nav-item dropdown">

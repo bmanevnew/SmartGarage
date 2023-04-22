@@ -1,4 +1,4 @@
-package com.company.web.smart_garage.data_transfer_objects;
+package com.company.web.smart_garage.models.filters;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +9,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDtoOut {
-
+public class UserFilterOptionsDto {
     private Long id;
-    private String username;
     private String firstName;
-    private String lastName;
     private String email;
+    private String username;
     private String phoneNumber;
+    private String brand;
+    private String model;
+    private String dateFrom;
+    private String dateTo;
+    private String sort;
 }

@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,8 +53,8 @@ class UserServiceTests {
     private User mockUser;
     private Vehicle mockVehicle;
     Pageable pageable;
-    private String dateFrom;
-    private String dateTo;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
 
     private User user;
     private User mockAdmin;
@@ -68,8 +69,8 @@ class UserServiceTests {
         mockAdmin = createMockAdmin();
         mockVehicle = createMockVehicle();
         mockVisit = createMockVisit();
-        dateFrom = "2021-01-01";
-        dateTo = "2023-04-06";
+        dateFrom = dateTime.toLocalDate().minusDays(7);
+        dateTo = dateTime.toLocalDate();
         pageable = PageRequest.of(0, 20);
     }
 
@@ -197,8 +198,8 @@ class UserServiceTests {
         String name = "John";
         String vehicleModel = "Ram";
         String vehicleMake = "Dodge";
-        String visitFromDate = "2021-01-01";
-        String visitToDate = "2022-01-31";
+        LocalDate visitFromDate = dateTime.toLocalDate().minusDays(7);
+        LocalDate visitToDate = dateTime.toLocalDate();
         Pageable pageable = PageRequest.of(0, 10);
 
         List<User> userList = new ArrayList<>();
@@ -208,8 +209,8 @@ class UserServiceTests {
         userList.add(mockUser);
         Page<User> expectedPage = new PageImpl<>(userList, pageable, 1);
         doReturn(expectedPage).when(mockRepository).findByFilters(name, vehicleModel,
-                vehicleMake, LocalDateTime.parse(visitFromDate + "T00:00:00"),
-                LocalDateTime.parse(visitToDate + "T00:00:00"), pageable);
+                vehicleMake, Date.valueOf(visitFromDate), Date.valueOf(visitToDate)
+                , pageable);
 
         Page<User> result = userService.getFilteredUsers(name, vehicleModel, vehicleMake, visitFromDate,
                 visitToDate, pageable);
@@ -221,8 +222,8 @@ class UserServiceTests {
         String name = "John";
         String vehicleModel = "Ram";
         String vehicleMake = "Dodge";
-        String visitFromDate = "2021-01-01";
-        String visitToDate = "2022-01-31";
+        LocalDate visitFromDate = dateTime.toLocalDate().minusDays(7);
+        LocalDate visitToDate = dateTime.toLocalDate();
         Pageable pageable = PageRequest.of(1, 10);
 
         List<User> userList = new ArrayList<>();
@@ -230,8 +231,7 @@ class UserServiceTests {
         Visit mockVisit = createMockVisit();
         Page<User> expectedPage = new PageImpl<>(userList, pageable, 1);
         doReturn(expectedPage).when(mockRepository).findByFilters(name, vehicleModel,
-                vehicleMake, LocalDateTime.parse(visitFromDate + "T00:00:00"),
-                LocalDateTime.parse(visitToDate + "T00:00:00"), pageable);
+                vehicleMake, Date.valueOf(visitFromDate), Date.valueOf(visitToDate), pageable);
 
         assertThrows(InvalidParamException.class, () -> userService.getFilteredUsers(name, vehicleModel,
                 vehicleMake, visitFromDate, visitToDate, pageable));
@@ -239,7 +239,7 @@ class UserServiceTests {
 
 
     @Test
-    public void getAll_Should_ThrowException_When_SortPropertiesAreInvalid() {
+    public void getFilteredUsers_Should_ThrowException_When_SortPropertiesAreInvalid() {
         pageable = PageRequest.of(0, 10, Sort.by("invalidProperty"));
 
         assertThrows(InvalidParamException.class, () ->
@@ -248,18 +248,18 @@ class UserServiceTests {
     }
 
     @Test
-    public void getAll_Should_ThrowException_When_DateIntervalIsInvalid() {
+    public void getFilteredUsers_Should_ThrowException_When_DateIntervalIsInvalid() {
         assertThrows(InvalidParamException.class, () ->
                 userService.getFilteredUsers(mockUser.getFirstName(), mockVehicle.getBrand(),
                         mockVehicle.getModel(), dateTo, dateFrom, pageable));
     }
 
     @Test
-    public void getAll_Should_ThrowException_When_DateIsInvalid() {
+    public void getFilteredUsers_Should_ThrowException_When_DateIsInvalid() {
         assertThrows(InvalidParamException.class, () ->
                 userService.getFilteredUsers(mockUser.getFirstName(), mockVehicle.getBrand(),
                         mockVehicle.getModel(), dateFrom,
-                        String.valueOf(LocalDate.now().plusDays(1)), pageable));
+                        LocalDate.now().plusDays(1), pageable));
     }
 
     @Test

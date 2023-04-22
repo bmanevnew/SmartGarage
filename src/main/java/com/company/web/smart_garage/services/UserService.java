@@ -4,6 +4,8 @@ import com.company.web.smart_garage.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+
 public interface UserService {
     User getById(long id);
 
@@ -15,8 +17,8 @@ public interface UserService {
 
     User getByPhoneNumber(String phoneNumber);
 
-    Page<User> getFilteredUsers(String name, String vehicleModel, String vehicleMake, String visitFromDate,
-                                String visitToDate, Pageable pageable);
+    Page<User> getFilteredUsers(String name, String vehicleModel, String vehicleMake, LocalDate visitFromDate,
+                                LocalDate visitToDate, Pageable pageable);
 
     User create(User user);
 
