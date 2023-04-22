@@ -17,7 +17,7 @@ import java.util.Set;
 public class VisitPdfExporter {
 
     private final Visit visit;
-//TODO implement a 3rd party currency converter
+    //TODO implement a 3rd party currency converter
 
 
     public VisitPdfExporter(Visit visit) {

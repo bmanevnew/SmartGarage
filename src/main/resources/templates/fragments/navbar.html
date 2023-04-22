@@ -75,27 +75,50 @@
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
                         <a href="../index.html" th:href="@{/}" class="nav-item nav-link">Home</a>
+
                         <a sec:authorize="isAnonymous()" href="../about.html" th:href="@{/about}"
                            class="nav-item nav-link">About</a>
                         <a sec:authorize="isAnonymous()" href="../contact.html" th:href="@{/contact}"
                            class="nav-item nav-link">Contact</a>
-                        <a sec:authorize="isAuthenticated()" href="" class="nav-item nav-link">Services</a>
+
+                        <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/repairs}"
+                           class="nav-item nav-link">Services</a>
+                        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Services</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="" th:href="@{/repairs}" class="dropdown-item">Browse services</a>
+                                <a href="" class="dropdown-item">Add service</a>
+                            </div>
+                        </div>
+
+                        <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/visits}"
+                           class="nav-item nav-link">My Visits</a>
+                        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Visits</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="" th:href="@{/visits}" class="dropdown-item">Browse visits</a>
+                                <a href="" class="dropdown-item">Add visit</a>
+                            </div>
+                        </div>
+
                         <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/vehicles}"
                            class="nav-item nav-link">My Vehicles</a>
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Vehicles</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="" th:href="@{/vehicles}" class="dropdown-item">Search vehicles</a>
+                                <a href="" th:href="@{/vehicles}" class="dropdown-item">Browse vehicles</a>
                                 <a href="" class="dropdown-item">Add vehicle</a>
                             </div>
                         </div>
+
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Users</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="" class="dropdown-item">Search users</a>
+                                <a href="" class="dropdown-item">Browse users</a>
                                 <a href="" class="dropdown-item">Add user</a>
                             </div>
                         </div>
+
                         <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Details</a>
                             <div class="dropdown-menu rounded-0 m-0">
@@ -103,6 +126,7 @@
                                 <a href="../contact.html" th:href="@{/contact}" class="dropdown-item">Contact</a>
                             </div>
                         </div>
+
                         <a sec:authorize="isAnonymous()" href="../login.html" th:href="@{/auth/login}"
                            class="nav-item nav-link">Login</a>
                         <a sec:authorize="isAuthenticated()" href="../login.html" th:href="@{/auth/logout}"
