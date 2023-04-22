@@ -111,6 +111,8 @@
                             </div>
                         </div>
 
+                        <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/users/profile}"
+                           class="nav-item nav-link">My Profile</a>
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Users</a>
                             <div class="dropdown-menu rounded-0 m-0">

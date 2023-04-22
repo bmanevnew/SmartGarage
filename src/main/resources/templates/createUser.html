@@ -93,7 +93,7 @@
 
         <!-- Page Header Start -->
 
-        <form action="#!" id="contactForm" th:action="@{/createUser}" th:object="${userDtoIn}"
+        <form action="#!" id="contactForm" th:action="@{/users/createUser}" th:object="${userDtoIn}"
               method="post">
             <!--    <div class="form-floating">-->
             <!--        <input class="form-control" id="first-name" type="text"-->
@@ -114,19 +114,19 @@
             <!--        <label for="username">Username</label>-->
             <!--        <div class="error" th:errors="*{username}">A username is required.</div>-->
             <!--    </div>-->
-            <!--            <div class="form-floating">-->
-            <!--                <input class="form-control" id="email" type="email" placeholder="Enter your email..."-->
-            <!--                       th:field="*{email}"/>-->
-            <!--                <label for="email">Email</label>-->
-            <!--                <div class="error" th:errors="*{email}">Email is required.</div>-->
-            <!--            </div>-->
-            <!--            <div class="form-floating">-->
-            <!--                <input class="form-control" id="phoneNumber" type="number"-->
-            <!--                       placeholder="Enter your password..."-->
-            <!--                       th:field="*{phoneNumber}"/>-->
-            <!--                <label for="phoneNumber">Phone Number</label>-->
-            <!--                <div class="error" th:errors="*{phoneNumber}">A phone number is required.</div>-->
-            <!--            </div>-->
+            <div class="form-floating">
+                <input class="form-control" id="email" type="email" placeholder="Enter your email..."
+                       th:field="*{email}"/>
+                <label for="email">Email</label>
+                <div class="error" th:errors="*{email}">Email is required.</div>
+            </div>
+            <div class="form-floating">
+                <input class="form-control" id="phoneNumber" type="number"
+                       placeholder="Enter your password..."
+                       th:field="*{phoneNumber}"/>
+                <label for="phoneNumber">Phone Number</label>
+                <div class="error" th:errors="*{phoneNumber}">A phone number is required.</div>
+            </div>
             <!--    <div class="form-floating">-->
             <!--        <input class="form-control" id="confirm-password" type="password"-->
             <!--               placeholder="Confirm your password..."-->
