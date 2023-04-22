@@ -1,17 +1,21 @@
 package com.company.web.smart_garage.controllers.mvc;
 
 import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
+import com.company.web.smart_garage.data_transfer_objects.UserDtoOut;
+import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
-import com.company.web.smart_garage.models.filters.UserFilterOptionsDto;
+import com.company.web.smart_garage.data_transfer_objects.filters.UserFilterOptionsDto;
 import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.mappers.UserMapper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,6 +28,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Collections;
+import java.util.List;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
 
@@ -34,6 +41,8 @@ public class UserMvcController {
 
     public static final int DEFAULT_PAGE_SIZE = 5;
     private final UserService userService;
+    private final UserMapper userMapper;
+    private final EmailSenderService emailSenderService;
 
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -63,6 +72,7 @@ public class UserMvcController {
         return "user";
     }
 
+
     @GetMapping
     public String getAll(@ModelAttribute("filterOptionsDto") UserFilterOptionsDto filterOptionsDto,
                          @PageableDefault(size = DEFAULT_PAGE_SIZE) Pageable pageable,
@@ -76,6 +86,32 @@ public class UserMvcController {
         Page<User> users;
         LocalDate dateFrom = null;
         LocalDate dateTo = null;
+        try {
+            if (filterOptionsDto.getPhoneNumber() != null) {
+                User user = userService.getByPhoneNumber(filterOptionsDto.getPhoneNumber());
+                List<User> userList = Collections.singletonList(user);
+                users = new PageImpl<>(userList, pageable, 1);
+                viewModel.addAttribute("users", users);
+                return "allUsers";
+            }
+            if (filterOptionsDto.getEmail() != null) {
+                User user = userService.getByEmail(filterOptionsDto.getEmail());
+                List<User> userList = Collections.singletonList(user);
+                users = new PageImpl<>(userList, pageable, 1);
+                viewModel.addAttribute("users", users);
+                return "allUsers";
+            }
+        } catch (InvalidParamException e) {
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
+                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
+            viewModel.addAttribute("users", users);
+            return "allUsers";
+        } catch (DateTimeParseException e) {
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
+                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
+            viewModel.addAttribute("users", users);
+            return "allUsers";
+        }
 
         try {
 
