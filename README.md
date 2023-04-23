@@ -1,92 +1,98 @@
 # Smart garage
 
+SmartGarage is a web application that enables owners of an auto repair shop to manage their daily activities
+efficiently. It offers a comprehensive list of cars and available services with their corresponding prices.
+The software includes a list of all customers and their contact information, and shop employees can link specific
+cars to each customer. The system also keeps a history of all services performed on the customers' cars, and
+SmartGarage can generate a detailed report for each visit to the shop. A profile is generated for new customers, and the
+login information is sent to the customer's email. All customers can access their personal information via the web UI.
 
+## Functional Requirements
 
-## Getting started
+### Entities
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+![img.png](databaseScripts/database-diagram.png)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+    Each user must have a username, password, email, and phone number. There is also optional first and last name.
+    The username must be unique and have between 2 and 20 symbols.
+    Password must be at least 8 symbols and should contain a capital letter,digit, and special symbol (+, -, *, &, ^, …)
+    Email must be a valid email and unique in the system.
+    Phone number must be 10 digits and unique in the system.
+    First and last name should be between 2 and 32 symbols.
 
-## Add your files
+    Each vehicle must have a license plate, VIN, year of creation, model, and brand.
+    The license plate must be a valid Bulgarian license plate.
+    The vehicle identification number must be a 17-character long string.
+    The year of creation must be a positive whole number larger than 1886.
+    The model and brand must be between 2 and 32 symbols.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+    Each visit must have a vehicle,user and date. There is also an optional list of services.
+    The date must be a valid date before the current date.
+    Services in each visit are unique. Can not have multiple of the same service.
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/smartgarageteam3/smart-garage.git
-git branch -M main
-git push -uf origin main
-```
+    Each service must have a name and price.
+    The price must be a non-negative number.
+    The name must be between 2 and 32 symbols and unique in the system.
 
-## Integrate with your tools
+## Security Requirements
 
-- [ ] [Set up project integrations](https://gitlab.com/smartgarageteam3/smart-garage/-/settings/integrations)
+The application is using Spring Security to handle authentication and authorization. JWT (JSON Web Token)
+authentication is being used for secure communication between the client and server.
 
-## Collaborate with your team
+JWT tokens are issued to users upon successful authentication and are used for subsequent requests to the server.
+The tokens contain user information and are verified on the server side to ensure that the request is coming from
+a valid user.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Passwords are encrypted using bcrypt, which is a secure one-way hashing algorithm that is designed to be slow
+and computationally expensive, making it difficult for attackers to crack passwords.
 
-## Test and Deploy
+Access to sensitive resources, such as customer information and service history, is restricted to authenticated
+users only. The application also uses role-based access control, with different levels of access granted to employees
+and customers.
 
-Use the built-in continuous integration in GitLab.
+Overall, the security of the application has been designed with best practices in mind to ensure that customer
+data is protected and secure.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Public Part
 
-***
+The public part of the application is accessible without authentication and includes basic information about
+the application and a contact form to directly contact the business via email. Additionally, it provides a login
+form where users can authenticate themselves by providing their username/email and password. The login form also
+includes a "forgotten password" option for users who need to reset their password.
 
-# Editing this README
+## Private part
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### Customer Part
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+The private part is accessible only if the user is authenticated. Customers can see lists of all their vehicles,
+visits and also a list of all available services that the auto repair shop offers. There are different ways to filter
+and
+sort all the before-mentioned lists. SmartGarage can generate a report that includes customer information,
+vehicle information, services performed, and total price for a given visit. Customers can choose the currency of the
+report.
 
-## Name
-Choose a self-explaining name for your project.
+### Employee Part
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Employees can browse or update all vehicles linked to customers, filter vehicles by owner, and create a new vehicle
+for customers. Employees can browse, create, delete, or update a service and filter services by name or price.
+They can also filter customers by name, email, phone number, vehicle (model or make), or visits in a range.
+Employees can register a new visit to the shop by a customer even if he does not have a profile yet.
+The customer receives an email with automatically generated login information.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Admin Part
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+The administrative part is accessible to admins only. Additionally to all the functionality given to employees,
+admins can delete users,vehicles and visits from the system. They can update the profiles of all users in the system.
+When an entity is deleted it is actually being hidden from access via the system, but the information is stored
+in the database and is not actually destroyed.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## REST API
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+SmartGarage provides a REST API to allow for integration with other applications. For more information you can
+see the swagger documentation of the API structure and endpoints.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+docs-link
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Appendix
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+SmartGarage uses a third-party service to convert the price into a different currency.
