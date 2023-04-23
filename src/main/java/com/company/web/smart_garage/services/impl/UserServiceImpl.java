@@ -245,6 +245,12 @@ public class UserServiceImpl implements UserService {
         User persistentUser = getById(user.getId());
         //changed properties
         persistentUser.setEmail(user.getEmail());
+        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent() && !Objects.equals(user.getId(), persistentUser.getId())) {
+            throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
+        }
+        if (user.getFirstName().length() < 4 || user.getLastName().length() < 4) {
+            throw new InvalidParamException("First name and last name should be at least 4 characters long.");
+        }
         persistentUser.setPhoneNumber(user.getPhoneNumber());
         persistentUser.setFirstName(user.getFirstName());
         persistentUser.setLastName(user.getLastName());
@@ -303,6 +309,7 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+
 
     private void validateId(Long id) {
         if (id != null && id <= 0) {

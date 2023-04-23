@@ -1,10 +1,19 @@
 package com.company.web.smart_garage.utils;
 
+import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
+import com.company.web.smart_garage.services.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AuthorizationUtils {
+    private final UserService userService;
 
+    public AuthorizationUtils(UserService userService) {
+        this.userService = userService;
+    }
 
     public static boolean userIsAdmin(Authentication authentication) {
         return authentication.getAuthorities().stream()
@@ -28,5 +37,15 @@ public class AuthorizationUtils {
 
     public static boolean userIsEmployee(User user) {
         return user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_EMPLOYEE"));
+    }
+
+    public User tryGetCurrentUser(Authentication authentication) {
+        String currentUsername = authentication.getName();
+
+        if (currentUsername == null) {
+            throw new UnauthorizedOperationException(Constants.INVALID_LOGIN_ERROR);
+        }
+
+        return userService.getByUsername(currentUsername);
     }
 }

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+    <meta charset="utf-8">
+    <title>ROYAL CARS - Car Rental HTML Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="../static/img/favicon.ico" th:href="@{/img/favicon.ico}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="../static/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"
+          th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}">
+    <link href="../static/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+          th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}" rel="stylesheet"/>
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar.html :: navbar}">Navigation bar fragment</div>
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header">
+    <!--    <h1 class="display-3 text-uppercase text-white mb-2" th:if="${currentUser.getId() == user.getId()} >My Profile</h1>-->
+    <!--    <h1 class="display-3 text-uppercase text-white mb-2" th:text="|*{user.username}'s Profile|">My Profile</h1>-->
+    <div class="d-inline-flex text-white">
+        <h6 class="text-uppercase m-0"><a class="text-white" href="">Home</a></h6>
+        <h6 class="text-body m-0 px-3">/</h6>
+        <h6 class="text-uppercase text-body m-0">My Profile</h6>
+    </div>
+</div>
+<!-- Page Header Start -->
+
+<div class="container pb-5">
+    <h2 class="mb-4">Details</h2>
+    <form class="formBox" action="#" th:action="@{/users/__${user.getId()}__/update}" th:object="${userDto}"
+          method="post">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" th:value="${user.username}" disabled style="width: 95%">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">First name</label>
+            <input type="text" class="form-control" th:field="*{firstName}" style="width: 95%">
+            <label class="error" th:errors="*{firstName}">Error placeholder</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Last name</label>
+            <input type="text" class="form-control" th:field="*{lastName}" style="width: 95%">
+            <label class="error" th:errors="*{lastName}">Error placeholder</label>
+        </div>
+        <div class="mb-3" th:if="${currUser.getId() == user.getId()}">
+            <label class="form-label">Phone Number</label>
+            <input type="text" class="form-control" th:value="${user.phoneNumber}" disabled style="width: 95%">
+        </div>
+
+
+        <div class="mb-3" sec:authorize="hasRole('ROLE_ADMIN')">
+            <label class="form-label">Phone number</label>
+            <input type="text" class="form-control" th:field="*{phoneNumber}" style="width: 95%">
+            <label class="error" th:text="${phoneError}">Error placeholder</label>
+            <!--            <h5 class="text-center error" th:text="${paramError}">Error</h5>-->
+        </div>
+
+        <button type="submit" class="btn btn-outline-success">Submit new details</button>
+    </form>
+</div>
+
+<!-- Banner Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row mx-0">
+            <div class="col-lg-6 px-0">
+                <div class="px-5 bg-secondary d-flex align-items-center justify-content-between" style="height: 350px;">
+                    <img class="img-fluid flex-shrink-0 ml-n5 w-50 mr-4" src="img/banner-left.png" alt="">
+                    <div class="text-right">
+                        <h3 class="text-uppercase text-light mb-3">New Car?</h3>
+                        <p class="mb-4">Click here if the customer has a new car</p>
+                        <a class="btn btn-primary py-2 px-4" href="">Start Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 px-0">
+                <div class="px-5 bg-dark d-flex align-items-center justify-content-between" style="height: 350px;">
+                    <div class="text-left">
+                        <h3 class="text-uppercase text-light mb-3">Looking for an existing car?</h3>
+                        <p class="mb-4">Browse customer's cars</p>
+                        <a class="btn btn-primary py-2 px-4" href="">Start Now</a>
+                    </div>
+                    <img class="img-fluid flex-shrink-0 mr-n5 w-50 ml-4" src="img/banner-right.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Banner End -->
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer.html :: footer}">Footer fragment</div>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="../static/lib/easing/easing.min.js" th:src="@{/lib/easing/easing.min.js}"></script>
+<script src="../static/lib/waypoints/waypoints.min.js" th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+<script src="../static/lib/owlcarousel/owl.carousel.min.js" th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/moment.min.js" th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/moment-timezone.min.js"
+        th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
+<script src="../static/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"
+        th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+<!-- Template Javascript -->
+<script src="../static/js/main.js" th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

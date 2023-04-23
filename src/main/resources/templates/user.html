@@ -38,39 +38,83 @@
 
 <!-- Page Header Start -->
 <div class="container-fluid page-header">
-    <h1 class="display-3 text-uppercase text-white mb-2">My Profile</h1>
+    <h1 class="display-3 text-uppercase text-white mb-2">
+        <a th:if="${currentUser.getId() == user.getId()}" th:text="'My Profile'">My Profile</a>
+        <a th:unless="${currentUser.getId() == user.getId()}" sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')"
+           th:text="|*{user.username}'s Profile|">User's Profile</a>
+    </h1>
     <div class="d-inline-flex text-white">
         <h6 class="text-uppercase m-0"><a class="text-white" href="">Home</a></h6>
         <h6 class="text-body m-0 px-3">/</h6>
-        <h6 class="text-uppercase text-body m-0">My Profile</h6>
+        <h6 class="text-uppercase text-body m-0" th:text="|*{user.username}'s Profile|">My Profile</h6>
     </div>
 </div>
-<!-- Page Header Start -->
 
-<div class="container-fluid position-relative px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 justify-content-center">
-        <div class="col-md-10 col-lg-8 col-xl-7">
-            <div class="post-heading">
-                <div class="my-4">
-                    <span th:text="#{user.email}">User ID </span>
-                    <span href="#!" th:text="${user.getEmail()}">1</span>
-                </div>
-                <div class="my-4">
-                    <span th:text="#{user.phoneNumber}">Username: </span>
-                    <span th:text="${user.getPhoneNumber()}">Test Username</span>
-                </div>
-            </div>
-            <!--<div th:each="role : ${user.getRoles()}">-->
-            <div class="w3-container w3-cell" id="buttonEditProfile" sec:authorize="!isAnonymous()">
-                <form>
-                    <a href="userUpdate.html" th:href="@{~/users/{id}/update(id=${user.getId()})}"
-                       th:id="updateUserButton" class="btn btn-primary text-uppercase" type="submit">Edit
-                        profile</a>
-                </form>
+<!-- Page Header Start -->
+<div class="container pb-5">
+    <h2 class="mb-4">Details</h2>
+    <form class="formBox" action="#" th:action="@{/users/__${user.getId()}__/update}" th:object="${userDto}"
+          method="post">
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label">Email: </label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" th:value="${user.email}" disabled>
             </div>
         </div>
-    </div>
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label">Username: </label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" th:value="${user.username}" disabled>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label">First Name: </label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" th:value="${user.firstName}" disabled>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label">Last Name: </label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" th:value="${user.lastName}" disabled>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label">Phone Number: </label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" th:value="${user.phoneNumber}" disabled>
+            </div>
+        </div>
+
+        <!--        <div class="w3-container w3-cell" th:if="${currentUser.getId() == user.getId()}" id="changePassword" >-->
+        <!--            <form>-->
+        <!--                <a href="userUpdate.html" th:href="@{~/users/{id}/update(id=${user.getId()})}" th:id="changePassword" -->
+        <!--                   class="btn btn-primary text-uppercase edit-profile-btn" type="submit">Edit profile</a>-->
+        <!--            </form>-->
+        <!--        </div>-->
+
+        <div class="w3-container w3-cell"
+             th:if="${currentUser.getId() == user?.getId() or #authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_EMPLOYEE'')')}"
+             id="changePassword" sec:authorize="!isAnonymous()">
+            <form>
+                <a href="userUpdate.html" th:href="@{~/users/{id}/update(id=${user?.getId()})}" th:id="updateUserButton"
+                   class="btn btn-primary text-uppercase edit-profile-btn" type="submit">Edit profile</a>
+            </form>
+        </div>
+
+        <div class="w3-container w3-cell" id="deleteProfile">
+            <a sec:authorize="hasRole('ROLE_ADMIN')">
+                <form th:action="@{~/users/{id}/delete(id=${user.getId()})}" method="post">
+                    <button class="btn btn-primary btn-block delete-account-btn" type="submit" th:id="deleteUserButton"
+                            style="height: 50px;">Delete Account
+                    </button>
+                </form>
+            </a>
+        </div>
+    </form>
 </div>
+
 <!-- About Start -->
 <div class="container-fluid py-3 ">
     <div class="container pt-5 pb-3">
@@ -88,7 +132,8 @@
                 </a>
             </div>
             <div class="col-lg-4 mb-2 ">
-                <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')" th:href="@{/vehicles}"
+                <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')"
+                   th:href="@{/vehicles?owner=__${user.getUsername()}__&model=&brand=&prodYearFrom=&prodYearTo=&sort=}"
                    href="">
                     <div class="d-flex align-items-center bg-light p-4 mb-4 btn btn-primary" style="height: 150px;">
                         <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary ml-n4 mr-4"
@@ -100,7 +145,8 @@
                 </a>
             </div>
             <div class="col-lg-4 mb-2">
-                <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')" th:href="@{/visits}"
+                <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')"
+                   th:href="@{/visits?visitor=__${user.getUsername()}__&vehicle=&dateFrom=&dateTo=&sort=}"
                    href="">
                     <div class="d-flex align-items-center bg-light p-4 mb-4 btn btn-primary" style="height: 150px;">
                         <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary ml-n4 mr-4"
