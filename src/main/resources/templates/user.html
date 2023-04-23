@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
 <head>
     <meta charset="utf-8">
@@ -35,6 +36,117 @@
 <!-- Navbar -->
 <div th:replace="~{fragments/navbar.html :: navbar}">Navigation bar fragment</div>
 
+<!-- Page Header Start -->
+<div class="container-fluid page-header">
+    <h1 class="display-3 text-uppercase text-white mb-2">My Profile</h1>
+    <div class="d-inline-flex text-white">
+        <h6 class="text-uppercase m-0"><a class="text-white" href="">Home</a></h6>
+        <h6 class="text-body m-0 px-3">/</h6>
+        <h6 class="text-uppercase text-body m-0">My Profile</h6>
+    </div>
+</div>
+<!-- Page Header Start -->
+
+<div class="container-fluid position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="post-heading">
+                <div class="my-4">
+                    <span th:text="#{user.email}">User ID </span>
+                    <span href="#!" th:text="${user.getEmail()}">1</span>
+                </div>
+                <div class="my-4">
+                    <span th:text="#{user.phoneNumber}">Username: </span>
+                    <span th:text="${user.getPhoneNumber()}">Test Username</span>
+                </div>
+            </div>
+            <!--<div th:each="role : ${user.getRoles()}">-->
+            <div class="w3-container w3-cell" id="buttonEditProfile" sec:authorize="!isAnonymous()">
+                <form>
+                    <a href="userUpdate.html" th:href="@{~/users/{id}/update(id=${user.getId()})}"
+                       th:id="updateUserButton" class="btn btn-primary text-uppercase" type="submit">Edit
+                        profile</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About Start -->
+<div class="container-fluid py-3 ">
+    <div class="container pt-5 pb-3">
+        <div class="row mt-3">
+            <div class="col-lg-4 mb-2">
+                <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')" th:href="@{/repairs}"
+                   href="">
+                    <div class="d-flex align-items-center bg-light p-4 mb-4 btn btn-primary" style="height: 150px;">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary ml-n4 mr-4"
+                             style="width: 100px; height: 100px;">
+                            <i class="fa fa-2x fa-wrench text-secondary"></i>
+                        </div>
+                        <h4 class="text-uppercase m-0">Services</h4>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-4 mb-2 ">
+                <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')" th:href="@{/vehicles}"
+                   href="">
+                    <div class="d-flex align-items-center bg-light p-4 mb-4 btn btn-primary" style="height: 150px;">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary ml-n4 mr-4"
+                             style="width: 100px; height: 100px;">
+                            <i class="fa fa-2x fa-car text-secondary" style="font-size: 2em;"></i>
+                        </div>
+                        <h4 class="text-uppercase m-0" th:text="|*{user.getVehicles().size()} Cars|">Cars</h4>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-4 mb-2">
+                <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')" th:href="@{/visits}"
+                   href="">
+                    <div class="d-flex align-items-center bg-light p-4 mb-4 btn btn-primary" style="height: 150px;">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary ml-n4 mr-4"
+                             style="width: 100px; height: 100px;">
+                            <i class="fa fa-2x fa-warehouse text-secondary"></i>
+                        </div>
+                        <h4 class="text-uppercase m-0 nav-item nav-link" th:text="|*{user.getVisits().size()} Visits|">
+                            Visits</h4>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- About End -->
+
+
+<!-- Banner Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row mx-0">
+            <div class="col-lg-6 px-0">
+                <div class="px-5 bg-secondary d-flex align-items-center justify-content-between" style="height: 350px;">
+                    <img class="img-fluid flex-shrink-0 ml-n5 w-50 mr-4" src="img/banner-left.png" alt="">
+                    <div class="text-right">
+                        <h3 class="text-uppercase text-light mb-3">New Car?</h3>
+                        <p class="mb-4">Click here if the customer has a new car</p>
+                        <a class="btn btn-primary py-2 px-4" href="">Start Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 px-0">
+                <div class="px-5 bg-dark d-flex align-items-center justify-content-between" style="height: 350px;">
+                    <div class="text-left">
+                        <h3 class="text-uppercase text-light mb-3">Looking for an existing car?</h3>
+                        <p class="mb-4">Browse customer's cars</p>
+                        <a class="btn btn-primary py-2 px-4" href="">Start Now</a>
+                    </div>
+                    <img class="img-fluid flex-shrink-0 mr-n5 w-50 ml-4" src="img/banner-right.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Banner End -->
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer.html :: footer}">Footer fragment</div>
