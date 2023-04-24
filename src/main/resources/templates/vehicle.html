@@ -92,7 +92,7 @@
                 <button class="btn btn-primary btn-block" style="height: 50px;">View Visits</button>
             </a>
         </div>
-        <div class="row justify-content-center">
+        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="row justify-content-center">
             <a class="col-lg-3" th:href="@{/vehicles/__${vehicle.getId()}__/update}">
                 <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Update</button>
             </a>
