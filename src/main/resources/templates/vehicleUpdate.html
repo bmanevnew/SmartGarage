@@ -54,51 +54,65 @@
 <div class="container-fluid py-3">
     <div class="container py-3">
         <h2 class="mb-5 text-center">Details</h2>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">License
-                plate:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${vehicle.getLicensePlate()}"></span>
+        <form href="" th:action="@{/vehicles/__${vehicle.getId()}__/update}" th:object="${vehicleDto}" method="post">
+            <div class="row mb-4 justify-content-center">
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">License
+                    plate:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{licensePlate}"
+                           th:value="${vehicleDto.getLicensePlate()}">
+                    <div class="error my-2" th:errors="*{licensePlate}"></div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Vin:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${vehicle.getVin()}"></span>
+            <div class="row mb-4 justify-content-center">
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Vin:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{vin}" th:value="${vehicleDto.getVin()}">
+                    <div class="error my-2" th:errors="*{vin}"></div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">
-                Production Year:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${vehicle.getProductionYear()}"></span>
+            <div class="row mb-4 justify-content-center">
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">
+                    Production Year:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{productionYear}"
+                           th:value="${vehicleDto.getProductionYear()}">
+                    <div class="error my-2" th:errors="*{productionYear}"></div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Brand:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${vehicle.getBrand()}"></span>
+            <div class="row mb-4 justify-content-center">
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Brand:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{brand}" th:value="${vehicleDto.getBrand()}">
+                    <div class="error my-2" th:errors="*{brand}"></div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-5 justify-content-center">
-            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Model:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${vehicle.getModel()}"></span>
+            <div class="row mb-5 justify-content-center">
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Model:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{model}" th:value="${vehicleDto.getModel()}">
+                    <div class="error my-2" th:errors="*{model}"></div>
+                </div>
             </div>
+
+            <div class="row mb-3 justify-content-center">
+                <div class="col-lg-6">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            style="height: 50px;">Confirm
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-3 justify-content-center">
+            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-6"
+               th:href="@{/vehicles/__${vehicle.getId()}__/delete}">
+                <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
+            </a>
         </div>
         <div class="row justify-content-center">
             <a class="col-lg-6 mb-3"
                th:href="@{/visits(visitor='',vehicle=__${vehicle.getId()}__,dateFrom='',dateTo='',sort='')}">
                 <button class="btn btn-primary btn-block" style="height: 50px;">View Visits</button>
-            </a>
-        </div>
-        <div class="row justify-content-center">
-            <a class="col-lg-3" th:href="@{/vehicles/__${vehicle.getId()}__/update}">
-                <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Update</button>
-            </a>
-            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-3"
-               th:href="@{/vehicles/__${vehicle.getId()}__/delete}">
-                <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
             </a>
         </div>
     </div>

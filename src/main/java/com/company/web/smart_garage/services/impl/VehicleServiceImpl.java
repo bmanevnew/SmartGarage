@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import static com.company.web.smart_garage.utils.Constants.*;
 
@@ -126,13 +125,10 @@ public class VehicleServiceImpl implements VehicleService {
 
     private void validateLicensePlate(String licensePlate) {
         if (licensePlate != null) {
-            if (!licensePlate.matches("^[ABEKMHOPCTYX]{1,2} \\d{4} [ABEKMHOPCTYX]{2}$")) {
+            if (!licensePlate.matches(
+                    "^(E|A|B|BT|BH|BP|EB|TX|K|KH|OB|M|PA|PK|EH|PB|PP|P|CC|CH|CM|CO|C|CA|CB|CT|T|X|H|Y)" +
+                            " \\d{4} [ABEKMHOPCTYX]{2}$")) {
                 throw new InvalidParamException(VEHICLE_PLATE_INVALID_FORMAT);
-            }
-            Set<String> validAreaCodes = Set.of(VEHICLE_VALID_AREA_CODES.split(","));
-            String areaCode = licensePlate.split(" ")[0];
-            if (!validAreaCodes.contains(areaCode)) {
-                throw new InvalidParamException(VEHICLE_PLATE_INVALID_AREA_CODE);
             }
         }
     }

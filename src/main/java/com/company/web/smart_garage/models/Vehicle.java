@@ -1,6 +1,5 @@
 package com.company.web.smart_garage.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,11 +35,11 @@ public class Vehicle {
 
     @Column(name = "brand")
     private String brand;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
-    @JsonIgnore
-    @OneToMany(mappedBy = "vehicle")
+
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.REMOVE)
     private Set<Visit> visits;
 }
