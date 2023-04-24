@@ -7,34 +7,32 @@ cars to each customer. The system also keeps a history of all services performed
 SmartGarage can generate a detailed report for each visit to the shop. A profile is generated for new customers, and the
 login information is sent to the customer's email. All customers can access their personal information via the web UI.
 
-## Functional Requirements
-
-### Entities
+## Entities
 
 ![img.png](databaseScripts/database-diagram.png)
 
-    Each user must have a username, password, email, and phone number. There is also optional first and last name.
-    The username must be unique and have between 2 and 20 symbols.
-    Password must be at least 8 symbols and should contain a capital letter,digit, and special symbol (+, -, *, &, ^, …)
-    Email must be a valid email and unique in the system.
-    Phone number must be 10 digits and unique in the system.
-    First and last name should be between 2 and 32 symbols.
+Each user must have a username, password, email, and phone number. There is also optional first and last name.
+The username must be unique and have between 2 and 20 symbols.
+Password must be at least 8 symbols and should contain a capital letter,digit, and special symbol (+, -, *, &, ^, …)
+Email must be a valid email and unique in the system.
+Phone number must be 10 digits and unique in the system.
+First and last name should be between 2 and 32 symbols.
 
-    Each vehicle must have a license plate, VIN, year of creation, model, and brand.
-    The license plate must be a valid Bulgarian license plate.
-    The vehicle identification number must be a 17-character long string.
-    The year of creation must be a positive whole number larger than 1886.
-    The model and brand must be between 2 and 32 symbols.
+Each vehicle must have a license plate, VIN, year of creation, model, and brand.
+The license plate must be a valid Bulgarian license plate.
+The vehicle identification number must be a 17-character long string.
+The year of creation must be a positive whole number larger than 1886.
+The model and brand must be between 2 and 32 symbols.
 
-    Each visit must have a vehicle,user and date. There is also an optional list of services.
-    The date must be a valid date before the current date.
-    Services in each visit are unique. Can not have multiple of the same service.
+Each visit must have a vehicle,user and date. There is also an optional list of services.
+The date must be a valid date before the current date.
+Services in each visit are unique. Can not have multiple of the same service.
 
-    Each service must have a name and price.
-    The price must be a non-negative number.
-    The name must be between 2 and 32 symbols and unique in the system.
+Each service must have a name and price.
+The price must be a non-negative number.
+The name must be between 2 and 32 symbols and unique in the system.
 
-## Security Requirements
+## Security
 
 The application is using Spring Security to handle authentication and authorization. JWT (JSON Web Token)
 authentication is being used for secure communication between the client and server.
