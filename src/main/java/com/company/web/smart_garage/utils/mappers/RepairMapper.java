@@ -1,6 +1,7 @@
 package com.company.web.smart_garage.utils.mappers;
 
 import com.company.web.smart_garage.data_transfer_objects.RepairDto;
+import com.company.web.smart_garage.data_transfer_objects.RepairDtoStrings;
 import com.company.web.smart_garage.models.Repair;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,6 +20,13 @@ public class RepairMapper {
     public Repair dtoToRepair(RepairDto dto, long id) {
         Repair repair = dtoToRepair(dto);
         repair.setId(id);
+        return repair;
+    }
+
+    public Repair dtoToRepair(RepairDtoStrings dto) {
+        Repair repair = new Repair();
+        repair.setName(dto.getName());
+        repair.setPrice(Double.parseDouble(dto.getPrice()));
         return repair;
     }
 

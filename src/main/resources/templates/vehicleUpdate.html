@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+>
 
 <head>
     <meta charset="utf-8">
@@ -103,12 +103,12 @@
                 </div>
             </div>
         </form>
-        <div class="row mb-3 justify-content-center">
-            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-6"
-               th:href="@{/vehicles/__${vehicle.getId()}__/delete}">
-                <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
-            </a>
-        </div>
+        <!--        <div class="row mb-3 justify-content-center">-->
+        <!--            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-6"-->
+        <!--               th:href="@{/vehicles/__${vehicle.getId()}__/delete}">-->
+        <!--                <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>-->
+        <!--            </a>-->
+        <!--        </div>-->
         <div class="row justify-content-center">
             <a class="col-lg-6 mb-3"
                th:href="@{/visits(visitor='',vehicle=__${vehicle.getId()}__,dateFrom='',dateTo='',sort='')}">

@@ -84,7 +84,14 @@ public class VehiclesMvcController {
         }
         Vehicle vehicle;
         try {
-            vehicle = vehicleService.create(vehicleMapper.dtoToVehicle(dto), owner);
+            Vehicle vehicleFromDto;
+            try {
+                vehicleFromDto = vehicleMapper.dtoToVehicle(dto);
+            } catch (NumberFormatException e) {
+                bindingResult.rejectValue("productionYear", "prod_year_invalid", "Year invalid.");
+                return "vehicleCreate";
+            }
+            vehicle = vehicleService.create(vehicleFromDto, owner);
         } catch (InvalidParamException e) {
             bindingResult.rejectValue("productionYear", "prod_year_invalid", e.getMessage());
             return "vehicleCreate";

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+>
 
 <head>
     <meta charset="utf-8">
@@ -38,11 +38,11 @@
 
 
 <div class="container-fluid page-header">
-    <h1 class="display-3 text-uppercase text-white mb-3">Current Service</h1>
+    <h1 class="display-3 text-uppercase text-white mb-3">Create new service</h1>
     <div class="d-inline-flex text-white">
         <h6 class="text-uppercase m-0"><a class="text-white" href="" th:href="@{/}">Home</a></h6>
         <h6 class="text-body m-0 px-3">/</h6>
-        <h6 class="text-uppercase text-body m-0">Current Service</h6>
+        <h6 class="text-uppercase text-body m-0">Create new service</h6>
     </div>
 </div>
 
@@ -52,27 +52,31 @@
 <div class="container-fluid py-3">
     <div class="container py-3">
         <h2 class="mb-5 text-center">Details</h2>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Name:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${repair.getName()}"></span>
+        <form href="" th:action="@{/repairs/create}" th:object="${repairDtoCreate}" method="post">
+            <div class="row mb-4 justify-content-center">
+                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Name:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{name}"
+                           th:value="${repairDtoCreate.getName()}">
+                    <div class="error my-2" th:errors="*{name}"></div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Price:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${repair.getPrice()}"></span>
+            <div class="row mb-4 justify-content-center">
+                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Price:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{price}"
+                           th:value="${repairDtoCreate.getPrice()}">
+                    <div class="error my-2" th:errors="*{price}"></div>
+                </div>
             </div>
-        </div>
-        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="row justify-content-center">
-            <a class="col-lg-3" th:href="@{/repairs/__${repair.getId()}__/update}">
-                <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Update</button>
-            </a>
-            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-3"
-               th:href="@{/repairs/__${repair.getId()}__/delete}">
-                <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
-            </a>
-        </div>
+            <div class="row mb-3 justify-content-center">
+                <div class="col-lg-6">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            style="height: 50px;">Create repair
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 <!-- Details end -->
