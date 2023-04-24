@@ -38,34 +38,39 @@
         <div class="row pt-5">
             <div class="col-md-6 mb-4">
                 <h4 class="text-uppercase text-light mb-4">Get In Touch</h4>
-                <span class="mr-4" th:text="#{address}"><i class="fa fa-map-marker-alt text-white mr-3"></i>123 Street, New
-                    York, USA</span>
-                <span class="mr-4" th:text="#{contact.number}"><i class="fa fa-phone-alt text-white mr-3"></i>+012 345
-                    67890</span>
-                <span th:text="#{contact.email}"><i class="fa fa-envelope text-white mr-3"></i>info@example.com</span>
+                <i class="fa fa-map-marker-alt text-white mr-3"></i>
+                <span class="mr-4" th:text="#{address}">123 Street, NewYork, USA</span>
+                <i class="fa fa-phone-alt text-white mr-3"></i>
+                <span class="mr-4" th:text="#{contact.number}">+012 34567890</span>
+                <i class="fa fa-envelope text-white mr-3"></i>
+                <span th:text="#{contact.email}">info@example.com</span>
             </div>
             <div class="col-md-6 mb-4">
                 <h4 class="text-uppercase text-light mb-4">Useful Links</h4>
-                <a class="text-body mr-3" href="" th:href="#{link.gitlab.repository}">
+                <a class="text-body mr-4" href="" th:href="#{link.gitlab.repository}">
                     <i class="fab fa-2x fa-gitlab"></i>
                 </a>
-                <a class="text-body mr-3" href="" th:href="#{georgi.linked.in}">
-                    <i class="fab fa-2x fa-linkedin"></i>
+                <a class="text-body mr-4" href="" th:href="#{georgi.linked.in}">
+                    <i class="fab fa-2x fa-linkedin mr-2"></i>
+                    <span class="text-capitalize font-weight-bold">Georgi's linked-in</span>
                 </a>
                 <a class="text-body" href="" th:href="#{boris.linked.in}">
-                    <i class="fab fa-2x fa-linkedin"></i>
+                    <i class="fab fa-2x fa-linkedin mr-2"></i>
+                    <span class="text-capitalize font-weight-bold">Boris' linked-in</span>
                 </a>
             </div>
         </div>
     </div>
+    <div class="container-fluid bg-dark py-4 px-sm-3 px-md-5">
+        <p class="mb-2 text-center text-body">&copy; <a href="" th:href="@{/}" th:text="#{webpage.name}">Smart
+            Garage</a>
+            . All Rights Not Reserved.</p>
+        <p class="m-0 text-center text-body">Template by <a href="https://htmlcodex.com">HTML Codex</a></p>
+    </div>
+    <!-- Footer End -->
+
 </div>
-<div class="container-fluid bg-dark py-4 px-sm-3 px-md-5">
-    <p class="mb-2 text-center text-body">&copy; <a href="" th:href="@{/}" th:text="#{webpage.name}">Smart Garage</a>
-        . All Rights Not Reserved.</p>
-    <p class="m-0 text-center text-body">Template by <a href="https://htmlcodex.com">HTML Codex</a></p>
-</div>
-<!-- Footer End -->
-</div>
+
 
 <!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
