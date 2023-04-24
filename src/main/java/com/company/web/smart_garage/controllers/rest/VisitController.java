@@ -8,6 +8,8 @@ import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
 import com.company.web.smart_garage.utils.mappers.VisitMapper;
+import com.posadskiy.currencyconverter.CurrencyConverter;
+import com.posadskiy.currencyconverter.enums.Currency;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -35,6 +37,7 @@ public class VisitController {
     private final VehicleService vehicleService;
     private final VisitMapper visitMapper;
     private final EmailSenderService emailSenderService;
+    private final CurrencyConverter converter;
 
 
     @GetMapping("/{id}")
@@ -54,7 +57,11 @@ public class VisitController {
                 !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
-        visitService.generatePdf(response, visit);
+        Double rate;
+        // if (bookingExportDTO.getCurrency() == Currency.BGN) rate = 1.0;
+        //  else rate = currencyConverter.rate(Currency.BGN, bookingExportDTO.getCurrency());
+        rate = converter.rate(Currency.BGN, Currency.USD);
+        visitService.generatePdf(response, visit, rate);
 
 
         return ResponseEntity.ok(visitMapper.visitToDto(visit));

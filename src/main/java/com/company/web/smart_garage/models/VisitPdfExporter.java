@@ -1,5 +1,6 @@
 package com.company.web.smart_garage.models;
 
+import com.company.web.smart_garage.data_transfer_objects.CurrencyExportDTO;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.*;
@@ -15,13 +16,20 @@ import java.io.IOException;
 import java.util.Set;
 
 public class VisitPdfExporter {
-
+    //  private final CurrencyExportDTO currencyExportDTO;
     private final Visit visit;
-    //TODO implement a 3rd party currency converter
+    //TODO
+    private final Double rate;
 
-
-    public VisitPdfExporter(Visit visit) {
+    public VisitPdfExporter(CurrencyExportDTO currencyExportDTO, Visit visit, Double rate) {
+        //  this.currencyExportDTO = currencyExportDTO;
         this.visit = visit;
+        this.rate = rate;
+    }
+
+    public VisitPdfExporter(Visit visit, Double rate) {
+        this.visit = visit;
+        this.rate = rate;
     }
 
     private void writeTableHeader(PdfPTable table) {
@@ -89,7 +97,7 @@ public class VisitPdfExporter {
         for (Repair repair : repairs) {
             borderlessCell.setPhrase(new Phrase(repair.getName()));
             table.addCell(borderlessCell);
-            borderlessCell.setPhrase(new Phrase(String.valueOf(repair.getPrice())));
+            borderlessCell.setPhrase(new Phrase(String.valueOf(String.format("%.2f", repair.getPrice() * rate))));
             table.addCell(borderlessCell);
         }
         borderlessCell.setPhrase(new Phrase());
@@ -98,7 +106,8 @@ public class VisitPdfExporter {
         table.addCell(borderlessCell);
 
         borderlessCell.setPhrase(new Phrase("Total: " +
-                String.format("%.2f", visit.getTotalCost()),
+                //  currencyExportDTO.getCurrency().toString() + " " +
+                String.format("%.2f", visit.getTotalCost() * rate),
                 fontBold));
         table.addCell(borderlessCell);
     }
@@ -106,7 +115,7 @@ public class VisitPdfExporter {
     public ByteArrayOutputStream export(HttpServletResponse response) throws DocumentException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, baos);
+        PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();
 

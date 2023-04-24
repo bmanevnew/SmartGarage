@@ -79,19 +79,19 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public void generatePdf(HttpServletResponse response, Visit visit) throws IOException, MessagingException {
+    public void generatePdf(HttpServletResponse response, Visit visit, Double rate) throws IOException, MessagingException {
         response.setContentType(CONTENT_TYPE);
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         String currentDateTime = dateFormat.format(new Date());
         String headerValue = String.format(HEADER_VALUE, currentDateTime);
         response.setHeader(HEADER_KEY, headerValue);
-        VisitPdfExporter exporter = new VisitPdfExporter(visit);
+        VisitPdfExporter exporter = new VisitPdfExporter(visit, rate);
         ByteArrayOutputStream baos = exporter.export(response);
 
         ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
 
         String fileName = String.format(FILE_NAME, visit.getId());
-//        String toEmail = "manev_boris@yahoo.com";
+        // String toEmail = "manev_boris@yahoo.com";
         String toEmail = visit.getVisitor().getEmail();
         String subject = String.format(REPORT_EMAIL_SUBJECT_FORMAT, visit.getId());
         String body = String.format(REPORT_EMAIL_BODY_FORMAT, visit.getId());

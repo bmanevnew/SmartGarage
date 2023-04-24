@@ -21,5 +21,5 @@ public interface VisitService {
 
     Visit delete(long id);
 
-    void generatePdf(HttpServletResponse response, Visit visit) throws IOException, MessagingException;
+    void generatePdf(HttpServletResponse response, Visit visit, Double rate) throws IOException, MessagingException;
 }

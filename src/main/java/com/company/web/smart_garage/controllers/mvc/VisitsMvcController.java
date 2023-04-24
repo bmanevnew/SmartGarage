@@ -9,6 +9,7 @@ import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
+import com.posadskiy.currencyconverter.CurrencyConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ public class VisitsMvcController {
     private final UserService userService;
     private final VehicleService vehicleService;
 
+    private final CurrencyConverter converter;
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleNotFound(EntityNotFoundException e, Model model) {
         model.addAttribute("errorMessage", e.getMessage());

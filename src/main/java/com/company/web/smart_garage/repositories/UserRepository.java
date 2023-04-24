@@ -32,12 +32,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByIdFetchAll(@Param("userId") Long userId);
 
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN u.vehicles v LEFT JOIN u.visits vi WHERE " +
-            "(:name IS NULL OR u.firstName LIKE %:name%) " +
-            "AND (:vehicleModel IS NULL OR v.model LIKE %:vehicleModel%) " +
-            "AND (:vehicleMake IS NULL OR v.brand LIKE %:vehicleMake%) " +
-            "AND (:fromDate is null or date(vi.date) >= :fromDate) and " +
-            "(:toDate is null or date(vi.date) <= :toDate)")
+    @Query("SELECT DISTINCT u FROM User u \n" +
+            "LEFT JOIN u.vehicles v \n" +
+            "LEFT JOIN u.visits vi \n" +
+            //  "LEFT JOIN u.roles r \n" +
+            "WHERE (:name IS NULL OR u.firstName LIKE %:name%) \n" +
+            "AND (:vehicleModel IS NULL OR v.model LIKE %:vehicleModel%) \n" +
+            "AND (:vehicleMake IS NULL OR v.brand LIKE %:vehicleMake%) \n" +
+            "AND (:fromDate is null or date(vi.date) >= :fromDate) \n" +
+            "AND (:toDate is null or date(vi.date) <= :toDate) \n"
+            //    +  "AND r.name = 'ROLE_CUSTOMER'"
+    )
     Page<User> findByFilters(@Param("name") String name,
                              @Param("vehicleModel") String vehicleModel,
                              @Param("vehicleMake") String vehicleMake,
