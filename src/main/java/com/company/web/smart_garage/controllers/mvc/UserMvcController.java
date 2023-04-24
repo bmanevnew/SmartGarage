@@ -2,26 +2,22 @@ package com.company.web.smart_garage.controllers.mvc;
 
 import com.company.web.smart_garage.data_transfer_objects.ProfileUpdateDto;
 import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
-import com.company.web.smart_garage.data_transfer_objects.UserDtoOut;
+import com.company.web.smart_garage.data_transfer_objects.filters.UserFilterOptionsDto;
 import com.company.web.smart_garage.exceptions.EntityDuplicationException;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
-import com.company.web.smart_garage.data_transfer_objects.filters.UserFilterOptionsDto;
 import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.AuthorizationUtils;
 import com.company.web.smart_garage.utils.mappers.UserMapper;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -219,7 +215,7 @@ public class UserMvcController {
         }
     }
 
-    @PreAuthorize("!isAnonymous()")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/update")
     public String updateUser(@PathVariable int id, Model model,
                              @Valid @ModelAttribute("userDto") ProfileUpdateDto updateProfile,
