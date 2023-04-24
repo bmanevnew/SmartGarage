@@ -147,7 +147,7 @@ public class RepairsMvcController {
         return "redirect:/repairs/" + afterUpdate.getId();
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable long id) {
         try {

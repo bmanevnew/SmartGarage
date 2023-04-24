@@ -37,7 +37,7 @@ public class Visit {
     @JoinColumn(name = "user_id")
     private User visitor;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "visits_repairs",
             joinColumns = @JoinColumn(name = "visit_id"),
