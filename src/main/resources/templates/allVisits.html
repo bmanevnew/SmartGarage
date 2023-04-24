@@ -104,7 +104,7 @@
                 <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Date: '+
                 ${#temporals.format(visit.getDate(), 'dd-MM-yyyy')}"></p>
                 <p class="m-0 col-xl-2 col-lg-6 col-md-6" th:text="'Cost: '+
-                ${#numbers.formatDecimal(visit.getTotalCost(),0,2)}"></p>
+                ${#numbers.formatDecimal(visit.getTotalCost(),1,2)}"></p>
             </div>
         </a>
         <div th:if="${visits.hasPrevious() || visits.hasNext()}" class="justify-content-center row mt-5">
