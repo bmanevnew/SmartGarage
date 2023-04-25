@@ -2,7 +2,6 @@ package com.company.web.smart_garage.services;
 
 import com.company.web.smart_garage.models.Visit;
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,5 +24,5 @@ public interface VisitService {
 
     Visit delete(long id);
 
-    void generatePdf(HttpServletResponse response, Visit visit, Double rate) throws IOException, MessagingException;
+    void sendPdfToMail(Visit visit, Double rate) throws IOException, MessagingException;
 }

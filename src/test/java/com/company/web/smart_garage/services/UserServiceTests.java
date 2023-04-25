@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -265,7 +264,7 @@ class UserServiceTests {
     @Test
     public void create_Should_CallRepository_When_EverythingIsValid() {
         when(mockRepository.save(user)).thenReturn(user);
-        when(mockRepository.findFirstByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+//        when(mockRepository.findFirstByEmail(Mockito.anyString())).thenReturn(Optional.empty());
         when(mockRepository.findFirstByPhoneNumber(Mockito.anyString())).thenReturn(Optional.empty());
         when(mockRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
         when(roleService.getByName(anyString())).thenReturn(createMockDefaultRole());
@@ -286,9 +285,11 @@ class UserServiceTests {
     public void create_Should_Throw_When_EmailExists() {
         User user1 = new User();
         user1.setEmail("unique.email@example.com");
+        user1.setPhoneNumber("0887362423");
 
         User user2 = new User();
         user2.setEmail("duplicate.email@example.com");
+        user2.setPhoneNumber("0887364523");
 
         when(mockRepository.findFirstByEmail(user2.getEmail())).thenReturn(Optional.of(user1));
 

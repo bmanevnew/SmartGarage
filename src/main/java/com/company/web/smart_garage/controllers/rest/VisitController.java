@@ -61,7 +61,7 @@ public class VisitController {
         // if (bookingExportDTO.getCurrency() == Currency.BGN) rate = 1.0;
         //  else rate = currencyConverter.rate(Currency.BGN, bookingExportDTO.getCurrency());
         rate = converter.rate(Currency.BGN, Currency.USD);
-        visitService.generatePdf(response, visit, rate);
+        visitService.sendPdfToMail(visit, rate);
 
 
         return ResponseEntity.ok(visitMapper.visitToDto(visit));

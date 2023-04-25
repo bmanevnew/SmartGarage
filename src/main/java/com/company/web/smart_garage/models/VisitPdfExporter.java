@@ -8,11 +8,9 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Set;
 
 public class VisitPdfExporter {
@@ -112,7 +110,7 @@ public class VisitPdfExporter {
         table.addCell(borderlessCell);
     }
 
-    public ByteArrayOutputStream export(HttpServletResponse response) throws DocumentException, IOException {
+    public ByteArrayOutputStream export() throws DocumentException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, baos);

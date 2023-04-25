@@ -223,7 +223,7 @@ public class VisitsMvcController {
             model.addAttribute("response", e.getMessage());
             return "visit";
         }
-        visitService.generatePdf(response, visit, rate);
+        visitService.sendPdfToMail(visit, rate);
         model.addAttribute("response", "Successfully sent pdf.");
         return "visit";
     }
