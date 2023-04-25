@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface VisitRepository extends JpaRepository<Visit, Long> {
 
-    @Query("select v from Visit v join fetch v.repairs where v.id = :id")
+    @Query("select v from Visit v left join fetch v.repairs where v.id = :id")
     Optional<Visit> findByIdFetchRepairs(@Param("id") long id);
 
     @Query("select v from Visit v where " +
