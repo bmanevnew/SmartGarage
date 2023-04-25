@@ -3,15 +3,11 @@ package com.company.web.smart_garage.controllers.rest;
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoIn;
 import com.company.web.smart_garage.data_transfer_objects.VisitDtoOut;
 import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
 import com.company.web.smart_garage.utils.mappers.VisitMapper;
-import com.posadskiy.currencyconverter.CurrencyConverter;
-import com.posadskiy.currencyconverter.enums.Currency;
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -36,8 +32,6 @@ public class VisitController {
     private final UserService userService;
     private final VehicleService vehicleService;
     private final VisitMapper visitMapper;
-    private final EmailSenderService emailSenderService;
-    private final CurrencyConverter converter;
 
 
     @GetMapping("/{id}")
@@ -51,18 +45,14 @@ public class VisitController {
     }
 
     @GetMapping("/{id}/export/pdf")
-    public ResponseEntity<VisitDtoOut> getPdfReport(@PathVariable long id, Authentication authentication, HttpServletResponse response) throws IOException, MessagingException {
+    public ResponseEntity<VisitDtoOut> getPdfReport(@PathVariable long id,
+                                                    Authentication authentication) throws IOException, MessagingException {
         Visit visit = visitService.getById(id);
         if (!userIsAdminOrEmployee(authentication) &&
                 !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
-        Double rate;
-        // if (bookingExportDTO.getCurrency() == Currency.BGN) rate = 1.0;
-        //  else rate = currencyConverter.rate(Currency.BGN, bookingExportDTO.getCurrency());
-        rate = converter.rate(Currency.BGN, Currency.USD);
-        visitService.sendPdfToMail(visit, rate);
-
+        visitService.sendPdfToMail(visit, "BGN");
 
         return ResponseEntity.ok(visitMapper.visitToDto(visit));
     }

@@ -24,5 +24,5 @@ public interface VisitService {
 
     Visit delete(long id);
 
-    void sendPdfToMail(Visit visit, Double rate) throws IOException, MessagingException;
+    void sendPdfToMail(Visit visit, String currencyCode) throws IOException, MessagingException;
 }

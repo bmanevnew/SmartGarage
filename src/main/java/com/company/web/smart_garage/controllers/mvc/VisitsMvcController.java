@@ -14,10 +14,7 @@ import com.company.web.smart_garage.services.RepairService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
-import com.posadskiy.currencyconverter.CurrencyConverter;
-import com.posadskiy.currencyconverter.enums.Currency;
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,7 +46,6 @@ public class VisitsMvcController {
     private final UserService userService;
     private final VehicleService vehicleService;
     private final RepairService repairService;
-    private final CurrencyConverter converter;
 
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleNotFound(EntityNotFoundException e, Model model) {
@@ -210,20 +206,15 @@ public class VisitsMvcController {
 
     @GetMapping("/{visitId}/sendPdf")
     public String sendPdf(@ModelAttribute("currency") SimpleStringDto currency,
-                          @PathVariable long visitId, HttpServletResponse response,
-                          Model model) throws IOException, MessagingException {
+                          @PathVariable long visitId, Model model) throws IOException, MessagingException {
         Visit visit = visitService.getById(visitId);
         model.addAttribute("visit", visit);
-//        model.addAttribute("currency", new SimpleStringDto());
-        double rate;
         try {
-            rate = converter.rate(Currency.BGN, Currency.findByCode(currency.getString())
-                    .orElseThrow(() -> new InvalidParamException("Currency not supported.")));
+            visitService.sendPdfToMail(visit, currency.getString().toUpperCase());
         } catch (InvalidParamException e) {
             model.addAttribute("response", e.getMessage());
             return "visit";
         }
-        visitService.sendPdfToMail(visit, rate);
         model.addAttribute("response", "Successfully sent pdf.");
         return "visit";
     }

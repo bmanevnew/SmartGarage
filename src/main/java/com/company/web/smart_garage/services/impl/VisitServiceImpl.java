@@ -4,9 +4,9 @@ import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.models.VisitPdfExporter;
 import com.company.web.smart_garage.repositories.VisitRepository;
 import com.company.web.smart_garage.services.RepairService;
+import com.company.web.smart_garage.services.VisitPdfExporterService;
 import com.company.web.smart_garage.services.VisitService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,7 @@ public class VisitServiceImpl implements VisitService {
     private final VisitRepository visitRepository;
     private final EmailSenderServiceImpl emailSenderService;
     private final RepairService repairService;
+    private final VisitPdfExporterService exporter;
 
     @Override
     public Visit getById(long id) {
@@ -105,10 +106,9 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public void sendPdfToMail(Visit visit, Double rate) throws MessagingException {
+    public void sendPdfToMail(Visit visit, String currencyCode) throws MessagingException {
 
-        VisitPdfExporter exporter = new VisitPdfExporter(visit, rate);
-        ByteArrayOutputStream baos = exporter.export();
+        ByteArrayOutputStream baos = exporter.export(visit, currencyCode);
 
         ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
 
