@@ -53,26 +53,26 @@
     <div class="container py-3">
         <h2 class="mb-5 text-center">Details</h2>
         <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Visitor:</label>
+            <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Visitor:</label>
             <div class="col-lg-6">
                 <span type="text" class="form-control" th:text="${visit.getVisitor().getEmail()}"></span>
             </div>
         </div>
         <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Vehicle:</label>
+            <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Vehicle:</label>
             <div class="col-lg-6">
                 <span type="text" class="form-control"
                       th:text="${visit.getVehicle().getBrand() +'  '+ visit.getVehicle().getModel()}"></span>
             </div>
         </div>
         <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Plate:</label>
+            <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Plate:</label>
             <div class="col-lg-6">
                 <span type="text" class="form-control" th:text="${visit.getVehicle().getLicensePlate()}"></span>
             </div>
         </div>
         <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Date:</label>
+            <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Date:</label>
             <div class="col-lg-6">
                 <span class="form-control" th:text="${#temporals.format(visit.getDate(), 'dd-MM-yyyy')}"></span>
             </div>

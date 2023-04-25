@@ -37,81 +37,50 @@
 <div th:replace="~{fragments/navbar.html :: navbar}">Navigation bar fragment</div>
 
 
-<!-- Page Header Start -->
+<div class="container-fluid page-header">
+    <h1 class="display-3 text-uppercase text-white mb-3">Create new account</h1>
+    <div class="d-inline-flex text-white">
+        <h6 class="text-uppercase m-0"><a class="text-white" href="" th:href="@{/}">Home</a></h6>
+        <h6 class="text-body m-0 px-3">/</h6>
+        <h6 class="text-uppercase text-body m-0">Create new account</h6>
+    </div>
+</div>
 
 
 <!-- Related Car Start -->
-<div class="container-fluid pb-5">
-    <div class="container pb-5">
-        <h2 class="mb-4">Create Account</h2>
+<div class="container-fluid py-3">
+    <div class="container py-3">
+        <h2 class="mb-5 text-center">Create Account</h2>
 
-        <!-- Page Header Start -->
-
-        <form action="#!" id="contactForm" th:action="@{/users/createUser}" th:object="${userDtoIn}"
+        <form action="" id="contactForm" th:action="@{/users/createUser}" th:object="${userDtoIn}"
               method="post">
-
-            <div class="form-floating">
-                <input class="form-control" id="email" type="email" placeholder="Enter your email..."
-                       th:field="*{email}"/>
-                <label for="email">Email</label>
-<!--                <div class="error" th:errors="*{email}">Email is required.</div>-->
+            <div class="row mb-4 justify-content-center">
+                <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Email:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{email}"
+                           th:value="${userDtoIn.getEmail()}" placeholder="Enter email">
+                    <div class="error my-2" th:errors="*{email}">An email is required.</div>
+                </div>
             </div>
-            <div class="form-floating">
-                <input class="form-control" id="phoneNumber" type="number"
-                       placeholder="Enter your password..."
-                       th:field="*{phoneNumber}"/>
-                <label for="phoneNumber">Phone Number</label>
+            <div class="row mb-4 justify-content-center">
+                <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Phone:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{phoneNumber}"
+                           th:value="${userDtoIn.getPhoneNumber()}" placeholder="Enter phone number">
+                    <div class="error my-2" th:errors="*{phoneNumber}">A phone number is required.</div>
+                </div>
             </div>
-            <div class="error" th:errors="*{phoneNumber}">A phone number is required.</div>
-            <!--    <div class="form-floating">-->
-            <!--        <input class="form-control" id="confirm-password" type="password"-->
-            <!--               placeholder="Confirm your password..."-->
-            <!--               th:field="*{passwordConfirm}"/>-->
-            <!--        <label for="confirm-password">Confirm password</label>-->
-            <!--        <div class="error" th:errors="*{passwordConfirm}">Password doesn't match.</div>-->
-            <!--    </div>-->
-            <!-- Submit Button-->
-            <button class="btn btn-primary text-uppercase mt-4 mb-3" id="submitButton" type="submit">
-                Submit
-            </button>
+            <div class="row mb-3 justify-content-center">
+                <div class="col-lg-6">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            style="height: 50px;">Create Account
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 </div>
 <!-- Related Car End -->
-
-
-<!-- Vendor Start -->
-<div class="container-fluid py-5">
-    <div class="container py-5">
-        <div class="owl-carousel vendor-carousel">
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-1.png" alt="" th:src="@{/img/vendor-1.png}">
-            </div>
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-2.png" alt="" th:src="@{/img/vendor-2.png}">
-            </div>
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-3.png" alt="" th:src="@{/img/vendor-3.png}">
-            </div>
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-4.png" alt="" th:src="@{/img/vendor-4.png}">
-            </div>
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-5.png" alt="" th:src="@{/img/vendor-5.png}">
-            </div>
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-6.png" alt="" th:src="@{/img/vendor-6.png}">
-            </div>
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-7.png" alt="" th:src="@{/img/vendor-7.png}">
-            </div>
-            <div class="bg-light p-4">
-                <img src="../static/img/vendor-8.png" alt="" th:src="@{/img/vendor-8.png}">
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Vendor End -->
 
 
 <!-- Footer -->
