@@ -2,9 +2,11 @@ package com.company.web.smart_garage.services.impl;
 
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
+import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.models.VisitPdfExporter;
 import com.company.web.smart_garage.repositories.VisitRepository;
+import com.company.web.smart_garage.services.RepairService;
 import com.company.web.smart_garage.services.VisitService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 import static com.company.web.smart_garage.utils.Constants.*;
 
@@ -31,6 +34,7 @@ public class VisitServiceImpl implements VisitService {
 
     private final VisitRepository visitRepository;
     private final EmailSenderServiceImpl emailSenderService;
+    private final RepairService repairService;
 
     @Override
     public Visit getById(long id) {
@@ -66,6 +70,33 @@ public class VisitServiceImpl implements VisitService {
         Visit visitPersistent = getById(visit.getId());
         visit.setVehicle(visitPersistent.getVehicle());
         visit.setVisitor(visitPersistent.getVisitor());
+        visit.setDate(visitPersistent.getDate());
+        return visitRepository.save(visit);
+    }
+
+    @Override
+    public Visit addRepair(long visitId, long repairId) {
+        validateId(repairId);
+        validateId(visitId);
+        Visit visit = getById(visitId);
+        if (visit.getRepairs().stream().anyMatch(repair -> repair.getId().equals(repairId)))
+            throw new InvalidParamException(String.format("Visit %d already has repair %d.", visitId, repairId));
+        Set<Repair> set = visit.getRepairs();
+        set.add(repairService.getById(repairId));
+        visit.setRepairs(set);
+        return visitRepository.save(visit);
+    }
+
+    @Override
+    public Visit removeRepair(long visitId, long repairId) {
+        validateId(repairId);
+        validateId(visitId);
+        Visit visit = getById(visitId);
+        if (visit.getRepairs().stream().noneMatch(repair -> repair.getId().equals(repairId)))
+            throw new InvalidParamException(String.format("Visit %d has no repair %d.", visitId, repairId));
+        Set<Repair> set = visit.getRepairs();
+        set.remove(repairService.getById(repairId));
+        visit.setRepairs(set);
         return visitRepository.save(visit);
     }
 

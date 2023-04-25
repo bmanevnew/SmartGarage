@@ -23,26 +23,18 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequestMapping("/auth")
 public class AuthenticationMvcController {
 
-    public static final String CONFIRM_PASSWORD_FIELD = "confirmNewPassword";
-    public static final String PASSWORD_ERROR = "password_error";
-    public static final String AUTH_ERROR = "auth_error";
-    public static final String PASSWORD_FIELD = "password";
-    public static final String CHANGE_PASSWORD_ENDPOINT = "/auth/change_password";
-    public static final String SAME_SITE = "SameSite";
-    public static final String SAME_SITE_LAX = "lax";
-    public static final String ROOT_PATH = "/";
     private final AuthService authService;
     @Value("${app.jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {
-        model.addAttribute("login", new LoginDto());
+        model.addAttribute(LOGIN_DTO_KEY, new LoginDto());
         return "login";
     }
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("login") LoginDto login,
+    public String login(@Valid @ModelAttribute(LOGIN_DTO_KEY) LoginDto login,
                         BindingResult bindingResult,
                         HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
@@ -67,12 +59,12 @@ public class AuthenticationMvcController {
 
     @GetMapping("/forgot_password")
     public String showForgotPasswordPage(Model model) {
-        model.addAttribute("loginEmail", new LoginDto());
+        model.addAttribute(LOGIN_DTO_EMAIL_KEY, new LoginDto());
         return "forgotPassword";
     }
 
     @PostMapping("/forgot_password")
-    public String resetPassword(@ModelAttribute("loginEmail") LoginDto loginDto,
+    public String resetPassword(@ModelAttribute(LOGIN_DTO_EMAIL_KEY) LoginDto loginDto,
                                 Model model) {
         String email = loginDto.getUsernameOrEmail();
         String response = SUCCESSFUL_RESET;
@@ -86,25 +78,24 @@ public class AuthenticationMvcController {
     }
 
     @GetMapping("/change_password")
-    public String getChangePasswordPage(@RequestParam(name = "token") String token,
+    public String getChangePasswordPage(@RequestParam(name = TOKEN_KEY) String token,
                                         Model model) {
-        model.addAttribute("passwordDto", new PasswordDto());
-        model.addAttribute("token", token);
+        model.addAttribute(PASSWORD_DTO_KEY, new PasswordDto());
+        model.addAttribute(TOKEN_KEY, token);
         return "updatePassword";
     }
 
     @PostMapping("/change_password")
-    public String changePassword(@RequestParam(name = "token") String token,
+    public String changePassword(@RequestParam(name = TOKEN_KEY) String token,
                                  @Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
                                  BindingResult bindingResult,
                                  Model model) {
-        model.addAttribute("token", token);
+        model.addAttribute(TOKEN_KEY, token);
         if (bindingResult.hasErrors()) {
             return "updatePassword";
         }
         if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
-            bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR,
-                    PASSWORD_DOES_NOT_MATCH);
+            bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, PASSWORD_DOES_NOT_MATCH);
             return "updatePassword";
         }
         try {

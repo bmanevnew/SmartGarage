@@ -62,7 +62,7 @@ public class RepairServiceImpl implements RepairService {
         validateSortProperties(pageable.getSort());
 
         Page<Repair> page = repairRepository.findByParameters(name, priceFrom, priceTo, pageable);
-        if (pageable.getPageNumber() >= page.getTotalPages() && pageable.getPageNumber() != 0) {
+        if (pageable.isPaged() && pageable.getPageNumber() >= page.getTotalPages() && pageable.getPageNumber() != 0) {
             throw new InvalidParamException(PAGE_IS_INVALID);
         }
 

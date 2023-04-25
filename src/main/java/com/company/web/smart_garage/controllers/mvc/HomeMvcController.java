@@ -20,6 +20,7 @@ import static com.company.web.smart_garage.utils.Constants.CONTACT_EMAIL_FORMAT;
 @RequestMapping("/")
 public class HomeMvcController {
 
+    public static final String CONTACT_DTO_KEY = "contactDto";
     private final EmailSenderService emailService;
     @Value("${spring.mail.username}")
     private String email;
@@ -36,18 +37,18 @@ public class HomeMvcController {
 
     @GetMapping("/contact")
     public String showContactPage(Model model) {
-        model.addAttribute("contactDto", new ContactUsDto());
+        model.addAttribute(CONTACT_DTO_KEY, new ContactUsDto());
         return "contact";
     }
 
     @PostMapping("/contact")
-    public String sendContactEmail(@Valid @ModelAttribute("contactDto") ContactUsDto contactDto,
+    public String sendContactEmail(@Valid @ModelAttribute(CONTACT_DTO_KEY) ContactUsDto contactDto,
                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "contact";
         }
-        String emailBody = String.format(CONTACT_EMAIL_FORMAT,
-                contactDto.getName(), contactDto.getEmail(), contactDto.getMessage());
+        String emailBody = String.format(
+                CONTACT_EMAIL_FORMAT, contactDto.getName(), contactDto.getEmail(), contactDto.getMessage());
         emailService.sendEmail(email, contactDto.getSubject(), emailBody);
         return "redirect:/contact";
     }

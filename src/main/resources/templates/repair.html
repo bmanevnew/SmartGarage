@@ -68,7 +68,7 @@
             <a class="col-lg-3" th:href="@{/repairs/__${repair.getId()}__/update}">
                 <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Update</button>
             </a>
-            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-3"
+            <a class="col-lg-3"
                th:href="@{/repairs/__${repair.getId()}__/delete}">
                 <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
             </a>

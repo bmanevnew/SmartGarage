@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+>
 
 <head>
     <meta charset="utf-8">
@@ -65,35 +65,43 @@
                       th:text="${visit.getVehicle().getBrand() +'  '+ visit.getVehicle().getModel()}"></span>
             </div>
         </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Plate:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${visit.getVehicle().getLicensePlate()}"></span>
-            </div>
-        </div>
+
         <div class="row mb-4 justify-content-center">
             <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Date:</label>
             <div class="col-lg-6">
                 <span class="form-control" th:text="${#temporals.format(visit.getDate(), 'dd-MM-yyyy')}"></span>
             </div>
         </div>
-        <h5 class="text-center mb-3">Services:</h5>
+        <h5 class="text-center mb-3">Services (click to remove):</h5>
         <div class="row justify-content-center"
              th:if="${visit.getRepairs()!=null && !visit.getRepairs().isEmpty()}"
              th:each="repair : ${visit.getRepairs()}">
-            <div class="py-1 mb-3 border border-secondary bg-light justify-content-center col-lg-6">
+            <a class="py-1 mb-3 border border-secondary bg-light justify-content-center col-lg-6  text-decoration-none text-dark"
+               th:href="@{/visits/__${visit.getId()}__/removeRepair/__${repair.getId()}__}">
                 <p class="m-0" th:text="'Name: '+${repair.getName()}"></p>
                 <span class="m-0" th:text="'Price: '+${repair.getPrice()}"></span>
-            </div>
-        </div>
-        <p th:if="${visit.getRepairs()==null || visit.getRepairs().isEmpty()}" class="text-center">No services</p>
-        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="row justify-content-center mt-4">
-            <a class="col-lg-3 mb-3" th:href="@{/visits/__${visit.getId()}__/update}">
-                <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Update</button>
             </a>
-            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-3"
-               th:href="@{/visits/__${visit.getId()}__/delete}">
-                <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
+        </div>
+        <p th:if="${visit.getRepairs()==null || visit.getRepairs().isEmpty()}" class="text-center mb-4">No services</p>
+        <form th:action="@{/visits/__${visit.getId()}__/addRepair}" th:object="${addRepair}">
+            <div class="row mb-4 mt-4 justify-content-center">
+                <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Add:</label>
+                <div class="col-lg-4">
+                    <select th:field="*{string}" class="custom-select px-4 mb-3" style="height: 50px;">
+                        <option th:each="repair : ${allRepairs}" th:value="${repair.getId()}"
+                                th:text="${repair.getName()}">Repair
+                        </option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block col-lg-2 mb-3" type="submit" style="height: 50px;">
+                    Add Repair
+                </button>
+            </div>
+
+        </form>
+        <div class="row justify-content-center mt-4">
+            <a class="col-lg-3 mb-3" th:href="@{/visits/__${visit.getId()}__}">
+                <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Done</button>
             </a>
         </div>
     </div>

@@ -1,15 +1,21 @@
 package com.company.web.smart_garage.controllers.mvc;
 
+import com.company.web.smart_garage.data_transfer_objects.SimpleStringDto;
+import com.company.web.smart_garage.data_transfer_objects.VisitDtoSimple;
 import com.company.web.smart_garage.data_transfer_objects.filters.VisitFilterOptionsDto;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
+import com.company.web.smart_garage.models.Repair;
+import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.models.Visit;
+import com.company.web.smart_garage.services.RepairService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
 import com.posadskiy.currencyconverter.CurrencyConverter;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +24,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
 
@@ -35,8 +44,9 @@ public class VisitsMvcController {
     private final VisitService visitService;
     private final UserService userService;
     private final VehicleService vehicleService;
-
+    private final RepairService repairService;
     private final CurrencyConverter converter;
+
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleNotFound(EntityNotFoundException e, Model model) {
         model.addAttribute("errorMessage", e.getMessage());
@@ -117,14 +127,90 @@ public class VisitsMvcController {
         return "allVisits";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
+    @GetMapping("/create")
+    public String getCreatePage(Model model) {
+        model.addAttribute("visitDto", new VisitDtoSimple());
+        return "visitCreate";
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
+    @PostMapping("/create")
+    public String create(@Valid @ModelAttribute("visitDto") VisitDtoSimple dto,
+                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "visitCreate";
+        }
+        User visitor;
+        try {
+            visitor = userService.getByUsernameOrEmail(dto.getVisitor());
+        } catch (EntityNotFoundException e) {
+            bindingResult.rejectValue("visitor", "visitor_invalid", e.getMessage());
+            return "visitCreate";
+        }
+        Vehicle vehicle;
+        try {
+            vehicle = vehicleService.getByLicensePlateOrVin(dto.getVehicle());
+        } catch (EntityNotFoundException e) {
+            bindingResult.rejectValue("vehicle", "vehicle_invalid", e.getMessage());
+            return "visitCreate";
+        }
+
+        Visit visit = new Visit(null, null, vehicle, visitor, null);
+        visit = visitService.create(visit);
+
+        return "redirect:/visits/" + visit.getId();
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
+    @GetMapping("/{id}/update")
+    public String getUpdatePage(@PathVariable long id, Model model) {
+        Visit visit = visitService.getById(id);
+        Set<Repair> repairs = repairService.getAll(null, null, null, Pageable.unpaged())
+                .stream().filter(repair -> !visit.getRepairs().contains(repair)).collect(Collectors.toSet());
+        model.addAttribute("allRepairs", repairs);
+        model.addAttribute("addRepair", new SimpleStringDto());
+        model.addAttribute("visit", visit);
+        return "visitUpdate";
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
+    @GetMapping("/{visitId}/addRepair/{repairId}")
+    public String addRepair(@PathVariable long visitId, @PathVariable long repairId) {
+        try {
+            visitService.addRepair(visitId, repairId);
+        } catch (InvalidParamException e) {
+            throw new EntityNotFoundException("Visit", visitId);
+        }
+        return "redirect:/visits/" + visitId + "/update";
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
+    @GetMapping("/{visitId}/addRepair")
+    public String addRepair(@ModelAttribute("addRepair") SimpleStringDto dto,
+                            @PathVariable long visitId) {
+        return addRepair(visitId, Long.parseLong(dto.getString()));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
+    @GetMapping("/{visitId}/removeRepair/{repairId}")
+    public String removeRepair(@PathVariable long visitId, @PathVariable long repairId) {
+        try {
+            visitService.removeRepair(visitId, repairId);
+        } catch (InvalidParamException e) {
+            throw new EntityNotFoundException("Visit", visitId);
+        }
+        return "redirect:/visits/" + visitId + "/update";
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable long id) {
         try {
             visitService.delete(id);
         } catch (InvalidParamException e) {
-            throw new EntityNotFoundException("Vehicle", id);
+            throw new EntityNotFoundException("Visit", id);
         }
-        return "redirect:/vehicles";
+        return "redirect:/visits";
     }
 }

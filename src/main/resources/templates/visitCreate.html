@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+>
 
 <head>
     <meta charset="utf-8">
@@ -38,11 +38,11 @@
 
 
 <div class="container-fluid page-header">
-    <h1 class="display-3 text-uppercase text-white mb-3" th:text="'Visit '+${visit.getId()}">Visit 3</h1>
+    <h1 class="display-3 text-uppercase text-white mb-3">Create new visit</h1>
     <div class="d-inline-flex text-white">
         <h6 class="text-uppercase m-0"><a class="text-white" href="" th:href="@{/}">Home</a></h6>
         <h6 class="text-body m-0 px-3">/</h6>
-        <h6 class="text-uppercase text-body m-0" th:text="'Visit '+${visit.getId()}">Visit 3</h6>
+        <h6 class="text-uppercase text-body m-0">Create new visit</h6>
     </div>
 </div>
 
@@ -52,50 +52,31 @@
 <div class="container-fluid py-3">
     <div class="container py-3">
         <h2 class="mb-5 text-center">Details</h2>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Visitor:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${visit.getVisitor().getEmail()}"></span>
+        <form href="" th:action="@{/visits/create}" th:object="${visitDto}" method="post">
+            <div class="row mb-4 justify-content-center">
+                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Visitor:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{visitor}"
+                           th:value="${visitDto.getVisitor()}">
+                    <div class="error my-2" th:errors="*{visitor}"></div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Vehicle:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control"
-                      th:text="${visit.getVehicle().getBrand() +'  '+ visit.getVehicle().getModel()}"></span>
+            <div class="row mb-4 justify-content-center">
+                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Vehicle:</label>
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" th:field="*{vehicle}"
+                           th:value="${visitDto.getVehicle()}">
+                    <div class="error my-2" th:errors="*{vehicle}"></div>
+                </div>
             </div>
-        </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Plate:</label>
-            <div class="col-lg-6">
-                <span type="text" class="form-control" th:text="${visit.getVehicle().getLicensePlate()}"></span>
+            <div class="row mb-3 justify-content-center">
+                <div class="col-lg-6">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            style="height: 50px;">Create visit
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="row mb-4 justify-content-center">
-            <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Date:</label>
-            <div class="col-lg-6">
-                <span class="form-control" th:text="${#temporals.format(visit.getDate(), 'dd-MM-yyyy')}"></span>
-            </div>
-        </div>
-        <h5 class="text-center mb-3">Services:</h5>
-        <div class="row justify-content-center"
-             th:if="${visit.getRepairs()!=null && !visit.getRepairs().isEmpty()}"
-             th:each="repair : ${visit.getRepairs()}">
-            <div class="py-1 mb-3 border border-secondary bg-light justify-content-center col-lg-6">
-                <p class="m-0" th:text="'Name: '+${repair.getName()}"></p>
-                <span class="m-0" th:text="'Price: '+${repair.getPrice()}"></span>
-            </div>
-        </div>
-        <p th:if="${visit.getRepairs()==null || visit.getRepairs().isEmpty()}" class="text-center">No services</p>
-        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="row justify-content-center mt-4">
-            <a class="col-lg-3 mb-3" th:href="@{/visits/__${visit.getId()}__/update}">
-                <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Update</button>
-            </a>
-            <a sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-3"
-               th:href="@{/visits/__${visit.getId()}__/delete}">
-                <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
-            </a>
-        </div>
+        </form>
     </div>
 </div>
 <!-- Details end -->
