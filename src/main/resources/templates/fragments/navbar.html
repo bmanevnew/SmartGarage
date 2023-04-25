@@ -97,7 +97,7 @@
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Visits</a>
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="" th:href="@{/visits}" class="dropdown-item">Browse visits</a>
-                                <a href="" class="dropdown-item">Add visit</a>
+                                <a href="" th:href="@{/visits/create}" class="dropdown-item">Add visit</a>
                             </div>
                         </div>
 
@@ -118,16 +118,12 @@
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="" th:href="@{/users}" class="dropdown-item">Browse users</a>
                                 <a href="" th:href="@{/users/createUser}" class="dropdown-item">Add user</a>
+                                <a sec:authorize="hasAnyRole('ROLE_ADMIN')"
+                                   href="" th:href="@{/adminPanel}" class="dropdown-item">Add Employee</a>
+                                <a sec:authorize="hasAnyRole('ROLE_ADMIN')"
+                                   href="" th:href="@{/users/createUser}" class="dropdown-item">Add Admin</a>
                             </div>
                         </div>
-                        <div sec:authorize="hasAnyRole('ROLE_ADMIN')" class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Admin Panel</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="" th:href="@{/adminPanel}" class="dropdown-item">Create Employee</a>
-                                <a href="" th:href="@{/users/createUser}" class="dropdown-item">Create Admin</a>
-                            </div>
-                        </div>
-
                         <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Details</a>
                             <div class="dropdown-menu rounded-0 m-0">

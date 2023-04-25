@@ -101,4 +101,19 @@ public class Constants {
     public static final String SUCCESSFUL_RESET = "Successfully sent reset link.";
     public static final String PASSWORD_SUCCESSFULLY_CHANGED = "You have successfully changed your password.";
     public static final String REQUIRED_FIELD = "Required field.";
+
+
+    //mvc authentication constants
+    public static final String CONFIRM_PASSWORD_FIELD = "confirmNewPassword";
+    public static final String PASSWORD_ERROR = "password_error";
+    public static final String AUTH_ERROR = "auth_error";
+    public static final String PASSWORD_FIELD = "password";
+    public static final String CHANGE_PASSWORD_ENDPOINT = "/auth/change_password";
+    public static final String SAME_SITE = "SameSite";
+    public static final String SAME_SITE_LAX = "lax";
+    public static final String ROOT_PATH = "/";
+    public static final String LOGIN_DTO_KEY = "login";
+    public static final String LOGIN_DTO_EMAIL_KEY = "loginEmail";
+    public static final String PASSWORD_DTO_KEY = "passwordDto";
+    public static final String TOKEN_KEY = "token";
 }

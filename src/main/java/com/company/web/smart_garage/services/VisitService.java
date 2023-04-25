@@ -19,6 +19,10 @@ public interface VisitService {
 
     Visit update(Visit visit);
 
+    Visit addRepair(long visitId, long repairId);
+
+    Visit removeRepair(long visitId, long repairId);
+
     Visit delete(long id);
 
     void generatePdf(HttpServletResponse response, Visit visit, Double rate) throws IOException, MessagingException;

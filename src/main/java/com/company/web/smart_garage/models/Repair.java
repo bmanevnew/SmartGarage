@@ -1,10 +1,7 @@
 package com.company.web.smart_garage.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
@@ -14,6 +11,7 @@ import org.hibernate.annotations.SQLDelete;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @SQLDelete(sql = "update repairs set is_deleted = true where repair_id = ?")
 @FilterDef(name = "deletedRepairFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
 @Filter(name = "deletedRepairFilter", condition = "is_deleted = :isDeleted")
