@@ -2,16 +2,19 @@ package com.company.web.smart_garage.controllers.mvc;
 
 import com.company.web.smart_garage.data_transfer_objects.ProfileUpdateDto;
 import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
+import com.company.web.smart_garage.data_transfer_objects.UserDtoOut;
 import com.company.web.smart_garage.data_transfer_objects.filters.UserFilterOptionsDto;
 import com.company.web.smart_garage.exceptions.EntityDuplicationException;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
+import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.AuthorizationUtils;
 import com.company.web.smart_garage.utils.mappers.UserMapper;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,9 +33,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdmin;
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
+import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
 @Controller
@@ -199,62 +204,87 @@ public class UserMvcController {
     @PreAuthorize("!isAnonymous()")
     @GetMapping("/{id}/update")
     public String showEditUserPage(@PathVariable int id, Model model, Authentication authentication) {
-
-
-        try {
-            User user = userService.getById(id);
-            ProfileUpdateDto userDto = userMapper.userToDtoUpdate(user);
-            User currentUser = authorizationUtils.tryGetCurrentUser(authentication);
-            model.addAttribute("currUser", currentUser);
-            model.addAttribute("user", user);
-            model.addAttribute("userDto", userDto);
-            return "userUpdate";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("error", e.getMessage());
-            return "notFound";
+        User user = userService.getById(id);
+        User currentUser = authorizationUtils.tryGetCurrentUser(authentication);
+        if (!userIsAdminOrEmployee(authentication) && !Objects.equals(currentUser.getId(), user.getId())) {
+            //Todo change view to show user was unauthorized to access resource
+            throw new UnauthorizedOperationException("Access denied.");
         }
+        model.addAttribute("userDto", userMapper.userToDtoUpdate(user));
+        model.addAttribute("user", user);
+        model.addAttribute("currUser", currentUser);
+        return "userUpdate";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/update")
-    public String updateUser(@PathVariable int id, Model model,
+    public String updateUser(@PathVariable long id,
+                             Model model,
                              @Valid @ModelAttribute("userDto") ProfileUpdateDto updateProfile,
-                             Authentication authentication) {
+                             //     Authentication authentication,
+                             BindingResult bindingResult) {
 
-        User currentUser = authorizationUtils.tryGetCurrentUser(authentication);
-        if (!userIsAdminOrEmployee(authentication) && currentUser.getId() != id) {
-            throw new UnauthorizedOperationException("Access denied.");
-        }
-//        if (bindingResult.hasErrors()) {
-//            return "userUpdate";
-//        }
-
-//        if (updateProfile.getEmail()==null){
-//            updateProfile.setEmail(userToUpdate.getEmail());
-//        }
-//        if (updateProfile.getPhoneNumber()==null){
-//            updateProfile.setPhoneNumber(userToUpdate.getPhoneNumber());
-//        }
-        User updatedUser = userMapper.profileDtoToUser(updateProfile, id);
-        model.addAttribute("user", updatedUser);
-
-
-        try {
-            userService.update(updatedUser);
-            return "redirect:/users";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("error", e.getMessage());
-            return "notFound";
-        } catch (UnauthorizedOperationException e) {
-            model.addAttribute("error", e.getMessage());
-            return "accessDenied";
-        } catch (InvalidParamException e) {
-            model.addAttribute("error", e.getMessage());
-            return "redirect:/users/" + id;
-        } catch (EntityDuplicationException e) {
-            model.addAttribute("phoneError", e.getMessage());
+        model.addAttribute("user", userService.getById(id));
+        // model.addAttribute("currUser", authorizationUtils.tryGetCurrentUser(authentication));
+        if (bindingResult.hasErrors()) {
             return "userUpdate";
         }
+
+        try {
+            User user = userMapper.profileDtoToUser(updateProfile, id);
+            userService.update(user);
+        } catch (InvalidParamException e) {
+            if (e.getMessage().equals(VEHICLE_PROD_YEAR_INVALID)) {
+                bindingResult.rejectValue("phoneNumber", "phone_number_error", e.getMessage());
+                return "userUpdate";
+            }
+        } catch (ConstraintViolationException e) {
+            if (e.getMessage().equals(USER_EMAIL_INVALID)) {
+                bindingResult.rejectValue("email", "email_error", e.getMessage());
+                return "userUpdate";
+            }
+        } catch (EntityDuplicationException e) {
+            if (e.getMessage().equals(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS)) {
+                bindingResult.rejectValue("phoneNumber", "phone_number_error", e.getMessage());
+                return "userUpdate";
+            }
+
+        }
+        return "redirect:/users/" + id;
+//        User currentUser = authorizationUtils.tryGetCurrentUser(authentication);
+//        if (!userIsAdminOrEmployee(authentication) && currentUser.getId() != id) {
+//            throw new UnauthorizedOperationException("Access denied.");
+//        }
+////        if (bindingResult.hasErrors()) {
+////            return "userUpdate";
+////        }
+//
+////        if (updateProfile.getEmail()==null){
+////            updateProfile.setEmail(userToUpdate.getEmail());
+////        }
+////        if (updateProfile.getPhoneNumber()==null){
+////            updateProfile.setPhoneNumber(userToUpdate.getPhoneNumber());
+////        }
+//        User updatedUser = userMapper.profileDtoToUser(updateProfile, id);
+//        model.addAttribute("user", updatedUser);
+//
+//
+//        try {
+//            userService.update(updatedUser);
+//            return "redirect:/users";
+//        } catch (EntityNotFoundException e) {
+//            model.addAttribute("error", e.getMessage());
+//            return "notFound";
+//        } catch (UnauthorizedOperationException e) {
+//            model.addAttribute("error", e.getMessage());
+//            return "accessDenied";
+//        } catch (InvalidParamException e) {
+//            model.addAttribute("error", e.getMessage());
+//            return "redirect:/users/" + id;
+//        } catch (EntityDuplicationException e) {
+//            model.addAttribute("phoneError", e.getMessage());
+//            return "userUpdate";
+//        }
 
     }
 

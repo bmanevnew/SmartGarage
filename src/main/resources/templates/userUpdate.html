@@ -50,44 +50,102 @@
 
 <div class="container pb-5">
     <h2 class="mb-4">Details</h2>
-    <form class="formBox" action="#" th:action="@{/users/__${user.getId()}__/update}" th:object="${userDto}"
-          method="post">
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Username</label>
-            <input type="text" class="form-control" th:value="${user.username}" disabled style="width: 95%">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">First name</label>
-            <input type="text" class="form-control" th:field="*{firstName}" style="width: 95%">
-            <label class="error" th:errors="*{firstName}">Error placeholder</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Last name</label>
-            <input type="text" class="form-control" th:field="*{lastName}" style="width: 95%">
-            <label class="error" th:errors="*{lastName}">Error placeholder</label>
-        </div>
-        <div class="mb-3" th:if="${currUser.getId() == user.getId()}">
-            <label class="form-label">Phone Number</label>
-            <input type="text" class="form-control" th:value="${user.phoneNumber}" disabled style="width: 95%">
-        </div>
+    <!--    <form class="formBox" action="#" th:action="@{/users/__${user.getId()}__/update}" th:object="${userDto}"-->
+    <!--          method="post">-->
+    <!--        <div class="mb-3">-->
+    <!--            <label class="form-label">Email</label>-->
+    <!--            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <label class="form-label">Username</label>-->
+    <!--            <input type="text" class="form-control" th:value="${user.username}" disabled style="width: 95%">-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <label class="form-label">Email</label>-->
+    <!--            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <label class="form-label">First name</label>-->
+    <!--            <input type="text" class="form-control" th:field="*{firstName}" style="width: 95%">-->
+    <!--            <label class="error" th:errors="*{firstName}">Error placeholder</label>-->
+    <!--        </div>-->
+    <!--        <div class="mb-3">-->
+    <!--            <label class="form-label">Last name</label>-->
+    <!--            <input type="text" class="form-control" th:field="*{lastName}" style="width: 95%">-->
+    <!--            <label class="error" th:errors="*{lastName}">Error placeholder</label>-->
+    <!--        </div>-->
+    <!--        <div class="mb-3" th:if="${currUser.getId() == user.getId()}">-->
+    <!--            <label class="form-label">Phone Number</label>-->
+    <!--            <input type="text" class="form-control" th:value="${user.phoneNumber}" disabled style="width: 95%">-->
+    <!--        </div>-->
 
 
-        <div class="mb-3" sec:authorize="hasRole('ROLE_ADMIN')">
-            <label class="form-label">Phone number</label>
-            <input type="text" class="form-control" th:field="*{phoneNumber}" style="width: 95%">
-            <label class="error" th:text="${phoneError}">Error placeholder</label>
-            <!--            <h5 class="text-center error" th:text="${paramError}">Error</h5>-->
+    <!--        <div class="mb-3" sec:authorize="hasRole('ROLE_ADMIN')">-->
+    <!--            <label class="form-label">Phone number</label>-->
+    <!--            <input type="text" class="form-control" th:field="*{phoneNumber}" style="width: 95%">-->
+    <!--            <label class="error" th:errors="${phoneNumber}">Error placeholder</label>-->
+    <!--            &lt;!&ndash;            <h5 class="text-center error" th:text="${paramError}">Error</h5>&ndash;&gt;-->
+    <!--        </div>-->
+
+    <!--        <button type="submit" class="btn btn-outline-success">Submit new details</button>-->
+    <!--    </form>-->
+    <form href="" action="#" th:action="@{/users/__${user.getId()}__/update}" th:object="${userDto}" method="post">
+        <div class="row mb-4 justify-content-center">
+            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Username:</label>
+            <div class="col-lg-6">
+                <input type="text" class="form-control"
+                       th:value="${user.username}" disabled style="width: 95%">
+            </div>
+        </div>
+        <div class="row mb-4 justify-content-center">
+            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Email:</label>
+            <div class="col-lg-6">
+                <input type="text" class="form-control" th:value="${user.getEmail()}" disabled style="width: 95%">
+            </div>
+        </div>
+        <div class="row mb-4 justify-content-center">
+            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">
+                First Name:</label>
+            <div class="col-lg-6">
+                <input type="text" class="form-control" th:field="*{firstName}"
+                       th:value="${userDto.getFirstName()}">
+                <div class="error my-2" th:errors="*{firstName}"></div>
+            </div>
+        </div>
+        <div class="row mb-4 justify-content-center">
+            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Last
+                Name:</label>
+            <div class="col-lg-6">
+                <input type="text" class="form-control" th:field="*{lastName}" th:value="${userDto.getLastName()}">
+                <div class="error my-2" th:errors="*{lastName}"></div>
+            </div>
+        </div>
+        <div class="row mb-5 justify-content-center" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')">
+            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Phone
+                number:</label>
+            <div class="col-lg-6">
+                <input type="text" class="form-control" th:field="*{phoneNumber}"
+                       th:value="${userDto.getPhoneNumber()}">
+                <div class="error my-2" th:errors="*{phoneNumber}"></div>
+            </div>
+        </div>
+        <div class="row mb-4 justify-content-center"
+             sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')">
+            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Phone
+                number:</label>
+            <div class="col-lg-6">
+                <input type="text" class="form-control"
+                       th:value="${user.phoneNumber}" disabled style="width: 95%">
+            </div>
         </div>
 
-        <button type="submit" class="btn btn-outline-success">Submit new details</button>
+        <div class="row mb-3 justify-content-center">
+            <div class="col-lg-6">
+                <button class="btn btn-primary btn-block" type="submit"
+                        style="height: 50px;">Confirm
+                </button>
+            </div>
+        </div>
     </form>
 </div>
 
@@ -138,6 +196,7 @@
 
 <!-- Template Javascript -->
 <script src="../static/js/main.js" th:src="@{/js/main.js}"></script>
+
 
 </body>
 </html>

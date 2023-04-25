@@ -137,9 +137,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        if (userRepository.findFirstByEmail(user.getEmail()).isPresent()) {
-            throw new EntityDuplicationException(String.format(USER_WITH_EMAIL_S_ALREADY_EXISTS, user.getEmail()));
-        }
+
         if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
             throw new EntityDuplicationException(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS);
         }
@@ -242,15 +240,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
+        User newUser = userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).orElse(null);
+        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+            throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
+        }
+
         User persistentUser = getById(user.getId());
         //changed properties
         persistentUser.setEmail(user.getEmail());
-        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent() && !Objects.equals(user.getId(), persistentUser.getId())) {
-            throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
-        }
-        if (user.getFirstName().length() < 4 || user.getLastName().length() < 4) {
-            throw new InvalidParamException("First name and last name should be at least 4 characters long.");
-        }
         persistentUser.setPhoneNumber(user.getPhoneNumber());
         persistentUser.setFirstName(user.getFirstName());
         persistentUser.setLastName(user.getLastName());
