@@ -115,7 +115,7 @@ public class VisitPdfExporter {
     public ByteArrayOutputStream export(HttpServletResponse response) throws DocumentException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
-        PdfWriter.getInstance(document, response.getOutputStream());
+        PdfWriter.getInstance(document, baos);
 
         document.open();
 
