@@ -15,6 +15,9 @@ import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.services.VehicleService;
 import com.company.web.smart_garage.services.VisitService;
 import com.posadskiy.currencyconverter.CurrencyConverter;
+import com.posadskiy.currencyconverter.enums.Currency;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -71,6 +75,7 @@ public class VisitsMvcController {
             throw new UnauthorizedOperationException("Access denied.");
         }
         model.addAttribute("visit", visit);
+        model.addAttribute("currency", new SimpleStringDto());
         return "visit";
     }
 
@@ -201,6 +206,26 @@ public class VisitsMvcController {
             throw new EntityNotFoundException("Visit", visitId);
         }
         return "redirect:/visits/" + visitId + "/update";
+    }
+
+    @GetMapping("/{visitId}/sendPdf")
+    public String sendPdf(@ModelAttribute("currency") SimpleStringDto currency,
+                          @PathVariable long visitId, HttpServletResponse response,
+                          Model model) throws IOException, MessagingException {
+        Visit visit = visitService.getById(visitId);
+        model.addAttribute("visit", visit);
+//        model.addAttribute("currency", new SimpleStringDto());
+        double rate;
+        try {
+            rate = converter.rate(Currency.BGN, Currency.findByCode(currency.getString())
+                    .orElseThrow(() -> new InvalidParamException("Currency not supported.")));
+        } catch (InvalidParamException e) {
+            model.addAttribute("response", e.getMessage());
+            return "visit";
+        }
+        visitService.generatePdf(response, visit, rate);
+        model.addAttribute("response", "Successfully sent pdf.");
+        return "visit";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

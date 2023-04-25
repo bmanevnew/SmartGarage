@@ -87,7 +87,20 @@
             </div>
         </div>
         <p th:if="${visit.getRepairs()==null || visit.getRepairs().isEmpty()}" class="text-center">No services</p>
-        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="row justify-content-center mt-4">
+
+        <form class="row justify-content-center mt-4" th:action="@{/visits/__${visit.getId()}__/sendPdf}"
+              th:object="${currency}">
+            <div class="col-lg-3 mb-3">
+                <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Send PDF</button>
+            </div>
+            <div class="col-lg-3 mb-3">
+                <input th:field="*{string}" class="form-control px-4" style="height: 50px;"
+                       placeholder="Choose currency (ex. USD)">
+            </div>
+        </form>
+        <p class="text-center" th:if="${response!=null && !response.isBlank()}" th:text="${response}"></p>
+
+        <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="row justify-content-center mt-2">
             <a class="col-lg-3 mb-3" th:href="@{/visits/__${visit.getId()}__/update}">
                 <button class="btn btn-primary btn-block" type="submit" style="height: 50px;">Update</button>
             </a>
