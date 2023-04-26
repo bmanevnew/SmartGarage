@@ -16,6 +16,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -138,12 +139,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-
-        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
-            throw new EntityDuplicationException(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS);
-        }
         if (userRepository.findFirstByEmail(user.getEmail()).isPresent()) {
-            throw new EntityDuplicationException(USER_WITH_EMAIL_S_ALREADY_EXISTS);
+            throw new EntityDuplicationException(String.format(USER_WITH_EMAIL_S_ALREADY_EXISTS, user.getEmail()));
+        }
+        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+            throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
         }
 
         String randomUsername;
@@ -151,6 +151,7 @@ public class UserServiceImpl implements UserService {
             randomUsername = generateRandomUsername();
         } while (randomUsername.length() > 20 || userRepository.existsByUsername(randomUsername));
         user.setUsername(randomUsername);
+
 
         String originalPassword = PasswordUtility.generatePassword();
         user.setPassword(originalPassword);
@@ -189,6 +190,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         Role role = roleService.getById(3);
         roles.add(role);
+        roles.addAll(userToAdmin.getRoles());
         userToAdmin.setRoles(roles);
 
         userRepository.save(userToAdmin);
@@ -204,7 +206,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         Role role = roleService.getById(2);
         roles.add(role);
-        //  roles.addAll(userToEmployed.getRoles());
+        roles.addAll(userToEmployed.getRoles());
         userToEmployed.setRoles(roles);
 
         userRepository.save(userToEmployed);
@@ -245,12 +247,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User user) {
         User newUser = userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).orElse(null);
-        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent() && newUser.getId() != user.getId()) {
-            throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
+        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+            if (newUser != null && newUser.getId() != null && newUser.getId() != user.getId()) {
+                throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
+            }
+        }
+        if (userRepository.findFirstByEmail(user.getEmail()).isPresent()) {
+            if (newUser != null && newUser.getId() != null && newUser.getId() != user.getId()) {
+                throw new EntityDuplicationException(String.format(USER_WITH_EMAIL_S_ALREADY_EXISTS, user.getPhoneNumber()));
+            }
         }
 
         User persistentUser = getById(user.getId());
-        //changed properties
         persistentUser.setEmail(user.getEmail());
         persistentUser.setPhoneNumber(user.getPhoneNumber());
         persistentUser.setFirstName(user.getFirstName());
@@ -264,32 +272,8 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        //throws exception if email duplication occurs
-        boolean duplicateEmailExists = true;
-        try {
-            User existingUser = getByEmail(persistentUser.getEmail());
-            if (Objects.equals(existingUser.getId(), persistentUser.getId())) {
-                duplicateEmailExists = false;
-            }
-        } catch (EntityNotFoundException e) {
-            duplicateEmailExists = false;
-        }
-        if (duplicateEmailExists) throw new EntityDuplicationException(
-                String.format(USER_WITH_EMAIL_S_ALREADY_EXISTS, persistentUser.getEmail()));
-
-        //throws exception if phone number duplication occurs
-        boolean duplicatePhoneNumberExists = true;
-        try {
-            User existingUser = getByPhoneNumber(persistentUser.getPhoneNumber());
-            if (Objects.equals(existingUser.getId(), persistentUser.getId())) {
-                duplicatePhoneNumberExists = false;
-            }
-        } catch (EntityNotFoundException e) {
-            duplicatePhoneNumberExists = false;
-        }
-        if (duplicatePhoneNumberExists) throw new EntityDuplicationException(
-                String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, persistentUser.getPhoneNumber()));
-
+//        phoneNumberDuplication(user);
+//        emailDuplication(user);
         return userRepository.save(persistentUser);
     }
 
@@ -330,4 +314,5 @@ public class UserServiceImpl implements UserService {
         senderService.sendEmail(toEmail,
                 subject, body);
     }
+
 }

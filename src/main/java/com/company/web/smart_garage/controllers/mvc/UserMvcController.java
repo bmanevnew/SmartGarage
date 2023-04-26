@@ -38,8 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdmin;
-import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
+import static com.company.web.smart_garage.utils.AuthorizationUtils.*;
 import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
@@ -83,6 +82,9 @@ public class UserMvcController {
         }
         model.addAttribute("user", user);
         model.addAttribute("currentUser", currentUser);
+        model.addAttribute("isAdmin", userIsAdmin(userService.getById(id)));
+        model.addAttribute("isEmployee", userIsEmployee(userService.getById(id)));
+
         return "user";
     }
 
@@ -169,11 +171,16 @@ public class UserMvcController {
             emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
             return "redirect:/";
         } catch (EntityDuplicationException e) {
-            bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());
-            bindingResult.rejectValue("email", "email_error", e.getMessage());
-            return "createUser";
-        }
+            if (e.getMessage().equals(USER_WITH_EMAIL_S_ALREADY_EXISTS)) {
+                bindingResult.rejectValue("email", "email_error", e.getMessage());
+                return "createUser";
+            } else if (e.getMessage().equals(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS)) {
+                bindingResult.rejectValue("phoneNumber", "phone_number_error", e.getMessage());
+                return "createUser";
+            }
 
+        }
+        return "createUser";
     }
 
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
@@ -182,6 +189,7 @@ public class UserMvcController {
         User currentUser = userService.getByUsernameOrEmail(authentication.getName());
 
         model.addAttribute("user", currentUser);
+
         return "redirect:/users/" + currentUser.getId();
 
     }
@@ -199,10 +207,94 @@ public class UserMvcController {
             return "redirect:/users";
         } catch (EntityNotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "notFound";
+            return "redirect:/users";
         } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/admin")
+    public String makeAdmin(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        try {
+            userService.makeAdmin(id);
+            model.addAttribute("isAdmin", userIsAdmin(userService.getById(id)));
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "accessDenied";
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/employee")
+    public String makeEmployee(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        try {
+            userService.makeEmployee(id);
+            model.addAttribute("isEmployee", userIsEmployee(userService.getById(id)));
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/notAdmin")
+    public String makeNotAdmin(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        try {
+            userService.makeNotAdmin(id);
+            model.addAttribute("isAdmin", userIsAdmin(userService.getById(id)));
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/notEmployee")
+    public String makeNotEmployee(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        try {
+            userService.makeUnemployed(id);
+            model.addAttribute("isEmployee", userIsEmployee(userService.getById(id)));
+
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
         }
 
     }
@@ -248,6 +340,10 @@ public class UserMvcController {
             if (e.getMessage().equals(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS)) {
                 bindingResult.rejectValue("phoneNumber", "phone_number_error", e.getMessage());
                 return "userUpdate";
+            } else if (e.getMessage().equals(USER_WITH_EMAIL_S_ALREADY_EXISTS)) {
+                bindingResult.rejectValue("email", "email_error", e.getMessage());
+                return "userUpdate";
+
             }
 
         }
@@ -308,7 +404,6 @@ public class UserMvcController {
             User user = userMapper.dtoToUser(register);
             userService.create(user);
             userService.makeEmployee(user.getId());
-            emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
             return "redirect:/";
         } catch (EntityDuplicationException e) {
             bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());
@@ -337,7 +432,7 @@ public class UserMvcController {
             User user = userMapper.dtoToUser(register);
             userService.create(user);
             userService.makeAdmin(user.getId());
-            emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
+
             return "redirect:/";
         } catch (EntityDuplicationException e) {
             bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());

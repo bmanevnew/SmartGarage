@@ -22,7 +22,7 @@ public class Constants {
     public static final String USER_IS_NOT_ADMIN = "This user is not an admin.";
     public static final String INVALID_LOGIN_ERROR = "Invalid username or password.";
     private static final String INVALID_AUTHENTICATION_ERROR = "Invalid authentication.";
-    public static final String USER_WITH_EMAIL_S_ALREADY_EXISTS = "User with email %s already exists.";
+    public static final String USER_WITH_EMAIL_S_ALREADY_EXISTS = "Email already registered";
     public static final String USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS = "Phone number is already registered";
     public static final String USER_WITH_EMAIL_S_DOES_NOT_EXIST = "User with email %s does not exist.";
     public static final String PASSWORD_DOES_NOT_MATCH = "Password confirmation does not match.";
