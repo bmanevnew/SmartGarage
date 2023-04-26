@@ -289,5 +289,61 @@ public class UserMvcController {
         return "redirect:/users/" + id;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/createEmployee")
+    public String showCreateEmployeePage(Model model) {
+        model.addAttribute("userDtoIn", new UserDtoIn());
+        return "createEmployee";
+    }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PostMapping("/createEmployee")
+    public String handleCreateEmployee(@Valid @ModelAttribute("userDtoIn") UserDtoIn register,
+                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "createEmployee";
+        }
+
+        try {
+            User user = userMapper.dtoToUser(register);
+            userService.create(user);
+            userService.makeEmployee(user.getId());
+            emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
+            return "redirect:/";
+        } catch (EntityDuplicationException e) {
+            bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());
+            bindingResult.rejectValue("email", "email_error", e.getMessage());
+            return "createEmployee";
+        }
+
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/createAdmin")
+    public String showCreateAdminPage(Model model) {
+        model.addAttribute("userDtoIn", new UserDtoIn());
+        return "createAdmin";
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PostMapping("/createAdmin")
+    public String handleCreateAdmin(@Valid @ModelAttribute("userDtoIn") UserDtoIn register,
+                                    BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "createAdmin";
+        }
+
+        try {
+            User user = userMapper.dtoToUser(register);
+            userService.create(user);
+            userService.makeAdmin(user.getId());
+            emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
+            return "redirect:/";
+        } catch (EntityDuplicationException e) {
+            bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());
+            bindingResult.rejectValue("email", "email_error", e.getMessage());
+            return "createAdmin";
+        }
+
+    }
 }

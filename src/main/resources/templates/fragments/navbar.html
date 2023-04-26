@@ -119,9 +119,9 @@
                                 <a href="" th:href="@{/users}" class="dropdown-item">Browse users</a>
                                 <a href="" th:href="@{/users/createUser}" class="dropdown-item">Add user</a>
                                 <a sec:authorize="hasAnyRole('ROLE_ADMIN')"
-                                   href="" th:href="@{/adminPanel}" class="dropdown-item">Add Employee</a>
+                                   href="" th:href="@{/users/createEmployee}" class="dropdown-item">Add Employee</a>
                                 <a sec:authorize="hasAnyRole('ROLE_ADMIN')"
-                                   href="" th:href="@{/users/createUser}" class="dropdown-item">Add Admin</a>
+                                   href="" th:href="@{/users/createAdmin}" class="dropdown-item">Add Admin</a>
                             </div>
                         </div>
                         <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="nav-item dropdown">

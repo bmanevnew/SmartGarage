@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -185,8 +186,8 @@ public class UserServiceImpl implements UserService {
         }
 
         //TODO Add addRole method
-        Set<Role> roles = userToAdmin.getRoles();
-        Role role = roleService.getByName("ROLE_ADMIN");
+        Set<Role> roles = new HashSet<>();
+        Role role = roleService.getById(3);
         roles.add(role);
         userToAdmin.setRoles(roles);
 
@@ -200,9 +201,10 @@ public class UserServiceImpl implements UserService {
             throw new RoleConflictException(USER_IS_ALREADY_EMPLOYEE);
         }
 
-        Set<Role> roles = userToEmployed.getRoles();
-        Role role = roleService.getByName("ROLE_EMPLOYEE");
+        Set<Role> roles = new HashSet<>();
+        Role role = roleService.getById(2);
         roles.add(role);
+        //  roles.addAll(userToEmployed.getRoles());
         userToEmployed.setRoles(roles);
 
         userRepository.save(userToEmployed);
@@ -214,7 +216,7 @@ public class UserServiceImpl implements UserService {
 
         Set<Role> roles = userToNotAdmin.getRoles();
         Role adminRole = roles.stream()
-                .filter(role -> role.getName().equals("ROLE_ADMIN"))
+                .filter(role -> role.getId() == 3)
                 .findFirst()
                 .orElseThrow(() -> new RoleConflictException(USER_IS_NOT_ADMIN));
 
@@ -230,7 +232,7 @@ public class UserServiceImpl implements UserService {
 
         Set<Role> roles = userToUnemployed.getRoles();
         Role employee = roles.stream()
-                .filter(role -> "ROLE_EMPLOYEE".equals(role.getName()))
+                .filter(role -> 2 == role.getId())
                 .findFirst()
                 .orElseThrow(() -> new RoleConflictException(USER_IS_NOT_EMPLOYED));
 

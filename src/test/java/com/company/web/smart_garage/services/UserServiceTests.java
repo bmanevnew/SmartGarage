@@ -354,7 +354,7 @@ class UserServiceTests {
         mockUser = createMockUser();
         mockUser.setId(1L);
         Mockito.when(mockRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockUser));
-        Mockito.when(roleService.getByName(Mockito.anyString())).thenReturn((createMockAdminRole()));
+        Mockito.when(roleService.getById(3L)).thenReturn((createMockEmployeeRole()));
 
         userService.makeAdmin(1L);
 
@@ -376,9 +376,9 @@ class UserServiceTests {
     public void makeEmployee_Should_AddAdminRole_When_UserIsNotEmployee() {
         mockUser = createMockUser();
         mockUser.setId(1L);
-        createMockAdminRole();
+        // createMockAdminRole();
         Mockito.when(mockRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockUser));
-        Mockito.when(roleService.getByName(Mockito.anyString())).thenReturn((createMockEmployeeRole()));
+        Mockito.when(roleService.getById(2L)).thenReturn((createMockEmployeeRole()));
         userService.makeEmployee(1L);
 
         Mockito.verify(mockRepository, Mockito.times(1)).save(mockUser);
