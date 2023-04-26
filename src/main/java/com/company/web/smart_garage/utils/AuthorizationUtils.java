@@ -3,7 +3,6 @@ package com.company.web.smart_garage.utils;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.services.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -42,12 +41,12 @@ public class AuthorizationUtils {
     }
 
     public User tryGetCurrentUser(Authentication authentication) {
-        String currentUsername = authentication.getName();
+        String currUsernameOrEmail = authentication.getName();
 
-        if (currentUsername == null) {
+        if (currUsernameOrEmail == null) {
             throw new UnauthorizedOperationException(INVALID_LOGIN_ERROR);
         }
 
-        return userService.getByUsername(currentUsername);
+        return userService.getByUsernameOrEmail(currUsernameOrEmail);
     }
 }

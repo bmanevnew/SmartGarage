@@ -25,7 +25,7 @@ public class Constants {
     public static final String USER_WITH_EMAIL_S_ALREADY_EXISTS = "User with email %s already exists.";
     public static final String USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS = "Phone number is already registered";
     public static final String USER_WITH_EMAIL_S_DOES_NOT_EXIST = "User with email %s does not exist.";
-    public static final String PASSWORD_DOES_NOT_MATCH = "Password confirmation does not match.";
+    public static final String PASSWORD_DOES_NOT_MATCH = "Password does not match.";
     public static final String PASSWORD_TOO_WEAK = "Password too weak. Must include one lowercase character," +
             " one uppercase character, one digit and one special symbol. Length should be between " +
             MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " symbols.";
@@ -78,9 +78,6 @@ public class Constants {
 
     //email
     public static final String DATE_FORMAT = "yyyy-MM-dd:hh:mm:ss";
-    public static final String HEADER_KEY = "Content-Disposition";
-    public static final String HEADER_VALUE = "attachment; filename=booking_%s.pdf";
-    public static final String CONTENT_TYPE = "application/pdf";
     public static final String FILE_NAME = "visit_%d.pdf";
     public static final String REPORT_EMAIL_BODY_FORMAT = "Please find attached the report for visit #%d.";
     public static final String REPORT_EMAIL_SUBJECT_FORMAT = "Visit Report #%d";
@@ -116,4 +113,5 @@ public class Constants {
     public static final String LOGIN_DTO_EMAIL_KEY = "loginEmail";
     public static final String PASSWORD_DTO_KEY = "passwordDto";
     public static final String TOKEN_KEY = "token";
+    public static final String RESPONSE_KEY = "response";
 }

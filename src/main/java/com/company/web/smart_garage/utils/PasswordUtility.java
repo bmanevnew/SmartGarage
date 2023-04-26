@@ -26,15 +26,15 @@ public class PasswordUtility {
     }
 
     private static List<CharacterRule> getGenerationRules() {
-        //should contain 1 lower case english character
+        //should contain 6 lower case english character
         CharacterRule lowerCaseRule = new CharacterRule(EnglishCharacterData.LowerCase);
         lowerCaseRule.setNumberOfCharacters(6);
 
-        //should contain 1 upper case english character
+        //should contain 6 upper case english character
         CharacterRule upperCaseRule = new CharacterRule(EnglishCharacterData.UpperCase);
         upperCaseRule.setNumberOfCharacters(6);
 
-        //should contain 1 digit case english character
+        //should contain 3 digit case english character
         CharacterRule digitRule = new CharacterRule(EnglishCharacterData.Digit);
         digitRule.setNumberOfCharacters(3);
 

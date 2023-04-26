@@ -1,18 +1,18 @@
 package com.company.web.smart_garage.controllers.mvc;
 
-import com.company.web.smart_garage.data_transfer_objects.*;
+import com.company.web.smart_garage.data_transfer_objects.PasswordResetDto;
+import com.company.web.smart_garage.data_transfer_objects.ProfileUpdateDto;
+import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
 import com.company.web.smart_garage.data_transfer_objects.filters.UserFilterOptionsDto;
 import com.company.web.smart_garage.exceptions.EntityDuplicationException;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
-import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.services.AuthService;
 import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.AuthorizationUtils;
-import com.company.web.smart_garage.utils.PasswordUtility;
 import com.company.web.smart_garage.utils.mappers.UserMapper;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -23,8 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -193,18 +191,8 @@ public class UserMvcController {
         if (!userIsAdmin(authentication)) {
             throw new UnauthorizedOperationException("Access denied.");
         }
-
-        try {
-            userService.delete(id);
-            return "redirect:/users";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("error", e.getMessage());
-            return "notFound";
-        } catch (UnauthorizedOperationException e) {
-            model.addAttribute("error", e.getMessage());
-            return "accessDenied";
-        }
-
+        userService.delete(id);
+        return "redirect:/users";
     }
 
     @PreAuthorize("!isAnonymous()")
@@ -259,7 +247,7 @@ public class UserMvcController {
     public String getChangePasswordPage(@PathVariable long id,
                                         Model model) {
         User user = userService.getById(id);
-        model.addAttribute(PASSWORD_DTO_KEY, new PasswordDto());
+        model.addAttribute(PASSWORD_DTO_KEY, new PasswordResetDto());
         model.addAttribute("user", user);
 
         return "changePassword";
@@ -267,23 +255,26 @@ public class UserMvcController {
 
     @PostMapping("/{id}/changePassword")
     public String changePassword(@PathVariable long id,
-                                 @Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
+                                 @Valid @ModelAttribute(PASSWORD_DTO_KEY) PasswordResetDto passwordDto,
                                  BindingResult bindingResult,
                                  Model model) {
-
+        User user = userService.getById(id);
+        model.addAttribute("user", user);
         if (bindingResult.hasErrors()) {
+            return "changePassword";
+        }
+        if (!passwordEncoder.matches(passwordDto.getCurrentPassword(), user.getPassword())) {
+            bindingResult.rejectValue("currentPassword", PASSWORD_ERROR, "Password is invalid.");
             return "changePassword";
         }
         if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
             bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, PASSWORD_DOES_NOT_MATCH);
-            model.addAttribute("user", userService.getById(id));
             return "changePassword";
         }
         try {
             authService.changePassword(id, passwordDto.getNewPassword());
         } catch (EntityNotFoundException | InvalidParamException e) {
             bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, e.getMessage());
-            model.addAttribute("user", userService.getById(id));
             return "changePassword";
         }
         return "redirect:/users/" + id;

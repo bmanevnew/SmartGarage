@@ -25,8 +25,7 @@ public class AuthenticationMvcController {
 
     public static final String LOGIN_VIEW = "login";
     public static final String FORGOT_PASSWORD_VIEW = "forgotPassword";
-    public static final String UPDATE_PASSWORD_VIEW = "updatePassword";
-    public static final String RESPONSE_KEY = "response";
+    public static final String UPDATE_PASSWORD_VIEW = "changeResetPassword";
     private final AuthService authService;
     @Value("${app.jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
