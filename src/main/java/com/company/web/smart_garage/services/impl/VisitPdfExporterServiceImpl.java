@@ -3,6 +3,7 @@ package com.company.web.smart_garage.services.impl;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.models.Visit;
+import com.company.web.smart_garage.services.VisitPdfExporterService;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.*;
@@ -19,16 +20,17 @@ import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.util.Set;
 
+import static com.company.web.smart_garage.utils.Constants.CURRENCY_NOT_SUPPORTED;
+
 @RequiredArgsConstructor
 @Service
-public class VisitPdfExporterServiceImpl implements com.company.web.smart_garage.services.VisitPdfExporterService {
+public class VisitPdfExporterServiceImpl implements VisitPdfExporterService {
 
     private final CurrencyConverter converter;
 
     private void writeTableHeader(PdfPTable table) {
         PdfPCell cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        // cell.setBackgroundColor();
         cell.setPadding(5);
 
         Font font = FontFactory.getFont(FontFactory.HELVETICA);
@@ -88,7 +90,7 @@ public class VisitPdfExporterServiceImpl implements com.company.web.smart_garage
         table.addCell(borderlessCell);
 
         double rate = converter.rate(Currency.BGN, Currency.findByCode(currencyCode)
-                .orElseThrow(() -> new InvalidParamException("Currency not supported.")));
+                .orElseThrow(() -> new InvalidParamException(CURRENCY_NOT_SUPPORTED)));
 
         for (Repair repair : repairs) {
             borderlessCell.setPhrase(new Phrase(repair.getName()));
@@ -102,8 +104,7 @@ public class VisitPdfExporterServiceImpl implements com.company.web.smart_garage
         table.addCell(borderlessCell);
         table.addCell(borderlessCell);
 
-        borderlessCell.setPhrase(new Phrase("Total: " +
-                String.format("%.2f %s", visit.getTotalCost() * rate, currencyCode),
+        borderlessCell.setPhrase(new Phrase(String.format("Total: %.2f %s", visit.getTotalCost() * rate, currencyCode),
                 fontBold));
         table.addCell(borderlessCell);
     }

@@ -21,8 +21,6 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @Service
 public class RepairServiceImpl implements RepairService {
 
-    public static final String FILTER_NAME = "deletedRepairFilter";
-    public static final String FILTER_PARAM = "isDeleted";
     private final RepairRepository repairRepository;
     private final EntityManager entityManager;
 

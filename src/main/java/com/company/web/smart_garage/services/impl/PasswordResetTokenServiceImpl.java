@@ -24,7 +24,6 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @Service
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
 
-    public static final String SHA_256 = "SHA-256";
     private final PasswordResetTokenRepository prtRepository;
     @Value("${password-reset-token-expiration-milliseconds}")
     private long prtExpirationTime;

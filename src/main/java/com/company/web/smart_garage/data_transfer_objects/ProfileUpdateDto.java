@@ -8,26 +8,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.company.web.smart_garage.utils.Constants.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfileUpdateDto {
 
-    @NotEmpty(message = "First name can not be empty.")
-    @Size(min = 4, max = 32, message = "First name should be between 4 and 32 symbols.")
+    @NotEmpty(message = FIRST_NAME_EMPTY)
+    @Size(min = 4, max = 32, message = FIRST_NAME_LENGTH_INVALID)
     private String firstName;
 
-    @NotEmpty(message = "Last name can not be empty.")
-    @Size(min = 4, max = 32, message = "Last name should be between 4 and 32 symbols.")
+    @NotEmpty(message = LAST_NAME_EMPTY)
+    @Size(min = 4, max = 32, message = LAST_NAME_LENGTH_INVALID)
     private String lastName;
 
-    @NotEmpty(message = "Email can not be empty.")
-    @Email(message = "Email should be a valid email.")
+    @NotEmpty(message = EMAIL_EMPTY)
+    @Email(message = EMAIL_INVALID)
     private String email;
 
-    @NotEmpty(message = "Phone number can not be empty.")
-    @Size(min = 10, max = 10, message = "Phone Number should be 10 symbols.")
+    @NotEmpty(message = PHONE_NUMBER_EMPTY)
+    @Size(min = 10, max = 10, message = PHONE_NUMBER_LENGTH_INVALID)
     private String phoneNumber;
 
 }

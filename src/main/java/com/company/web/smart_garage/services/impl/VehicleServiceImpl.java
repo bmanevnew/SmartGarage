@@ -21,7 +21,6 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @Service
 public class VehicleServiceImpl implements VehicleService {
 
-    public static final int MIN_PROD_YEAR = 1886;
     private final VehicleRepository vehicleRepository;
     private final UserService userService;
 
@@ -125,9 +124,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     private void validateLicensePlate(String licensePlate) {
         if (licensePlate != null) {
-            if (!licensePlate.matches(
-                    "^(E|A|B|BT|BH|BP|EB|TX|K|KH|OB|M|PA|PK|EH|PB|PP|P|CC|CH|CM|CO|C|CA|CB|CT|T|X|H|Y)" +
-                            " \\d{4} [ABEKMHOPCTYX]{2}$")) {
+            if (!licensePlate.matches(VEHICLE_LICENSE_PLATE_REGEX)) {
                 throw new InvalidParamException(VEHICLE_PLATE_INVALID_FORMAT);
             }
         }
@@ -135,7 +132,7 @@ public class VehicleServiceImpl implements VehicleService {
 
 
     private void validateVin(String vin) {
-        if (vin != null && !vin.matches("^[A-Z\\d]{17}$")) {
+        if (vin != null && !vin.matches(VEHICLE_VIN_REGEX)) {
             throw new InvalidParamException(VEHICLE_VIN_INVALID_FORMAT);
         }
     }

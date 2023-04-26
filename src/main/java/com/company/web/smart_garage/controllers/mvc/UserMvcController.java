@@ -1,6 +1,8 @@
 package com.company.web.smart_garage.controllers.mvc;
 
-import com.company.web.smart_garage.data_transfer_objects.*;
+import com.company.web.smart_garage.data_transfer_objects.PasswordResetDto;
+import com.company.web.smart_garage.data_transfer_objects.ProfileUpdateDto;
+import com.company.web.smart_garage.data_transfer_objects.UserDtoIn;
 import com.company.web.smart_garage.data_transfer_objects.filters.UserFilterOptionsDto;
 import com.company.web.smart_garage.exceptions.EntityDuplicationException;
 import com.company.web.smart_garage.exceptions.EntityNotFoundException;
@@ -181,15 +183,14 @@ public class UserMvcController {
 
         }
         return "createUser";
-    }
 
+    }
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     @GetMapping("/profile")
     public String showMyProfile(Authentication authentication, Model model) {
         User currentUser = userService.getByUsernameOrEmail(authentication.getName());
 
         model.addAttribute("user", currentUser);
-
         return "redirect:/users/" + currentUser.getId();
 
     }
@@ -201,19 +202,24 @@ public class UserMvcController {
         if (!userIsAdmin(authentication)) {
             throw new UnauthorizedOperationException("Access denied.");
         }
-
-        try {
-            userService.delete(id);
-            return "redirect:/users";
-        } catch (EntityNotFoundException e) {
-            model.addAttribute("error", e.getMessage());
-            return "redirect:/users";
-        } catch (UnauthorizedOperationException e) {
-            throw new UnauthorizedOperationException("Access denied.");
-        }
-
+        userService.delete(id);
+        return "redirect:/users";
     }
 
+    @PreAuthorize("!isAnonymous()")
+    @GetMapping("/{id}/update")
+    public String showEditUserPage(@PathVariable int id, Model model, Authentication authentication) {
+        User user = userService.getById(id);
+        User currentUser = authorizationUtils.tryGetCurrentUser(authentication);
+        if (!userIsAdminOrEmployee(authentication) && !Objects.equals(currentUser.getId(), user.getId())) {
+            //Todo change view to show user was unauthorized to access resource
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+        model.addAttribute("userDto", userMapper.userToDtoUpdate(user));
+        model.addAttribute("user", user);
+        model.addAttribute("currUser", currentUser);
+        return "userUpdate";
+    }
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{id}/admin")
     public String makeAdmin(@PathVariable int id, Model model, Authentication authentication) {
@@ -298,22 +304,6 @@ public class UserMvcController {
         }
 
     }
-
-    @PreAuthorize("!isAnonymous()")
-    @GetMapping("/{id}/update")
-    public String showEditUserPage(@PathVariable int id, Model model, Authentication authentication) {
-        User user = userService.getById(id);
-        User currentUser = authorizationUtils.tryGetCurrentUser(authentication);
-        if (!userIsAdminOrEmployee(authentication) && !Objects.equals(currentUser.getId(), user.getId())) {
-            //Todo change view to show user was unauthorized to access resource
-            throw new UnauthorizedOperationException("Access denied.");
-        }
-        model.addAttribute("userDto", userMapper.userToDtoUpdate(user));
-        model.addAttribute("user", user);
-        model.addAttribute("currUser", currentUser);
-        return "userUpdate";
-    }
-
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/update")
     public String updateUser(@PathVariable long id,
@@ -355,7 +345,7 @@ public class UserMvcController {
     public String getChangePasswordPage(@PathVariable long id,
                                         Model model) {
         User user = userService.getById(id);
-        model.addAttribute(PASSWORD_DTO_KEY, new PasswordDto());
+        model.addAttribute(PASSWORD_DTO_KEY, new PasswordResetDto());
         model.addAttribute("user", user);
 
         return "changePassword";
@@ -363,23 +353,26 @@ public class UserMvcController {
 
     @PostMapping("/{id}/changePassword")
     public String changePassword(@PathVariable long id,
-                                 @Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
+                                 @Valid @ModelAttribute(PASSWORD_DTO_KEY) PasswordResetDto passwordDto,
                                  BindingResult bindingResult,
                                  Model model) {
-
+        User user = userService.getById(id);
+        model.addAttribute("user", user);
         if (bindingResult.hasErrors()) {
+            return "changePassword";
+        }
+        if (!passwordEncoder.matches(passwordDto.getCurrentPassword(), user.getPassword())) {
+            bindingResult.rejectValue("currentPassword", PASSWORD_ERROR, "Password is invalid.");
             return "changePassword";
         }
         if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
             bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, PASSWORD_DOES_NOT_MATCH);
-            model.addAttribute("user", userService.getById(id));
             return "changePassword";
         }
         try {
             authService.changePassword(id, passwordDto.getNewPassword());
         } catch (EntityNotFoundException | InvalidParamException e) {
             bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, e.getMessage());
-            model.addAttribute("user", userService.getById(id));
             return "changePassword";
         }
         return "redirect:/users/" + id;

@@ -45,14 +45,17 @@ public class VisitController {
     }
 
     @GetMapping("/{id}/export/pdf")
-    public ResponseEntity<VisitDtoOut> getPdfReport(@PathVariable long id,
-                                                    Authentication authentication) throws IOException, MessagingException {
+    public ResponseEntity<VisitDtoOut> getPdfReport(
+            @RequestParam(required = false, name = "currency") String currencyCode,
+            @PathVariable long id,
+            Authentication authentication) throws IOException, MessagingException {
+
         Visit visit = visitService.getById(id);
         if (!userIsAdminOrEmployee(authentication) &&
                 !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
-        visitService.sendPdfToMail(visit, "BGN");
+        visitService.sendPdfToMail(visit, currencyCode);
 
         return ResponseEntity.ok(visitMapper.visitToDto(visit));
     }

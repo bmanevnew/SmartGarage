@@ -81,8 +81,8 @@
                         <a sec:authorize="isAnonymous()" href="../contact.html" th:href="@{/contact}"
                            class="nav-item nav-link">Contact</a>
 
-                        <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/repairs}"
-                           class="nav-item nav-link">Services</a>
+                        <a sec:authorize="hasRole('ROLE_CUSTOMER') && !hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')"
+                           href="" th:href="@{/repairs}" class="nav-item nav-link">Services</a>
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Services</a>
                             <div class="dropdown-menu rounded-0 m-0">
@@ -91,8 +91,8 @@
                             </div>
                         </div>
 
-                        <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/visits}"
-                           class="nav-item nav-link">My Visits</a>
+                        <a sec:authorize="hasRole('ROLE_CUSTOMER') && !hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')"
+                           href="" th:href="@{/visits}" class="nav-item nav-link">My Visits</a>
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Visits</a>
                             <div class="dropdown-menu rounded-0 m-0">
@@ -101,8 +101,8 @@
                             </div>
                         </div>
 
-                        <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/vehicles}"
-                           class="nav-item nav-link">My Vehicles</a>
+                        <a sec:authorize="hasRole('ROLE_CUSTOMER') && !hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')"
+                           href="" th:href="@{/vehicles}" class="nav-item nav-link">My Vehicles</a>
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Vehicles</a>
                             <div class="dropdown-menu rounded-0 m-0">
@@ -111,20 +111,23 @@
                             </div>
                         </div>
 
-                        <a sec:authorize="hasRole('ROLE_CUSTOMER')" href="" th:href="@{/users/profile}"
-                           class="nav-item nav-link">My Profile</a>
+                        <a sec:authorize="hasRole('ROLE_CUSTOMER') && !hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')"
+                           href="" th:href="@{/users/profile}" class="nav-item nav-link">My Profile</a>
                         <div sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')" class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Users</a>
                             <div class="dropdown-menu rounded-0 m-0">
+                                <a href="" th:href="@{/users/profile}" class="dropdown-item">My profile</a>
                                 <a href="" th:href="@{/users}" class="dropdown-item">Browse users</a>
                                 <a href="" th:href="@{/users/createUser}" class="dropdown-item">Add user</a>
                                 <a sec:authorize="hasAnyRole('ROLE_ADMIN')"
-                                   href="" th:href="@{/users/createEmployee}" class="dropdown-item">Add Employee</a>
+                                   href="" th:href="@{/users/createEmployee}" class="dropdown-item">Add employee</a>
                                 <a sec:authorize="hasAnyRole('ROLE_ADMIN')"
-                                   href="" th:href="@{/users/createAdmin}" class="dropdown-item">Add Admin</a>
+                                   href="" th:href="@{/users/createAdmin}" class="dropdown-item">Add admin</a>
                             </div>
                         </div>
-                        <div sec:authorize="hasRole('ROLE_CUSTOMER')" class="nav-item dropdown">
+
+                        <div sec:authorize="hasRole('ROLE_CUSTOMER') && !hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')"
+                             class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Details</a>
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="../about.html" th:href="@{/about}" class="dropdown-item">About</a>
