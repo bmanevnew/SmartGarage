@@ -23,6 +23,10 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequestMapping("/auth")
 public class AuthenticationMvcController {
 
+    public static final String LOGIN_VIEW = "login";
+    public static final String FORGOT_PASSWORD_VIEW = "forgotPassword";
+    public static final String UPDATE_PASSWORD_VIEW = "updatePassword";
+    public static final String RESPONSE_KEY = "response";
     private final AuthService authService;
     @Value("${app.jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
@@ -30,7 +34,7 @@ public class AuthenticationMvcController {
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         model.addAttribute(LOGIN_DTO_KEY, new LoginDto());
-        return "login";
+        return LOGIN_VIEW;
     }
 
     @PostMapping("/login")
@@ -38,14 +42,14 @@ public class AuthenticationMvcController {
                         BindingResult bindingResult,
                         HttpServletResponse response) {
         if (bindingResult.hasErrors()) {
-            return "login";
+            return LOGIN_VIEW;
         }
         String token;
         try {
             token = authService.login(login);
         } catch (AuthenticationException e) {
             bindingResult.rejectValue(PASSWORD_FIELD, AUTH_ERROR, INVALID_LOGIN_ERROR);
-            return "login";
+            return LOGIN_VIEW;
         }
         setTokenAsCookie(response, token);
         return "redirect:/";
@@ -60,7 +64,7 @@ public class AuthenticationMvcController {
     @GetMapping("/forgot_password")
     public String showForgotPasswordPage(Model model) {
         model.addAttribute(LOGIN_DTO_EMAIL_KEY, new LoginDto());
-        return "forgotPassword";
+        return FORGOT_PASSWORD_VIEW;
     }
 
     @PostMapping("/forgot_password")
@@ -73,8 +77,8 @@ public class AuthenticationMvcController {
         } catch (EntityNotFoundException | InvalidParamException e) {
             response = String.format(USER_WITH_EMAIL_S_DOES_NOT_EXIST, email);
         }
-        model.addAttribute("response", response);
-        return "forgotPassword";
+        model.addAttribute(RESPONSE_KEY, response);
+        return FORGOT_PASSWORD_VIEW;
     }
 
     @GetMapping("/change_password")
@@ -82,27 +86,27 @@ public class AuthenticationMvcController {
                                         Model model) {
         model.addAttribute(PASSWORD_DTO_KEY, new PasswordDto());
         model.addAttribute(TOKEN_KEY, token);
-        return "updatePassword";
+        return UPDATE_PASSWORD_VIEW;
     }
 
     @PostMapping("/change_password")
     public String changePassword(@RequestParam(name = TOKEN_KEY) String token,
-                                 @Valid @ModelAttribute("passwordDto") PasswordDto passwordDto,
+                                 @Valid @ModelAttribute(PASSWORD_DTO_KEY) PasswordDto passwordDto,
                                  BindingResult bindingResult,
                                  Model model) {
         model.addAttribute(TOKEN_KEY, token);
         if (bindingResult.hasErrors()) {
-            return "updatePassword";
+            return UPDATE_PASSWORD_VIEW;
         }
         if (!passwordDto.getNewPassword().equals(passwordDto.getConfirmNewPassword())) {
             bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, PASSWORD_DOES_NOT_MATCH);
-            return "updatePassword";
+            return UPDATE_PASSWORD_VIEW;
         }
         try {
             authService.changePassword(token, passwordDto.getNewPassword());
         } catch (EntityNotFoundException | InvalidParamException e) {
             bindingResult.rejectValue(CONFIRM_PASSWORD_FIELD, PASSWORD_ERROR, e.getMessage());
-            return "updatePassword";
+            return UPDATE_PASSWORD_VIEW;
         }
         return "redirect:/auth/login";
     }

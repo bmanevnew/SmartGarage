@@ -20,6 +20,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    public static final String ENDPOINT_PATH = "/api/auth/change_password";
     private final AuthService authService;
     private final UserService userService;
 
@@ -33,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/reset_password")
     public ResponseEntity<String> resetPassword(@RequestParam("email") String email) {
-        authService.resetPassword(email, "/api/auth/change_password");
+        authService.resetPassword(email, ENDPOINT_PATH);
         return ResponseEntity.ok(SUCCESSFUL_RESET);
     }
 

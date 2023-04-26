@@ -11,6 +11,9 @@ import java.util.Map;
 @Configuration
 public class CloudinaryConfig {
 
+    public static final String CLOUD_NAME_KEY = "cloud_name";
+    public static final String CLOUD_API_KEY = "api_key";
+    public static final String API_SECRET_KEY = "api_secret";
     @Value("${cloudinary.cloud-name}")
     private String CLOUD_NAME;
     @Value("${cloudinary.api-key}")
@@ -21,9 +24,9 @@ public class CloudinaryConfig {
     @Bean
     public Cloudinary cloudinary() {
         Map<String, String> config = new HashMap<>();
-        config.put("cloud_name", CLOUD_NAME);
-        config.put("api_key", API_KEY);
-        config.put("api_secret", API_SECRET);
+        config.put(CLOUD_NAME_KEY, CLOUD_NAME);
+        config.put(CLOUD_API_KEY, API_KEY);
+        config.put(API_SECRET_KEY, API_SECRET);
         return new Cloudinary(config);
     }
 }
