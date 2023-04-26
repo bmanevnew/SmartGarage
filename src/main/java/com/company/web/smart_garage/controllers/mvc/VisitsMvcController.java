@@ -105,7 +105,12 @@ public class VisitsMvcController {
                     actualVisitorId = Long.parseLong(filter.getVisitor());
                 } catch (NumberFormatException e) {
                     if (filter.getVisitor() != null && !filter.getVisitor().isBlank()) {
-                        actualVisitorId = userService.getByUsernameOrEmail(filter.getVisitor()).getId();
+                        try {
+                            actualVisitorId = userService.getByUsernameOrEmail(filter.getVisitor()).getId();
+                        } catch (EntityNotFoundException ex) {
+                            viewModel.addAttribute(PARAM_ERROR, ex.getMessage());
+                            return ALL_VISITS_VIEW;
+                        }
                     }
                 }
             }
@@ -114,13 +119,19 @@ public class VisitsMvcController {
                 actualVehicleId = Long.parseLong(filter.getVehicle());
             } catch (NumberFormatException e) {
                 if (filter.getVehicle() != null && !filter.getVehicle().isBlank()) {
-                    Vehicle vehicle = vehicleService.getByLicensePlateOrVin(filter.getVehicle());
-                    actualVehicleId = vehicle.getId();
+                    try {
+                        Vehicle vehicle = vehicleService.getByLicensePlateOrVin(filter.getVehicle());
+                        actualVehicleId = vehicle.getId();
+                    } catch (EntityNotFoundException ex) {
+                        viewModel.addAttribute(PARAM_ERROR, ex.getMessage());
+                        return ALL_VISITS_VIEW;
+                    }
                 }
             }
             if (actualVehicleId != null && !userIsAdminOrEmployee(authentication) &&
                     !vehicleService.getById(actualVehicleId).getOwner().getId().equals(authUserId)) {
-                throw new UnauthorizedOperationException(ACCESS_DENIED);
+                viewModel.addAttribute(PARAM_ERROR, ACCESS_DENIED);
+                return ALL_VISITS_VIEW;
             }
 
             if (filter.getDateFrom() != null && !filter.getDateFrom().isBlank())
