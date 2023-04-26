@@ -4,12 +4,11 @@ import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.models.VisitPdfExporter;
 import com.company.web.smart_garage.repositories.VisitRepository;
 import com.company.web.smart_garage.services.RepairService;
+import com.company.web.smart_garage.services.VisitPdfExporterService;
 import com.company.web.smart_garage.services.VisitService;
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
@@ -18,12 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Set;
 
 import static com.company.web.smart_garage.utils.Constants.*;
@@ -35,6 +30,7 @@ public class VisitServiceImpl implements VisitService {
     private final VisitRepository visitRepository;
     private final EmailSenderServiceImpl emailSenderService;
     private final RepairService repairService;
+    private final VisitPdfExporterService exporter;
 
     @Override
     public Visit getById(long id) {
@@ -110,19 +106,13 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    public void generatePdf(HttpServletResponse response, Visit visit, Double rate) throws IOException, MessagingException {
-        response.setContentType(CONTENT_TYPE);
-        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        String currentDateTime = dateFormat.format(new Date());
-        String headerValue = String.format(HEADER_VALUE, currentDateTime);
-        response.setHeader(HEADER_KEY, headerValue);
-        VisitPdfExporter exporter = new VisitPdfExporter(visit, rate);
-        ByteArrayOutputStream baos = exporter.export(response);
+    public void sendPdfToMail(Visit visit, String currencyCode) throws MessagingException {
+
+        ByteArrayOutputStream baos = exporter.export(visit, currencyCode);
 
         ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
 
         String fileName = String.format(FILE_NAME, visit.getId());
-        // String toEmail = "manev_boris@yahoo.com";
         String toEmail = visit.getVisitor().getEmail();
         String subject = String.format(REPORT_EMAIL_SUBJECT_FORMAT, visit.getId());
         String body = String.format(REPORT_EMAIL_BODY_FORMAT, visit.getId());

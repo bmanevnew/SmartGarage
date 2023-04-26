@@ -54,25 +54,25 @@
         <h2 class="mb-5 text-center">Details</h2>
         <form href="" th:action="@{/repairs/create}" th:object="${repairDtoCreate}" method="post">
             <div class="row mb-4 justify-content-center">
-                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Name:</label>
+                <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Name:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{name}"
-                           th:value="${repairDtoCreate.getName()}">
+                           th:value="${repairDtoCreate.getName()}" placeholder="Service name">
                     <div class="error my-2" th:errors="*{name}"></div>
                 </div>
             </div>
             <div class="row mb-4 justify-content-center">
-                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Price:</label>
+                <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Price:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{price}"
-                           th:value="${repairDtoCreate.getPrice()}">
+                           th:value="${repairDtoCreate.getPrice()}" placeholder="Service price">
                     <div class="error my-2" th:errors="*{price}"></div>
                 </div>
             </div>
             <div class="row mb-3 justify-content-center">
                 <div class="col-lg-6">
                     <button class="btn btn-primary btn-block" type="submit"
-                            style="height: 50px;">Create repair
+                            style="height: 50px;">Create service
                     </button>
                 </div>
             </div>

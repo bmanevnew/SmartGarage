@@ -15,6 +15,10 @@ import java.util.Properties;
 @PropertySource("classpath:application.properties")
 public class HibernateConfig {
 
+    public static final String MODELS_PATH = "com.company.web.smart_garage.models";
+    public static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    public static final String HIBERNATE_DIALECT_KEY = "hibernate.dialect";
+    public static final String HIBERNATE_DIALECT_VALUE = "org.hibernate.dialect.MySQLDialect";
     private final String dbUrl, dbUsername, dbPassword;
 
     @Autowired
@@ -28,7 +32,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("com.company.web.smart_garage.models");
+        sessionFactory.setPackagesToScan(MODELS_PATH);
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }
@@ -36,7 +40,7 @@ public class HibernateConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setDriverClassName(DRIVER);
         dataSource.setUrl(dbUrl);
         dataSource.setUsername(dbUsername);
         dataSource.setPassword(dbPassword);
@@ -45,7 +49,7 @@ public class HibernateConfig {
 
     private Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+        hibernateProperties.setProperty(HIBERNATE_DIALECT_KEY, HIBERNATE_DIALECT_VALUE);
         return hibernateProperties;
     }
 }

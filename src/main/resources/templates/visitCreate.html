@@ -54,18 +54,18 @@
         <h2 class="mb-5 text-center">Details</h2>
         <form href="" th:action="@{/visits/create}" th:object="${visitDto}" method="post">
             <div class="row mb-4 justify-content-center">
-                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Visitor:</label>
+                <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Visitor:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{visitor}"
-                           th:value="${visitDto.getVisitor()}">
+                           th:value="${visitDto.getVisitor()}" placeholder="User username or email">
                     <div class="error my-2" th:errors="*{visitor}"></div>
                 </div>
             </div>
             <div class="row mb-4 justify-content-center">
-                <label class="col-lg-1 col-form-label text-uppercase text-primary font-weight-bold">Vehicle:</label>
+                <label class="col-lg-1 col-form-label text-uppercase text-dark font-weight-bold">Vehicle:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{vehicle}"
-                           th:value="${visitDto.getVehicle()}">
+                           th:value="${visitDto.getVehicle()}" placeholder="Vehicle license plate or vin">
                     <div class="error my-2" th:errors="*{vehicle}"></div>
                 </div>
             </div>

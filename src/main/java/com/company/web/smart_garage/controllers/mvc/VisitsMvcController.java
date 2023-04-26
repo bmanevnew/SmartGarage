@@ -10,16 +10,17 @@ import com.company.web.smart_garage.models.Repair;
 import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.models.Visit;
-import com.company.web.smart_garage.services.RepairService;
-import com.company.web.smart_garage.services.UserService;
-import com.company.web.smart_garage.services.VehicleService;
-import com.company.web.smart_garage.services.VisitService;
-import com.posadskiy.currencyconverter.CurrencyConverter;
+import com.company.web.smart_garage.services.*;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -27,13 +28,18 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
+import static com.company.web.smart_garage.utils.Constants.DATE_FORMAT;
 
 @RequiredArgsConstructor
 @Controller
@@ -45,7 +51,7 @@ public class VisitsMvcController {
     private final UserService userService;
     private final VehicleService vehicleService;
     private final RepairService repairService;
-    private final CurrencyConverter converter;
+    private final VisitPdfExporterService pdfExporter;
 
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleNotFound(EntityNotFoundException e, Model model) {
@@ -71,6 +77,7 @@ public class VisitsMvcController {
             throw new UnauthorizedOperationException("Access denied.");
         }
         model.addAttribute("visit", visit);
+        model.addAttribute("currency", new SimpleStringDto());
         return "visit";
     }
 
@@ -159,7 +166,7 @@ public class VisitsMvcController {
         Visit visit = new Visit(null, null, vehicle, visitor, null);
         visit = visitService.create(visit);
 
-        return "redirect:/visits/" + visit.getId();
+        return "redirect:/visits/" + visit.getId() + "/update";
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
@@ -201,6 +208,60 @@ public class VisitsMvcController {
             throw new EntityNotFoundException("Visit", visitId);
         }
         return "redirect:/visits/" + visitId + "/update";
+    }
+
+    @GetMapping("/{visitId}/sendPdf")
+    public String sendPdf(@ModelAttribute("currency") SimpleStringDto currency,
+                          @PathVariable long visitId, Model model,
+                          Authentication authentication) throws IOException, MessagingException {
+        Visit visit = visitService.getById(visitId);
+
+        if (!userIsAdminOrEmployee(authentication) &&
+                !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        model.addAttribute("visit", visit);
+        try {
+            visitService.sendPdfToMail(visit, currency.getString().toUpperCase());
+        } catch (InvalidParamException e) {
+            model.addAttribute("response", e.getMessage());
+            return "visit";
+        }
+        model.addAttribute("response", "Successfully sent pdf.");
+        return "visit";
+    }
+
+    @GetMapping("/{visitId}/downloadPdf")
+    public Object downloadPdf(@ModelAttribute("currency") SimpleStringDto currency,
+                              @PathVariable long visitId, Model model,
+                              Authentication authentication) {
+
+        Visit visit = visitService.getById(visitId);
+
+        if (!userIsAdminOrEmployee(authentication) &&
+                !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        model.addAttribute("visit", visit);
+        byte[] contents;
+        try {
+            contents = pdfExporter.export(visit, currency.getString().toUpperCase()).toByteArray();
+        } catch (InvalidParamException e) {
+            model.addAttribute("response", e.getMessage());
+            return "visit";
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        String currentDateTime = dateFormat.format(new Date());
+        String filename = String.format("visit_pdf_%s", currentDateTime);
+        headers.setContentDispositionFormData(filename, filename);
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

@@ -141,6 +141,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
             throw new EntityDuplicationException(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS);
         }
+        if (userRepository.findFirstByEmail(user.getEmail()).isPresent()) {
+            throw new EntityDuplicationException(USER_WITH_EMAIL_S_ALREADY_EXISTS);
+        }
 
         String randomUsername;
         do {

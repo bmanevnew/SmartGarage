@@ -54,52 +54,53 @@
         <h2 class="mb-5 text-center">Details</h2>
         <form href="" th:action="@{/vehicles/create}" th:object="${vehicleDtoCreate}" method="post">
             <div class="row mb-4 justify-content-center">
-                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">License
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-dark font-weight-bold">License
                     plate:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{licensePlate}"
-                           th:value="${vehicleDtoCreate.getLicensePlate()}">
+                           th:value="${vehicleDtoCreate.getLicensePlate()}" placeholder="Vehicle license plate">
                     <div class="error my-2" th:errors="*{licensePlate}"></div>
                 </div>
             </div>
             <div class="row mb-4 justify-content-center">
-                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Vin:</label>
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-dark font-weight-bold">Vin:</label>
                 <div class="col-lg-6">
-                    <input type="text" class="form-control" th:field="*{vin}" th:value="${vehicleDtoCreate.getVin()}">
+                    <input type="text" class="form-control" th:field="*{vin}" th:value="${vehicleDtoCreate.getVin()}"
+                           placeholder="Vehicle VIN number">
                     <div class="error my-2" th:errors="*{vin}"></div>
                 </div>
             </div>
             <div class="row mb-4 justify-content-center">
-                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-dark font-weight-bold">
                     Production Year:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{productionYear}"
-                           th:value="${vehicleDtoCreate.getProductionYear()}">
+                           th:value="${vehicleDtoCreate.getProductionYear()}" placeholder="Year or production">
                     <div class="error my-2" th:errors="*{productionYear}"></div>
                 </div>
             </div>
             <div class="row mb-4 justify-content-center">
-                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Brand:</label>
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-dark font-weight-bold">Brand:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{brand}"
-                           th:value="${vehicleDtoCreate.getBrand()}">
+                           th:value="${vehicleDtoCreate.getBrand()}" placeholder="Vehicle brand">
                     <div class="error my-2" th:errors="*{brand}"></div>
                 </div>
             </div>
             <div class="row mb-5 justify-content-center">
-                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Model:</label>
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-dark font-weight-bold">Model:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{model}"
-                           th:value="${vehicleDtoCreate.getModel()}">
+                           th:value="${vehicleDtoCreate.getModel()}" placeholder="Vehicle model">
                     <div class="error my-2" th:errors="*{model}"></div>
                 </div>
             </div>
             <div class="row mb-5 justify-content-center">
-                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">
-                    Owner username or email:</label>
+                <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-dark font-weight-bold">Owner:</label>
                 <div class="col-lg-6">
                     <input type="text" class="form-control" th:field="*{ownerUsernameOrEmail}"
-                           th:value="${vehicleDtoCreate.getOwnerUsernameOrEmail()}">
+                           th:value="${vehicleDtoCreate.getOwnerUsernameOrEmail()}"
+                           placeholder="User's username or email">
                     <div class="error my-2" th:errors="*{ownerUsernameOrEmail}"></div>
                 </div>
             </div>
