@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import static com.company.web.smart_garage.utils.Constants.INVALID_LOGIN_ERROR;
+
 @Component
 public class AuthorizationUtils {
     private final UserService userService;
@@ -43,7 +45,7 @@ public class AuthorizationUtils {
         String currentUsername = authentication.getName();
 
         if (currentUsername == null) {
-            throw new UnauthorizedOperationException(Constants.INVALID_LOGIN_ERROR);
+            throw new UnauthorizedOperationException(INVALID_LOGIN_ERROR);
         }
 
         return userService.getByUsername(currentUsername);

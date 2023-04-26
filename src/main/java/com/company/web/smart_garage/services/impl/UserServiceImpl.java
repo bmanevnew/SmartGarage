@@ -153,7 +153,6 @@ public class UserServiceImpl implements UserService {
         sendMail(user);
         String hash = passwordEncoder.encode(originalPassword);
         user.setPassword(hash);
-
         user.setRoles(Set.of(roleService.getByName("ROLE_CUSTOMER")));
 
         return userRepository.save(user);
@@ -241,7 +240,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User user) {
         User newUser = userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).orElse(null);
-        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+        if (userRepository.findFirstByPhoneNumber(user.getPhoneNumber()).isPresent() && newUser.getId() != user.getId()) {
             throw new EntityDuplicationException(String.format(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS, user.getPhoneNumber()));
         }
 
@@ -251,7 +250,7 @@ public class UserServiceImpl implements UserService {
         persistentUser.setPhoneNumber(user.getPhoneNumber());
         persistentUser.setFirstName(user.getFirstName());
         persistentUser.setLastName(user.getLastName());
-        if (user.getPassword() != null) {
+        if (user.getPassword().length() != 60 && user.getPassword() != null) {
             if (PasswordUtility.validatePassword(user.getPassword())) {
                 String hash = passwordEncoder.encode(user.getPassword());
                 persistentUser.setPassword(hash);

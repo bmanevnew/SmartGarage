@@ -77,7 +77,7 @@ public class RoleServiceTests {
         Role customer = createMockDefaultRole();
         String name = "ROLE_CUSTOMER";
 
-        when(roleRepository.findByName(name)).thenReturn(Optional.of(customer));
+        when(roleRepository.findFirstByName(name)).thenReturn(Optional.of(customer));
 
         Role result = roleService.getByName(name);
 
@@ -88,7 +88,7 @@ public class RoleServiceTests {
     public void testGetByNameWithNonExistingName() {
         String name = "ROLE_NON_EXISTING";
 
-        when(roleRepository.findByName(name)).thenReturn(Optional.empty());
+        when(roleRepository.findFirstByName(name)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             roleService.getByName(name);

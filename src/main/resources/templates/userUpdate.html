@@ -100,7 +100,9 @@
         <div class="row mb-4 justify-content-center">
             <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Email:</label>
             <div class="col-lg-6">
-                <input type="text" class="form-control" th:value="${user.getEmail()}" disabled style="width: 95%">
+                <!--                <input type="text" class="form-control" th:value="${user.getEmail()}" disabled style="width: 95%">-->
+                <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">
+                <input type="hidden" name="email" th:value="${user.getEmail()}">
             </div>
         </div>
         <div class="row mb-4 justify-content-center">
@@ -134,10 +136,36 @@
             <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Phone
                 number:</label>
             <div class="col-lg-6">
-                <input type="text" class="form-control"
-                       th:value="${user.phoneNumber}" disabled style="width: 95%">
+
+                <input type="text" class="form-control" th:value="${user.phoneNumber}" disabled style="width: 95%">
+                <input type="hidden" name="phoneNumber" th:value="${user.getPhoneNumber()}">
             </div>
         </div>
+
+        <!--        <div class="row mb-4 justify-content-center"-->
+        <!--             sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')">-->
+        <!--            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Old password:</label>-->
+        <!--            <div class="col-lg-6">-->
+        <!--                <input type="password" th:field="*{oldPassword}">-->
+        <!--                <div class="error my-2" th:errors="*{oldPassword}"></div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--        <div class="row mb-4 justify-content-center"-->
+        <!--             sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')">-->
+        <!--            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">New Password:</label>-->
+        <!--            <div class="col-lg-6">-->
+        <!--                <input type="password" th:field="*{newPassword}">-->
+        <!--                <div class="error my-2" th:errors="*{newPassword}"></div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--        <div class="row mb-4 justify-content-center"-->
+        <!--             sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_EMPLOYEE')">-->
+        <!--            <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Confirm new password:</label>-->
+        <!--            <div class="col-lg-6">-->
+        <!--                <input type="password" th:field="*{newPasswordConfirm}">-->
+        <!--                <div class="error my-2" th:errors="*{newPasswordConfirm}"></div>-->
+        <!--            </div>-->
+        <!--        </div>-->
 
         <div class="row mb-3 justify-content-center">
             <div class="col-lg-6">

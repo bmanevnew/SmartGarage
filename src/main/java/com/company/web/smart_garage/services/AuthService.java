@@ -8,4 +8,6 @@ public interface AuthService {
     void resetPassword(String email, String path);
 
     void changePassword(String token, String newPassword);
+
+    void changePassword(Long id, String newPassword);
 }

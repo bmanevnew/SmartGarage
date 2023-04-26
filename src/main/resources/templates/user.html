@@ -96,13 +96,21 @@
 
         <div class="w3-container w3-cell"
              th:if="${currentUser.getId() == user?.getId() or #authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_EMPLOYEE'')')}"
-             id="changePassword" sec:authorize="!isAnonymous()">
+             id="userUpdate" sec:authorize="!isAnonymous()">
             <form>
                 <a href="userUpdate.html" th:href="@{~/users/{id}/update(id=${user?.getId()})}" th:id="updateUserButton"
                    class="btn btn-primary text-uppercase edit-profile-btn" type="submit">Edit profile</a>
             </form>
         </div>
-
+        <div class="w3-container w3-cell"
+             th:if="${currentUser.getId() == user?.getId()}"
+             id="changePassword" sec:authorize="!isAnonymous()">
+            <form>
+                <a href="changePassword.html" th:href="@{~/users/{id}/changePassword(id=${user?.getId()})}"
+                   th:id="changePassButton"
+                   class="btn btn-primary text-uppercase edit-profile-btn" type="submit">Change Password</a>
+            </form>
+        </div>
         <div class="w3-container w3-cell" id="deleteProfile">
             <a sec:authorize="hasRole('ROLE_ADMIN')">
                 <form th:action="@{~/users/{id}/delete(id=${user.getId()})}" method="post">
@@ -112,6 +120,7 @@
                 </form>
             </a>
         </div>
+
     </form>
 </div>
 
@@ -212,6 +221,5 @@
 
 <!-- Template Javascript -->
 <script src="../static/js/main.js" th:src="@{/js/main.js}"></script>
-
 </body>
 </html>

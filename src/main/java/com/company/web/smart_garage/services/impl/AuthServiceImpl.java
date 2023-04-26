@@ -63,4 +63,14 @@ public class AuthServiceImpl implements AuthService {
         userService.update(user);
         prtService.deletePasswordResetToken(resetToken.getId());
     }
+
+    @Override
+    public void changePassword(Long id, String newPassword) {
+        if (!validatePassword(newPassword)) throw new InvalidParamException(PASSWORD_TOO_WEAK);
+
+        User user = userService.getById(id);
+        user.setPassword(newPassword);
+        userService.update(user);
+
+    }
 }
