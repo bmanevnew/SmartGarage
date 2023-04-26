@@ -21,7 +21,6 @@ public class Constants {
     public static final String USER_IS_NOT_EMPLOYED = "This user is not employed.";
     public static final String USER_IS_NOT_ADMIN = "This user is not an admin.";
     public static final String INVALID_LOGIN_ERROR = "Invalid username or password.";
-    private static final String INVALID_AUTHENTICATION_ERROR = "Invalid authentication.";
     public static final String USER_WITH_EMAIL_S_ALREADY_EXISTS = "User with email %s already exists.";
     public static final String USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS = "Phone number is already registered";
     public static final String USER_WITH_EMAIL_S_DOES_NOT_EXIST = "User with email %s does not exist.";
@@ -29,6 +28,24 @@ public class Constants {
     public static final String PASSWORD_TOO_WEAK = "Password too weak. Must include one lowercase character," +
             " one uppercase character, one digit and one special symbol. Length should be between " +
             MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " symbols.";
+    public static final String FIRST_NAME_EMPTY = "First name can not be empty.";
+    public static final String FIRST_NAME_LENGTH_INVALID = "First name should be between 4 and 32 symbols.";
+    public static final String LAST_NAME_EMPTY = "Last name can not be empty.";
+    public static final String LAST_NAME_LENGTH_INVALID = "Last name should be between 4 and 32 symbols.";
+    public static final String EMAIL_EMPTY = "Email can not be empty.";
+    public static final String EMAIL_INVALID = "Email should be a valid email.";
+    public static final String PHONE_NUMBER_EMPTY = "Phone number can not be empty.";
+    public static final String PHONE_NUMBER_LENGTH_INVALID = "Phone Number should be 10 symbols.";
+    public static final String PASSWORD_LENGTH_INVALID = "Your password must be between 8 and 32 symbols";
+    public static final String PHONE_NUMBER_REGEX = "^\\d{10}$";
+    public static final String CURRENT_PASSWORD_BLANK = "Please enter your current password.";
+    public static final String NEW_PASSWORD_BLANK = "Please enter your new password.";
+    public static final String CONFIRM_PASSWORD_BLANK = "Please confirm your new password.";
+
+
+    //roles
+    public static final String ROLE_EMPLOYEE = "ROLE_EMPLOYEE";
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
 
     //vehicles
@@ -44,10 +61,11 @@ public class Constants {
     public static final String VEHICLE_BRAND_INVALID_SIZE = "Vehicle brand must be between 2 and 32 symbols.";
     public static final String VEHICLE_PROD_YEAR_INVALID = "Production year must be between 1886 and the present year.";
     public static final String VEHICLE_PROD_YEAR_INTERVAL_INVALID = "Production year interval is invalid.";
-    public static final String VEHICLE_PLATE_INVALID_AREA_CODE = "License plate area code is invalid.";
     public static final String INVALID_OWNER = "Invalid owner.";
-    public static final String VEHICLE_VALID_AREA_CODES = "E,A,B,BT,BH,BP,EB,TX,K,KH,OB,M,PA,PK,EH,PB,PP,P,CC,CH,CM,CO," +
-            "C,CA,CB,CT,T,X,H,Y";
+    public static final int MIN_PROD_YEAR = 1886;
+    public static final String VEHICLE_LICENSE_PLATE_REGEX =
+            "^(E|A|B|BT|BH|BP|EB|TX|K|KH|OB|M|PA|PK|EH|PB|PP|P|CC|CH|CM|CO|C|CA|CB|CT|T|X|H|Y) \\d{4} [ABEKMHOPCTYX]{2}$";
+    public static final String VEHICLE_VIN_REGEX = "^[A-Z\\d]{17}$";
 
 
     //visits
@@ -57,6 +75,8 @@ public class Constants {
     public static final String VEHICLE_ID_MUST_BE_POSITIVE = "Vehicle id must be positive.";
     public static final String VISIT_DATE_IN_FUTURE = "Date cannot be in the future.";
     public static final String VISIT_DATE_INTERVAL_INVALID = "Date interval is invalid.";
+    public static final String VISIT_ALREADY_HAS_REPAIR_FORMAT = "Visit %d already has repair %d.";
+    public static final String VISIT_HAS_NO_REPAIR_FORMAT = "Visit %d has no repair %d.";
 
 
     //repairs
@@ -66,6 +86,8 @@ public class Constants {
     public static final String PRICE_IS_REQUIRED = "Price is a required field.";
     public static final String PRICE_IS_INVALID = "Price is invalid.";
     public static final String PRICE_INTERVAL_IS_INVALID = "Price interval is invalid.";
+    public static final String FILTER_NAME = "deletedRepairFilter";
+    public static final String FILTER_PARAM = "isDeleted";
 
 
     //JWT
@@ -77,7 +99,7 @@ public class Constants {
 
 
     //email
-    public static final String DATE_FORMAT = "yyyy-MM-dd:hh:mm:ss";
+    public static final String DATE_FORMAT_MS = "yyyy-MM-dd:hh:mm:ss";
     public static final String FILE_NAME = "visit_%d.pdf";
     public static final String REPORT_EMAIL_BODY_FORMAT = "Please find attached the report for visit #%d.";
     public static final String REPORT_EMAIL_SUBJECT_FORMAT = "Visit Report #%d";
@@ -98,9 +120,12 @@ public class Constants {
     public static final String SUCCESSFUL_RESET = "Successfully sent reset link.";
     public static final String PASSWORD_SUCCESSFULLY_CHANGED = "You have successfully changed your password.";
     public static final String REQUIRED_FIELD = "Required field.";
+    public static final String CURRENCY_NOT_SUPPORTED = "Currency not supported.";
+    public static final String SHA_256 = "SHA-256";
+    public static final String NOT_ARCHIVED = "is_archived = false";
 
 
-    //mvc authentication constants
+    //authentication mvc
     public static final String CONFIRM_PASSWORD_FIELD = "confirmNewPassword";
     public static final String PASSWORD_ERROR = "password_error";
     public static final String AUTH_ERROR = "auth_error";
@@ -114,4 +139,61 @@ public class Constants {
     public static final String PASSWORD_DTO_KEY = "passwordDto";
     public static final String TOKEN_KEY = "token";
     public static final String RESPONSE_KEY = "response";
+    public static final String CONTACT_DTO_KEY = "contactDto";
+
+    //error handling mvc
+    public static final String ERROR_MESSAGE_KEY = "errorMessage";
+    public static final String HTTP_CODE_KEY = "httpCode";
+    public static final String NOT_FOUND_HEADING = "404 Not Found";
+    public static final String UNAUTHORIZED_HEADING = "401 Unauthorized";
+
+
+    //repairs mvc
+    public static final String REPAIR_FILTER_OPTIONS = "repairFilterOptions";
+    public static final String REPAIRS_KEY = "repairs";
+    public static final String PARAM_ERROR = "paramError";
+    public static final String INVALID_PRICE = "Invalid price input.";
+    public static final String REPAIR_DTO_CREATE = "repairDtoCreate";
+    public static final String REPAIR_CREATE_VIEW = "repairCreate";
+    public static final String REPAIR_UPDATE_VIEW = "repairUpdate";
+    public static final String DUPLICATE_NAME = "duplicate_name";
+    public static final String REPAIR_DTO_KEY = "repairDto";
+    public static final String PRICE_ERROR = "price_error";
+    public static final String PRICE_FIELD = "price";
+    public static final String NAME_FIELD = "name";
+
+    //vehicles mvc
+    public static final String ACCESS_DENIED = "Access denied.";
+    public static final String VEHICLE_KEY = "vehicle";
+    public static final String VEHICLE_DTO_CREATE = "vehicleDtoCreate";
+    public static final String OWNER_INVALID = "owner_invalid";
+    public static final String OWNER_USERNAME_OR_EMAIL_FIELD = "ownerUsernameOrEmail";
+    public static final String PRODUCTION_YEAR_FIELD = "productionYear";
+    public static final String PROD_YEAR_INVALID = "prod_year_invalid";
+    public static final String PROD_YEAR_INVALID_MESSAGE = "Production year is invalid.";
+    public static final String VEHICLE_DTO = "vehicleDto";
+    public static final String INVALID_YEAR = "Invalid year input.";
+    public static final String VEHICLES_KEY = "vehicles";
+    public static final String VEHICLE_FILTER_OPTIONS = "vehicleFilterOptions";
+
+    //VISITS MVC
+    public static final String VISIT_KEY = "visit";
+    public static final String CURRENCY_KEY = "currency";
+    public static final String VISIT_FILTER_OPTIONS = "visitFilterOptions";
+    public static final String INVALID_DATE = "Invalid date input.";
+    public static final String VISITS_KEY = "visits";
+    public static final String VISIT_DTO = "visitDto";
+    public static final String VISITOR_FIELD = "visitor";
+    public static final String VEHICLE_FIELD = "vehicle";
+    public static final String VISITOR_INVALID = "visitor_invalid";
+    public static final String VEHICLE_INVALID = "vehicle_invalid";
+    public static final String SUCCESSFULLY_SENT_PDF = "Successfully sent pdf.";
+    public static final String FILE_NAME_FORMAT = "visit_pdf_%s";
+    public static final String CACHE_CONTROL = "must-revalidate, post-check=0, pre-check=0";
+    public static final String ALL_REPAIRS_KEY = "allRepairs";
+    public static final String ADD_REPAIR_KEY = "addRepair";
+    public static final String DATE_FORMAT = "MM/dd/yyyy";
+
+    //mvc general
+    public static final String ERROR_VIEW = "error";
 }

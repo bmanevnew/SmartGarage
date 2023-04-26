@@ -17,12 +17,11 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @AllArgsConstructor
 public class VehicleDtoCreate {
     @NotNull(message = VEHICLE_PLATE_REQUIRED)
-    @Pattern(regexp = "^(E|A|B|BT|BH|BP|EB|TX|K|KH|OB|M|PA|PK|EH|PB|PP|P|CC|CH|CM|CO|C|CA|CB|CT|T|X|H|Y) \\d{4}" +
-            " [ABEKMHOPCTYX]{2}$", message = VEHICLE_PLATE_INVALID_FORMAT)
+    @Pattern(regexp = VEHICLE_LICENSE_PLATE_REGEX, message = VEHICLE_PLATE_INVALID_FORMAT)
     private String licensePlate;
 
     @NotNull(message = VEHICLE_VIN_REQUIRED)
-    @Pattern(regexp = "^[A-Z\\d]{17}$", message = VEHICLE_VIN_INVALID_FORMAT)
+    @Pattern(regexp = VEHICLE_VIN_REGEX, message = VEHICLE_VIN_INVALID_FORMAT)
     private String vin;
 
     @NotNull(message = VEHICLE_PROD_YEAR_REQUIRED)

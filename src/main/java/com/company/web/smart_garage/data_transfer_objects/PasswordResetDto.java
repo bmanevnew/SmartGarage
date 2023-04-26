@@ -1,11 +1,12 @@
 package com.company.web.smart_garage.data_transfer_objects;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import static com.company.web.smart_garage.utils.Constants.*;
 
 @Getter
 @Setter
@@ -13,14 +14,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PasswordResetDto {
 
-    @NotBlank(message = "Please enter your current password.")
+    @NotBlank(message = CURRENT_PASSWORD_BLANK)
     private String currentPassword;
 
-    @NotBlank(message = "Please enter your new password.")
-    // @Size(min = 8, message = "Your new password must be at least 8 characters long.")
+    @NotBlank(message = NEW_PASSWORD_BLANK)
     private String newPassword;
 
-    @NotBlank(message = "Please confirm your new password.")
+    @NotBlank(message = CONFIRM_PASSWORD_BLANK)
     private String confirmNewPassword;
 
 

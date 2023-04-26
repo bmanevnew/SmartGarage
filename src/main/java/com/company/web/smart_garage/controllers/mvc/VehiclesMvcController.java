@@ -24,7 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
-import static com.company.web.smart_garage.utils.Constants.VEHICLE_PROD_YEAR_INVALID;
+import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
 @Controller
@@ -32,22 +32,27 @@ import static com.company.web.smart_garage.utils.Constants.VEHICLE_PROD_YEAR_INV
 public class VehiclesMvcController {
 
     public static final int DEFAULT_PAGE_SIZE = 5;
+    public static final String VEHICLE_UPDATE_VIEW = "vehicleUpdate";
+    public static final String ALL_VEHICLES_VIEW = "allVehicles";
+    public static final String VEHICLE_CREATE_VIEW = "vehicleCreate";
+    public static final String VEHICLE_VIEW = "vehicle";
+
     private final VehicleService vehicleService;
     private final UserService userService;
     private final VehicleMapper vehicleMapper;
 
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleNotFound(EntityNotFoundException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        model.addAttribute("httpCode", "404 Not Found");
-        return "error";
+        model.addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+        model.addAttribute(HTTP_CODE_KEY, NOT_FOUND_HEADING);
+        return ERROR_VIEW;
     }
 
     @ExceptionHandler(UnauthorizedOperationException.class)
     public String handleUnauthorized(UnauthorizedOperationException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        model.addAttribute("httpCode", "401 Unauthorized");
-        return "error";
+        model.addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+        model.addAttribute(HTTP_CODE_KEY, UNAUTHORIZED_HEADING);
+        return ERROR_VIEW;
     }
 
     @GetMapping("/{id}")
@@ -55,32 +60,32 @@ public class VehiclesMvcController {
         Vehicle vehicle = vehicleService.getById(id);
         if (!userIsAdminOrEmployee(authentication) &&
                 !vehicle.getOwner().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
-            throw new UnauthorizedOperationException("Access denied.");
+            throw new UnauthorizedOperationException(ACCESS_DENIED);
         }
-        model.addAttribute("vehicle", vehicle);
-        return "vehicle";
+        model.addAttribute(VEHICLE_KEY, vehicle);
+        return VEHICLE_VIEW;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping("/create")
     public String getCreatePage(Model model) {
-        model.addAttribute("vehicleDtoCreate", new VehicleDtoCreate());
-        return "vehicleCreate";
+        model.addAttribute(VEHICLE_DTO_CREATE, new VehicleDtoCreate());
+        return VEHICLE_CREATE_VIEW;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping("/create")
-    public String create(@Valid @ModelAttribute("vehicleDtoCreate") VehicleDtoCreate dto,
+    public String create(@Valid @ModelAttribute(VEHICLE_DTO_CREATE) VehicleDtoCreate dto,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "vehicleCreate";
+            return VEHICLE_CREATE_VIEW;
         }
         User owner;
         try {
             owner = userService.getByUsernameOrEmail(dto.getOwnerUsernameOrEmail());
         } catch (EntityNotFoundException e) {
-            bindingResult.rejectValue("ownerUsernameOrEmail", "owner_invalid", e.getMessage());
-            return "vehicleCreate";
+            bindingResult.rejectValue(OWNER_USERNAME_OR_EMAIL_FIELD, OWNER_INVALID, e.getMessage());
+            return VEHICLE_CREATE_VIEW;
         }
         Vehicle vehicle;
         try {
@@ -88,13 +93,13 @@ public class VehiclesMvcController {
             try {
                 vehicleFromDto = vehicleMapper.dtoToVehicle(dto);
             } catch (NumberFormatException e) {
-                bindingResult.rejectValue("productionYear", "prod_year_invalid", "Year invalid.");
-                return "vehicleCreate";
+                bindingResult.rejectValue(PRODUCTION_YEAR_FIELD, PROD_YEAR_INVALID, PROD_YEAR_INVALID_MESSAGE);
+                return VEHICLE_CREATE_VIEW;
             }
             vehicle = vehicleService.create(vehicleFromDto, owner);
         } catch (InvalidParamException e) {
-            bindingResult.rejectValue("productionYear", "prod_year_invalid", e.getMessage());
-            return "vehicleCreate";
+            bindingResult.rejectValue(PRODUCTION_YEAR_FIELD, PROD_YEAR_INVALID, e.getMessage());
+            return VEHICLE_CREATE_VIEW;
         }
         return "redirect:/vehicles/" + vehicle.getId();
     }
@@ -105,38 +110,37 @@ public class VehiclesMvcController {
         Vehicle vehicle = vehicleService.getById(id);
         if (!userIsAdminOrEmployee(authentication) &&
                 !vehicle.getOwner().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
-            //Todo change view to show user was unauthorized to access resource
-            throw new UnauthorizedOperationException("Access denied.");
+            throw new UnauthorizedOperationException(ACCESS_DENIED);
         }
-        model.addAttribute("vehicleDto", vehicleMapper.vehicleToDto(vehicle));
-        model.addAttribute("vehicle", vehicle);
-        return "vehicleUpdate";
+        model.addAttribute(VEHICLE_DTO, vehicleMapper.vehicleToDto(vehicle));
+        model.addAttribute(VEHICLE_KEY, vehicle);
+        return VEHICLE_UPDATE_VIEW;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping("/{id}/update")
-    public String update(@Valid @ModelAttribute("vehicleDto") VehicleDto dto,
+    public String update(@Valid @ModelAttribute(VEHICLE_DTO) VehicleDto dto,
                          BindingResult bindingResult,
                          @PathVariable long id,
                          Model model) {
-        model.addAttribute("vehicle", vehicleService.getById(id));
+        model.addAttribute(VEHICLE_KEY, vehicleService.getById(id));
         if (bindingResult.hasErrors()) {
-            return "vehicleUpdate";
+            return VEHICLE_UPDATE_VIEW;
         }
         Vehicle vehicle = vehicleMapper.dtoToVehicle(dto, id);
         try {
             vehicleService.update(vehicle);
         } catch (InvalidParamException e) {
             if (e.getMessage().equals(VEHICLE_PROD_YEAR_INVALID)) {
-                bindingResult.rejectValue("productionYear", "prod_year_error", e.getMessage());
-                return "vehicleUpdate";
+                bindingResult.rejectValue(PRODUCTION_YEAR_FIELD, PROD_YEAR_INVALID, e.getMessage());
+                return VEHICLE_UPDATE_VIEW;
             }
         }
         return "redirect:/vehicles/" + id;
     }
 
     @GetMapping
-    public String getAll(@ModelAttribute("vehicleFilterOptions") VehicleFilterOptionsDto filter,
+    public String getAll(@ModelAttribute(VEHICLE_FILTER_OPTIONS) VehicleFilterOptionsDto filter,
                          @PageableDefault(size = DEFAULT_PAGE_SIZE) Pageable pageable,
                          Authentication authentication, Model viewModel) {
         viewModel.addAttribute("pageSize", pageable.getPageSize());
@@ -163,14 +167,14 @@ public class VehiclesMvcController {
             vehicles = vehicleService.getAll(actualOwnerId, filter.getModel(), filter.getBrand(),
                     prodYearFrom, prodYearTo, pageable);
         } catch (InvalidParamException e) {
-            viewModel.addAttribute("paramError", e.getMessage());
-            return "allVehicles";
+            viewModel.addAttribute(PARAM_ERROR, e.getMessage());
+            return ALL_VEHICLES_VIEW;
         } catch (NumberFormatException e) {
-            viewModel.addAttribute("paramError", "Invalid year input.");
-            return "allVehicles";
+            viewModel.addAttribute(PARAM_ERROR, INVALID_YEAR);
+            return ALL_VEHICLES_VIEW;
         }
-        viewModel.addAttribute("vehicles", vehicles);
-        return "allVehicles";
+        viewModel.addAttribute(VEHICLES_KEY, vehicles);
+        return ALL_VEHICLES_VIEW;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

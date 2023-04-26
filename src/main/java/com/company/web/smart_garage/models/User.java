@@ -10,12 +10,14 @@ import org.hibernate.annotations.Where;
 
 import java.util.Set;
 
+import static com.company.web.smart_garage.utils.Constants.NOT_ARCHIVED;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "update users set is_archived = true where user_id = ?")
-@Where(clause = "is_archived = false")
+@Where(clause = NOT_ARCHIVED)
 @Entity
 @Table(name = "users")
 public class User {

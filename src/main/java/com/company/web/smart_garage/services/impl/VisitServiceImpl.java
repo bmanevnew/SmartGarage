@@ -76,7 +76,7 @@ public class VisitServiceImpl implements VisitService {
         validateId(visitId);
         Visit visit = getById(visitId);
         if (visit.getRepairs().stream().anyMatch(repair -> repair.getId().equals(repairId)))
-            throw new InvalidParamException(String.format("Visit %d already has repair %d.", visitId, repairId));
+            throw new InvalidParamException(String.format(VISIT_ALREADY_HAS_REPAIR_FORMAT, visitId, repairId));
         Set<Repair> set = visit.getRepairs();
         set.add(repairService.getById(repairId));
         visit.setRepairs(set);
@@ -89,7 +89,7 @@ public class VisitServiceImpl implements VisitService {
         validateId(visitId);
         Visit visit = getById(visitId);
         if (visit.getRepairs().stream().noneMatch(repair -> repair.getId().equals(repairId)))
-            throw new InvalidParamException(String.format("Visit %d has no repair %d.", visitId, repairId));
+            throw new InvalidParamException(String.format(VISIT_HAS_NO_REPAIR_FORMAT, visitId, repairId));
         Set<Repair> set = visit.getRepairs();
         set.remove(repairService.getById(repairId));
         visit.setRepairs(set);

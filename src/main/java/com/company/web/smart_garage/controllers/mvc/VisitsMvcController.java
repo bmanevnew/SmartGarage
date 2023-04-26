@@ -11,6 +11,7 @@ import com.company.web.smart_garage.models.User;
 import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.models.Visit;
 import com.company.web.smart_garage.services.*;
+import com.company.web.smart_garage.utils.Constants;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
-import static com.company.web.smart_garage.utils.Constants.DATE_FORMAT;
+import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
 @Controller
@@ -47,6 +48,10 @@ import static com.company.web.smart_garage.utils.Constants.DATE_FORMAT;
 public class VisitsMvcController {
 
     public static final int DEFAULT_PAGE_SIZE = 5;
+    public static final String VISIT_VIEW = "visit";
+    public static final String ALL_VISITS_VIEW = "allVisits";
+    public static final String VISIT_CREATE_VIEW = "visitCreate";
+    public static final String VISIT_UPDATE_VIEW = "visitUpdate";
     private final VisitService visitService;
     private final UserService userService;
     private final VehicleService vehicleService;
@@ -55,16 +60,16 @@ public class VisitsMvcController {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public String handleNotFound(EntityNotFoundException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        model.addAttribute("httpCode", "404 Not Found");
-        return "error";
+        model.addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+        model.addAttribute(HTTP_CODE_KEY, NOT_FOUND_HEADING);
+        return ERROR_VIEW;
     }
 
     @ExceptionHandler(UnauthorizedOperationException.class)
     public String handleUnauthorized(UnauthorizedOperationException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-        model.addAttribute("httpCode", "401 Unauthorized");
-        return "error";
+        model.addAttribute(ERROR_MESSAGE_KEY, e.getMessage());
+        model.addAttribute(HTTP_CODE_KEY, UNAUTHORIZED_HEADING);
+        return ERROR_VIEW;
     }
 
     @GetMapping("/{id}")
@@ -74,21 +79,21 @@ public class VisitsMvcController {
         visit = visitService.getById(id);
         if (!userIsAdminOrEmployee(authentication) &&
                 !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
-            throw new UnauthorizedOperationException("Access denied.");
+            throw new UnauthorizedOperationException(ACCESS_DENIED);
         }
-        model.addAttribute("visit", visit);
-        model.addAttribute("currency", new SimpleStringDto());
-        return "visit";
+        model.addAttribute(VISIT_KEY, visit);
+        model.addAttribute(CURRENCY_KEY, new SimpleStringDto());
+        return VISIT_VIEW;
     }
 
     @GetMapping
-    public String getAll(@ModelAttribute("visitFilterOptions") VisitFilterOptionsDto filter,
+    public String getAll(@ModelAttribute(VISIT_FILTER_OPTIONS) VisitFilterOptionsDto filter,
                          @PageableDefault(size = DEFAULT_PAGE_SIZE) Pageable pageable,
                          Authentication authentication, Model viewModel) {
         viewModel.addAttribute("pageSize", pageable.getPageSize());
+        Page<Visit> visits;
         Long actualVisitorId = null;
         Long actualVehicleId = null;
-        Page<Visit> visits;
         LocalDate dateFrom = null;
         LocalDate dateTo = null;
         try {
@@ -115,52 +120,52 @@ public class VisitsMvcController {
             }
             if (actualVehicleId != null && !userIsAdminOrEmployee(authentication) &&
                     !vehicleService.getById(actualVehicleId).getOwner().getId().equals(authUserId)) {
-                throw new UnauthorizedOperationException("Access denied.");
+                throw new UnauthorizedOperationException(ACCESS_DENIED);
             }
 
             if (filter.getDateFrom() != null && !filter.getDateFrom().isBlank())
-                dateFrom = LocalDate.parse(filter.getDateFrom(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                dateFrom = LocalDate.parse(filter.getDateFrom(), DateTimeFormatter.ofPattern(DATE_FORMAT));
             if (filter.getDateTo() != null && !filter.getDateTo().isBlank())
-                dateTo = LocalDate.parse(filter.getDateTo(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                dateTo = LocalDate.parse(filter.getDateTo(), DateTimeFormatter.ofPattern(DATE_FORMAT));
             visits = visitService.getAll(actualVisitorId, actualVehicleId, dateFrom, dateTo, pageable);
         } catch (InvalidParamException e) {
-            viewModel.addAttribute("paramError", e.getMessage());
-            return "allVisits";
+            viewModel.addAttribute(PARAM_ERROR, e.getMessage());
+            return ALL_VISITS_VIEW;
         } catch (DateTimeParseException e) {
-            viewModel.addAttribute("paramError", "Invalid date input.");
-            return "allVisits";
+            viewModel.addAttribute(PARAM_ERROR, INVALID_DATE);
+            return ALL_VISITS_VIEW;
         }
-        viewModel.addAttribute("visits", visits);
-        return "allVisits";
+        viewModel.addAttribute(VISITS_KEY, visits);
+        return ALL_VISITS_VIEW;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping("/create")
     public String getCreatePage(Model model) {
-        model.addAttribute("visitDto", new VisitDtoSimple());
-        return "visitCreate";
+        model.addAttribute(VISIT_DTO, new VisitDtoSimple());
+        return VISIT_CREATE_VIEW;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @PostMapping("/create")
-    public String create(@Valid @ModelAttribute("visitDto") VisitDtoSimple dto,
+    public String create(@Valid @ModelAttribute(VISIT_DTO) VisitDtoSimple dto,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "visitCreate";
+            return VISIT_CREATE_VIEW;
         }
         User visitor;
         try {
             visitor = userService.getByUsernameOrEmail(dto.getVisitor());
         } catch (EntityNotFoundException e) {
-            bindingResult.rejectValue("visitor", "visitor_invalid", e.getMessage());
-            return "visitCreate";
+            bindingResult.rejectValue(VISITOR_FIELD, VISITOR_INVALID, e.getMessage());
+            return VISIT_CREATE_VIEW;
         }
         Vehicle vehicle;
         try {
             vehicle = vehicleService.getByLicensePlateOrVin(dto.getVehicle());
         } catch (EntityNotFoundException e) {
-            bindingResult.rejectValue("vehicle", "vehicle_invalid", e.getMessage());
-            return "visitCreate";
+            bindingResult.rejectValue(VEHICLE_FIELD, VEHICLE_INVALID, e.getMessage());
+            return VISIT_CREATE_VIEW;
         }
 
         Visit visit = new Visit(null, null, vehicle, visitor, null);
@@ -175,10 +180,10 @@ public class VisitsMvcController {
         Visit visit = visitService.getById(id);
         Set<Repair> repairs = repairService.getAll(null, null, null, Pageable.unpaged())
                 .stream().filter(repair -> !visit.getRepairs().contains(repair)).collect(Collectors.toSet());
-        model.addAttribute("allRepairs", repairs);
-        model.addAttribute("addRepair", new SimpleStringDto());
-        model.addAttribute("visit", visit);
-        return "visitUpdate";
+        model.addAttribute(ALL_REPAIRS_KEY, repairs);
+        model.addAttribute(ADD_REPAIR_KEY, new SimpleStringDto());
+        model.addAttribute(VISIT_KEY, visit);
+        return VISIT_UPDATE_VIEW;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
@@ -194,7 +199,7 @@ public class VisitsMvcController {
 
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping("/{visitId}/addRepair")
-    public String addRepair(@ModelAttribute("addRepair") SimpleStringDto dto,
+    public String addRepair(@ModelAttribute(ADD_REPAIR_KEY) SimpleStringDto dto,
                             @PathVariable long visitId) {
         return addRepair(visitId, Long.parseLong(dto.getString()));
     }
@@ -218,22 +223,22 @@ public class VisitsMvcController {
 
         if (!userIsAdminOrEmployee(authentication) &&
                 !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
-            throw new UnauthorizedOperationException("Access denied.");
+            throw new UnauthorizedOperationException(ACCESS_DENIED);
         }
 
-        model.addAttribute("visit", visit);
+        model.addAttribute(VISIT_KEY, visit);
         try {
             visitService.sendPdfToMail(visit, currency.getString().toUpperCase());
         } catch (InvalidParamException e) {
-            model.addAttribute("response", e.getMessage());
-            return "visit";
+            model.addAttribute(RESPONSE_KEY, e.getMessage());
+            return VISIT_VIEW;
         }
-        model.addAttribute("response", "Successfully sent pdf.");
-        return "visit";
+        model.addAttribute(RESPONSE_KEY, SUCCESSFULLY_SENT_PDF);
+        return VISIT_VIEW;
     }
 
     @GetMapping("/{visitId}/downloadPdf")
-    public Object downloadPdf(@ModelAttribute("currency") SimpleStringDto currency,
+    public Object downloadPdf(@ModelAttribute(CURRENCY_KEY) SimpleStringDto currency,
                               @PathVariable long visitId, Model model,
                               Authentication authentication) {
 
@@ -241,25 +246,25 @@ public class VisitsMvcController {
 
         if (!userIsAdminOrEmployee(authentication) &&
                 !visit.getVisitor().getId().equals(userService.getByUsernameOrEmail(authentication.getName()).getId())) {
-            throw new UnauthorizedOperationException("Access denied.");
+            throw new UnauthorizedOperationException(ACCESS_DENIED);
         }
 
-        model.addAttribute("visit", visit);
+        model.addAttribute(VISIT_KEY, visit);
         byte[] contents;
         try {
             contents = pdfExporter.export(visit, currency.getString().toUpperCase()).toByteArray();
         } catch (InvalidParamException e) {
-            model.addAttribute("response", e.getMessage());
-            return "visit";
+            model.addAttribute(RESPONSE_KEY, e.getMessage());
+            return VISIT_VIEW;
         }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_MS);
         String currentDateTime = dateFormat.format(new Date());
-        String filename = String.format("visit_pdf_%s", currentDateTime);
+        String filename = String.format(FILE_NAME_FORMAT, currentDateTime);
         headers.setContentDispositionFormData(filename, filename);
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        headers.setCacheControl(CACHE_CONTROL);
 
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }

@@ -7,14 +7,17 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
 
+import static com.company.web.smart_garage.utils.Constants.FILTER_NAME;
+import static com.company.web.smart_garage.utils.Constants.FILTER_PARAM;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @SQLDelete(sql = "update repairs set is_deleted = true where repair_id = ?")
-@FilterDef(name = "deletedRepairFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedRepairFilter", condition = "is_deleted = :isDeleted")
+@FilterDef(name = FILTER_NAME, parameters = @ParamDef(name = FILTER_PARAM, type = Boolean.class))
+@Filter(name = FILTER_NAME, condition = "is_deleted = :" + FILTER_PARAM)
 @Entity
 @Table(name = "repairs")
 public class Repair {
