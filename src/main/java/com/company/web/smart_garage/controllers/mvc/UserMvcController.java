@@ -105,40 +105,13 @@ public class UserMvcController {
         LocalDate dateFrom = null;
         LocalDate dateTo = null;
         try {
-            if (filterOptionsDto.getPhoneNumber() != null) {
-                User user = userService.getByPhoneNumber(filterOptionsDto.getPhoneNumber());
-                List<User> userList = Collections.singletonList(user);
-                users = new PageImpl<>(userList, pageable, 1);
-                viewModel.addAttribute("users", users);
-                return "allUsers";
-            }
-            if (filterOptionsDto.getEmail() != null) {
-                User user = userService.getByEmail(filterOptionsDto.getEmail());
-                List<User> userList = Collections.singletonList(user);
-                users = new PageImpl<>(userList, pageable, 1);
-                viewModel.addAttribute("users", users);
-                return "allUsers";
-            }
-        } catch (InvalidParamException e) {
-            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
-                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
-            viewModel.addAttribute("users", users);
-            return "allUsers";
-        } catch (DateTimeParseException e) {
-            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
-                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
-            viewModel.addAttribute("users", users);
-            return "allUsers";
-        }
-
-        try {
 
             if (filterOptionsDto.getDateFrom() != null && !filterOptionsDto.getDateFrom().isBlank())
                 dateFrom = LocalDate.parse(filterOptionsDto.getDateFrom(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
             if (filterOptionsDto.getDateTo() != null && !filterOptionsDto.getDateTo().isBlank())
                 dateTo = LocalDate.parse(filterOptionsDto.getDateTo(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
 
-            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getEmail(), filterOptionsDto.getModel(),
                     filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
         } catch (InvalidParamException e) {
             viewModel.addAttribute("paramError", e.getMessage());
@@ -147,6 +120,34 @@ public class UserMvcController {
             viewModel.addAttribute("paramError", "Invalid year input.");
             return "allUsers";
         }
+        try {
+            if (filterOptionsDto.getPhoneNumber() != null) {
+                User user = userService.getByPhoneNumber(filterOptionsDto.getPhoneNumber());
+                List<User> userList = Collections.singletonList(user);
+                users = new PageImpl<>(userList, pageable, 1);
+                viewModel.addAttribute("users", users);
+                return "allUsers";
+            }
+//            if (filterOptionsDto.getEmail() != null) {
+//                User user = userService.getByEmail(filterOptionsDto.getEmail());
+//                List<User> userList = Collections.singletonList(user);
+//                users = new PageImpl<>(userList, pageable, 1);
+//                viewModel.addAttribute("users", users);
+//                return "allUsers";
+//            }
+        } catch (InvalidParamException e) {
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getEmail(), filterOptionsDto.getModel(),
+                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
+            viewModel.addAttribute("users", users);
+            return "allUsers";
+        } catch (DateTimeParseException e) {
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getEmail(), filterOptionsDto.getModel(),
+                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
+            viewModel.addAttribute("users", users);
+            return "allUsers";
+        }
+
+
 
         viewModel.addAttribute("users", users);
         return "allUsers";

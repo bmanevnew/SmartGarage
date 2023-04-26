@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> getFilteredUsers(String name, String vehicleModel,
+    public Page<User> getFilteredUsers(String name, String email, String vehicleModel,
                                        String vehicleMake, LocalDate dateFrom, LocalDate dateTo,
                                        Pageable pageable) {
 
@@ -110,10 +110,11 @@ public class UserServiceImpl implements UserService {
         validateSortProperties(pageable.getSort());
 
         if (name != null && name.isBlank()) name = null;
+        if (email != null && email.isBlank()) email = null;
         if (vehicleMake != null && vehicleMake.isBlank()) vehicleMake = null;
         if (vehicleModel != null && vehicleModel.isBlank()) vehicleModel = null;
 
-        Page<User> users = userRepository.findByFilters(name, vehicleModel, vehicleMake,
+        Page<User> users = userRepository.findByFilters(name, email, vehicleModel, vehicleMake,
                 (dateFrom == null ? null : java.sql.Date.valueOf(dateFrom)),
                 (dateTo == null ? null : java.sql.Date.valueOf(dateTo)),
                 pageable);

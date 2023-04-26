@@ -65,13 +65,14 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN')")
     @GetMapping
     public List<UserDtoOut> getAll(@RequestParam(required = false, name = "name") String name,
+                                   @RequestParam(required = false, name = "name") String email,
                                    @RequestParam(required = false, name = "vehicle-model") String vehicleModel,
                                    @RequestParam(required = false, name = "vehicle-brand") String vehicleMake,
                                    @RequestParam(required = false, name = "visit-from-date") LocalDate visitFromDate,
                                    @RequestParam(required = false, name = "visit-to-date") LocalDate visitToDate,
                                    Pageable pageable) {
 
-        return userService.getFilteredUsers(name, vehicleModel, vehicleMake, visitFromDate, visitToDate, pageable)
+        return userService.getFilteredUsers(name, email, vehicleModel, vehicleMake, visitFromDate, visitToDate, pageable)
                 .map(userMapper::userToDto).toList();
     }
 

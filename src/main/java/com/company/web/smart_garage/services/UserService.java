@@ -17,7 +17,7 @@ public interface UserService {
 
     User getByPhoneNumber(String phoneNumber);
 
-    Page<User> getFilteredUsers(String name, String vehicleModel, String vehicleMake, LocalDate visitFromDate,
+    Page<User> getFilteredUsers(String name, String email, String vehicleModel, String vehicleMake, LocalDate visitFromDate,
                                 LocalDate visitToDate, Pageable pageable);
 
     User create(User user);
