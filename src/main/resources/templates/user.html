@@ -86,21 +86,24 @@
                 <span type="text" class="form-control" th:text="${user.getPhoneNumber()}"></span>
             </div>
         </div>
-        <div class="row justify-content-center" th:if="${currentUser.getId() == user?.getId()}"
+        <div class="row justify-content-center"
              style="margin-bottom: 20px;">
-            <a th:if="${#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_EMPLOYEE'')')}"
+            <a th:if="${#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_EMPLOYEE'')')
+            || currentUser.getId() == user?.getId()}"
                id="userUpdate" sec:authorize="!isAnonymous()" class="col-lg-3" href="userUpdate.html"
                th:href="@{~/users/{id}/update(id=${user?.getId()})}"
                th:id="updateUserButton" type="submit">
                 <button class="btn btn-primary btn-block" style="height: 50px;">Edit Profile</button>
             </a>
-            <a id="changePassword" sec:authorize="!isAnonymous()" class="col-lg-3" href="changePassword.html"
+            <a id="changePassword" th:if="${currentUser.getId() == user?.getId()}" class="col-lg-3"
+               href="changePassword.html"
                th:href="@{~/users/{id}/changePassword(id=${user?.getId()})}"
                th:id="changePassButton" type="submit">
                 <button class="btn btn-primary btn-block" style="height: 50px;">Change Password</button>
             </a>
         </div>
-        <div class="row justify-content-center" sec:authorize="hasRole('ROLE_ADMIN')">
+        <div class="row justify-content-center" sec:authorize="hasRole('ROLE_ADMIN')"
+             th:if="${currentUser.getId() != user.getId()}">
             <a class="col-lg-3">
                 <form th:action="@{~/users/{id}/delete(id=${user.getId()})}" method="post">
                     <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
@@ -136,7 +139,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-4 mb-2 ">
                 <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')"
-                   th:href="@{/vehicles?owner=__${user.getUsername()}__&model=&brand=&prodYearFrom=&prodYearTo=&sort=}"
+                   th:href="@{/vehicles}"
                    href="">
                     <div class="d-flex align-items-center bg-light p-4 mb-4 btn btn-primary" style="height: 150px;">
                         <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary ml-n4 mr-4"
@@ -149,7 +152,7 @@
             </div>
             <div class="col-lg-4 mb-2">
                 <a sec:authorize="hasAnyRole('ROLE_EMPLOYEE','ROLE_ADMIN', 'ROLE_CUSTOMER')"
-                   th:href="@{/visits?visitor=__${user.getUsername()}__&vehicle=&dateFrom=&dateTo=&sort=}"
+                   th:href="@{/visits}"
                    href="">
                     <div class="d-flex align-items-center bg-light p-4 mb-4 btn btn-primary" style="height: 150px;">
                         <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary ml-n4 mr-4"
@@ -167,35 +170,6 @@
 </div>
 <!-- About End -->
 
-
-<!-- Banner Start -->
-<div class="container-fluid py-5">
-    <div class="container py-5">
-        <div class="row mx-0">
-            <div class="col-lg-6 px-0">
-                <div class="px-5 bg-secondary d-flex align-items-center justify-content-between" style="height: 350px;">
-                    <img class="img-fluid flex-shrink-0 ml-n5 w-50 mr-4" src="img/banner-left.png" alt="">
-                    <div class="text-right">
-                        <h3 class="text-uppercase text-light mb-3">New Car?</h3>
-                        <p class="mb-4">Click here if the customer has a new car</p>
-                        <a class="btn btn-primary py-2 px-4" href="">Start Now</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 px-0">
-                <div class="px-5 bg-dark d-flex align-items-center justify-content-between" style="height: 350px;">
-                    <div class="text-left">
-                        <h3 class="text-uppercase text-light mb-3">Looking for an existing car?</h3>
-                        <p class="mb-4">Browse customer's cars</p>
-                        <a class="btn btn-primary py-2 px-4" href="">Start Now</a>
-                    </div>
-                    <img class="img-fluid flex-shrink-0 mr-n5 w-50 ml-4" src="img/banner-right.png" alt="">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Banner End -->
 
 <!-- Footer -->
 <div th:replace="~{fragments/footer.html :: footer}">Footer fragment</div>
