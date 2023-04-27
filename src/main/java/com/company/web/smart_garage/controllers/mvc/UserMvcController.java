@@ -9,10 +9,12 @@ import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
+import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.services.AuthService;
 import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.AuthorizationUtils;
+import com.company.web.smart_garage.utils.PasswordUtility;
 import com.company.web.smart_garage.utils.mappers.UserMapper;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -23,6 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,8 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdmin;
-import static com.company.web.smart_garage.utils.AuthorizationUtils.userIsAdminOrEmployee;
+import static com.company.web.smart_garage.utils.AuthorizationUtils.*;
 import static com.company.web.smart_garage.utils.Constants.*;
 
 @RequiredArgsConstructor
@@ -81,6 +84,9 @@ public class UserMvcController {
         }
         model.addAttribute("user", user);
         model.addAttribute("currentUser", currentUser);
+        model.addAttribute("isAdmin", userIsAdmin(userService.getById(id)));
+        model.addAttribute("isEmployee", userIsEmployee(userService.getById(id)));
+
         return "user";
     }
 
@@ -99,40 +105,13 @@ public class UserMvcController {
         LocalDate dateFrom = null;
         LocalDate dateTo = null;
         try {
-            if (filterOptionsDto.getPhoneNumber() != null) {
-                User user = userService.getByPhoneNumber(filterOptionsDto.getPhoneNumber());
-                List<User> userList = Collections.singletonList(user);
-                users = new PageImpl<>(userList, pageable, 1);
-                viewModel.addAttribute("users", users);
-                return "allUsers";
-            }
-            if (filterOptionsDto.getEmail() != null) {
-                User user = userService.getByEmail(filterOptionsDto.getEmail());
-                List<User> userList = Collections.singletonList(user);
-                users = new PageImpl<>(userList, pageable, 1);
-                viewModel.addAttribute("users", users);
-                return "allUsers";
-            }
-        } catch (InvalidParamException e) {
-            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
-                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
-            viewModel.addAttribute("users", users);
-            return "allUsers";
-        } catch (DateTimeParseException e) {
-            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
-                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
-            viewModel.addAttribute("users", users);
-            return "allUsers";
-        }
-
-        try {
 
             if (filterOptionsDto.getDateFrom() != null && !filterOptionsDto.getDateFrom().isBlank())
                 dateFrom = LocalDate.parse(filterOptionsDto.getDateFrom(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
             if (filterOptionsDto.getDateTo() != null && !filterOptionsDto.getDateTo().isBlank())
                 dateTo = LocalDate.parse(filterOptionsDto.getDateTo(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
 
-            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getModel(),
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getEmail(), filterOptionsDto.getModel(),
                     filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
         } catch (InvalidParamException e) {
             viewModel.addAttribute("paramError", e.getMessage());
@@ -141,6 +120,34 @@ public class UserMvcController {
             viewModel.addAttribute("paramError", "Invalid year input.");
             return "allUsers";
         }
+        try {
+            if (filterOptionsDto.getPhoneNumber() != null) {
+                User user = userService.getByPhoneNumber(filterOptionsDto.getPhoneNumber());
+                List<User> userList = Collections.singletonList(user);
+                users = new PageImpl<>(userList, pageable, 1);
+                viewModel.addAttribute("users", users);
+                return "allUsers";
+            }
+//            if (filterOptionsDto.getEmail() != null) {
+//                User user = userService.getByEmail(filterOptionsDto.getEmail());
+//                List<User> userList = Collections.singletonList(user);
+//                users = new PageImpl<>(userList, pageable, 1);
+//                viewModel.addAttribute("users", users);
+//                return "allUsers";
+//            }
+        } catch (InvalidParamException e) {
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getEmail(), filterOptionsDto.getModel(),
+                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
+            viewModel.addAttribute("users", users);
+            return "allUsers";
+        } catch (DateTimeParseException e) {
+            users = userService.getFilteredUsers(filterOptionsDto.getFirstName(), filterOptionsDto.getEmail(), filterOptionsDto.getModel(),
+                    filterOptionsDto.getBrand(), dateFrom, dateTo, pageable);
+            viewModel.addAttribute("users", users);
+            return "allUsers";
+        }
+
+
 
         viewModel.addAttribute("users", users);
         return "allUsers";
@@ -167,13 +174,18 @@ public class UserMvcController {
             emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
             return "redirect:/";
         } catch (EntityDuplicationException e) {
-            bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());
-            bindingResult.rejectValue("email", "email_error", e.getMessage());
-            return "createUser";
+            if (e.getMessage().equals(USER_WITH_EMAIL_S_ALREADY_EXISTS)) {
+                bindingResult.rejectValue("email", "email_error", e.getMessage());
+                return "createUser";
+            } else if (e.getMessage().equals(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS)) {
+                bindingResult.rejectValue("phoneNumber", "phone_number_error", e.getMessage());
+                return "createUser";
+            }
+
         }
+        return "createUser";
 
     }
-
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     @GetMapping("/profile")
     public String showMyProfile(Authentication authentication, Model model) {
@@ -209,7 +221,90 @@ public class UserMvcController {
         model.addAttribute("currUser", currentUser);
         return "userUpdate";
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/admin")
+    public String makeAdmin(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
 
+        try {
+            userService.makeAdmin(id);
+            model.addAttribute("isAdmin", userIsAdmin(userService.getById(id)));
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/employee")
+    public String makeEmployee(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        try {
+            userService.makeEmployee(id);
+            model.addAttribute("isEmployee", userIsEmployee(userService.getById(id)));
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/notAdmin")
+    public String makeNotAdmin(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        try {
+            userService.makeNotAdmin(id);
+            model.addAttribute("isAdmin", userIsAdmin(userService.getById(id)));
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/{id}/notEmployee")
+    public String makeNotEmployee(@PathVariable int id, Model model, Authentication authentication) {
+        // User user = userService.getById(id);
+        if (!userIsAdmin(authentication)) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+        try {
+            userService.makeUnemployed(id);
+            model.addAttribute("isEmployee", userIsEmployee(userService.getById(id)));
+
+            return "redirect:/users/" + id;
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "redirect:/users/" + id;
+        } catch (UnauthorizedOperationException e) {
+            throw new UnauthorizedOperationException("Access denied.");
+        }
+
+    }
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/update")
     public String updateUser(@PathVariable long id,
@@ -236,6 +331,10 @@ public class UserMvcController {
             if (e.getMessage().equals(USER_WITH_PHONE_NUMBER_S_ALREADY_EXISTS)) {
                 bindingResult.rejectValue("phoneNumber", "phone_number_error", e.getMessage());
                 return "userUpdate";
+            } else if (e.getMessage().equals(USER_WITH_EMAIL_S_ALREADY_EXISTS)) {
+                bindingResult.rejectValue("email", "email_error", e.getMessage());
+                return "userUpdate";
+
             }
 
         }
@@ -299,7 +398,6 @@ public class UserMvcController {
             User user = userMapper.dtoToUser(register);
             userService.create(user);
             userService.makeEmployee(user.getId());
-            emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
             return "redirect:/";
         } catch (EntityDuplicationException e) {
             bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());
@@ -328,7 +426,7 @@ public class UserMvcController {
             User user = userMapper.dtoToUser(register);
             userService.create(user);
             userService.makeAdmin(user.getId());
-            emailSenderService.sendEmail(user.getEmail(), user.getUsername(), user.getPassword());
+
             return "redirect:/";
         } catch (EntityDuplicationException e) {
             bindingResult.rejectValue("phoneNumber", "phoneNumber_error", e.getMessage());

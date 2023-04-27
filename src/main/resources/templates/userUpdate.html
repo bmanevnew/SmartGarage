@@ -50,45 +50,6 @@
 
 <div class="container pb-5">
     <h2 class="mb-4">Details</h2>
-    <!--    <form class="formBox" action="#" th:action="@{/users/__${user.getId()}__/update}" th:object="${userDto}"-->
-    <!--          method="post">-->
-    <!--        <div class="mb-3">-->
-    <!--            <label class="form-label">Email</label>-->
-    <!--            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">-->
-    <!--        </div>-->
-    <!--        <div class="mb-3">-->
-    <!--            <label class="form-label">Username</label>-->
-    <!--            <input type="text" class="form-control" th:value="${user.username}" disabled style="width: 95%">-->
-    <!--        </div>-->
-    <!--        <div class="mb-3">-->
-    <!--            <label class="form-label">Email</label>-->
-    <!--            <input type="text" class="form-control" th:value="${user.email}" disabled style="width: 95%">-->
-    <!--        </div>-->
-    <!--        <div class="mb-3">-->
-    <!--            <label class="form-label">First name</label>-->
-    <!--            <input type="text" class="form-control" th:field="*{firstName}" style="width: 95%">-->
-    <!--            <label class="error" th:errors="*{firstName}">Error placeholder</label>-->
-    <!--        </div>-->
-    <!--        <div class="mb-3">-->
-    <!--            <label class="form-label">Last name</label>-->
-    <!--            <input type="text" class="form-control" th:field="*{lastName}" style="width: 95%">-->
-    <!--            <label class="error" th:errors="*{lastName}">Error placeholder</label>-->
-    <!--        </div>-->
-    <!--        <div class="mb-3" th:if="${currUser.getId() == user.getId()}">-->
-    <!--            <label class="form-label">Phone Number</label>-->
-    <!--            <input type="text" class="form-control" th:value="${user.phoneNumber}" disabled style="width: 95%">-->
-    <!--        </div>-->
-
-
-    <!--        <div class="mb-3" sec:authorize="hasRole('ROLE_ADMIN')">-->
-    <!--            <label class="form-label">Phone number</label>-->
-    <!--            <input type="text" class="form-control" th:field="*{phoneNumber}" style="width: 95%">-->
-    <!--            <label class="error" th:errors="${phoneNumber}">Error placeholder</label>-->
-    <!--            &lt;!&ndash;            <h5 class="text-center error" th:text="${paramError}">Error</h5>&ndash;&gt;-->
-    <!--        </div>-->
-
-    <!--        <button type="submit" class="btn btn-outline-success">Submit new details</button>-->
-    <!--    </form>-->
     <form href="" action="#" th:action="@{/users/__${user.getId()}__/update}" th:object="${userDto}" method="post">
         <div class="row mb-4 justify-content-center">
             <label class="col-xl-2 col-lg-3 col-form-label text-uppercase text-primary font-weight-bold">Username:</label>

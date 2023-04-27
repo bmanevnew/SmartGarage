@@ -31,11 +31,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "LEFT JOIN u.vehicles v " +
             "LEFT JOIN u.visits vi " +
             "WHERE (:name IS NULL OR u.firstName LIKE %:name%) " +
+            "AND (:email IS NULL OR u.email LIKE %:email%) " +
             "AND (:vehicleModel IS NULL OR v.model LIKE %:vehicleModel%) " +
             "AND (:vehicleMake IS NULL OR v.brand LIKE %:vehicleMake%) " +
             "AND (:fromDate is null or date(vi.date) >= :fromDate) " +
             "AND (:toDate is null or date(vi.date) <= :toDate)")
     Page<User> findByFilters(@Param("name") String name,
+                             @Param("email") String email,
                              @Param("vehicleModel") String vehicleModel,
                              @Param("vehicleMake") String vehicleMake,
                              @Param("fromDate") Date fromDate,

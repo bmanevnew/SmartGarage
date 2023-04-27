@@ -86,25 +86,46 @@
                 <span type="text" class="form-control" th:text="${user.getPhoneNumber()}"></span>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <a th:if="${currentUser.getId() == user?.getId() or #authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_EMPLOYEE'')')}"
+        <div class="row justify-content-center" th:if="${currentUser.getId() == user?.getId()}"
+             style="margin-bottom: 20px;">
+            <a th:if="${#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_EMPLOYEE'')')}"
                id="userUpdate" sec:authorize="!isAnonymous()" class="col-lg-3" href="userUpdate.html"
                th:href="@{~/users/{id}/update(id=${user?.getId()})}"
                th:id="updateUserButton" type="submit">
                 <button class="btn btn-primary btn-block" style="height: 50px;">Edit Profile</button>
             </a>
-            <a th:if="${currentUser.getId() == user?.getId()}"
-               id="changePassword" sec:authorize="!isAnonymous()" class="col-lg-3" href="changePassword.html"
+            <a id="changePassword" sec:authorize="!isAnonymous()" class="col-lg-3" href="changePassword.html"
                th:href="@{~/users/{id}/changePassword(id=${user?.getId()})}"
                th:id="changePassButton" type="submit">
                 <button class="btn btn-primary btn-block" style="height: 50px;">Change Password</button>
             </a>
-            <a th:if="${currentUser.getId() != user.getId()}" sec:authorize="hasRole('ROLE_ADMIN')" class="col-lg-3">
+        </div>
+        <div class="row justify-content-center" sec:authorize="hasRole('ROLE_ADMIN')">
+            <a class="col-lg-3">
                 <form th:action="@{~/users/{id}/delete(id=${user.getId()})}" method="post">
                     <button class="btn btn-primary btn-block" style="height: 50px;">Delete</button>
                 </form>
             </a>
-
+            <a th:if="${!isAdmin}" class="col-lg-3">
+                <form th:action="@{~/users/{id}/admin(id=${user.getId()})}" method="post">
+                    <button class="btn btn-primary btn-block" style="height: 50px;">Make Admin</button>
+                </form>
+            </a>
+            <a th:if="${isAdmin}" class="col-lg-3">
+                <form th:action="@{~/users/{id}/notAdmin(id=${user.getId()})}" method="post">
+                    <button class="btn btn-primary btn-block" style="height: 50px;">Remove Admin</button>
+                </form>
+            </a>
+            <a th:if="${!isEmployee}" class="col-lg-3">
+                <form th:action="@{~/users/{id}/employee(id=${user.getId()})}" method="post">
+                    <button class="btn btn-primary btn-block" style="height: 50px;">Make Employee</button>
+                </form>
+            </a>
+            <a th:if="${isEmployee}" class="col-lg-3">
+                <form th:action="@{~/users/{id}/notEmployee(id=${user.getId()})}" method="post">
+                    <button class="btn btn-primary btn-block" style="height: 50px;">Remove Employee</button>
+                </form>
+            </a>
         </div>
     </div>
 </div>
