@@ -31,7 +31,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequestMapping("/vehicles")
 public class VehiclesMvcController {
 
-    public static final int DEFAULT_PAGE_SIZE = 5;
+    public static final int DEFAULT_PAGE_SIZE = 10;
     public static final String VEHICLE_UPDATE_VIEW = "vehicleUpdate";
     public static final String ALL_VEHICLES_VIEW = "allVehicles";
     public static final String VEHICLE_CREATE_VIEW = "vehicleCreate";

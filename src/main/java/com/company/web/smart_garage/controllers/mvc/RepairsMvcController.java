@@ -28,7 +28,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequestMapping("/repairs")
 public class RepairsMvcController {
 
-    public static final int DEFAULT_PAGE_SIZE = 5;
+    public static final int DEFAULT_PAGE_SIZE = 10;
     public static final String REPAIR_KEY = "repair";
     public static final String REPAIR_VIEW = "repair";
     public static final String ALL_REPAIRS_VIEW = "allRepairs";

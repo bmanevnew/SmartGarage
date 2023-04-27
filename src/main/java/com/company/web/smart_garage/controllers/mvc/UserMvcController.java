@@ -9,12 +9,10 @@ import com.company.web.smart_garage.exceptions.EntityNotFoundException;
 import com.company.web.smart_garage.exceptions.InvalidParamException;
 import com.company.web.smart_garage.exceptions.UnauthorizedOperationException;
 import com.company.web.smart_garage.models.User;
-import com.company.web.smart_garage.models.Vehicle;
 import com.company.web.smart_garage.services.AuthService;
 import com.company.web.smart_garage.services.EmailSenderService;
 import com.company.web.smart_garage.services.UserService;
 import com.company.web.smart_garage.utils.AuthorizationUtils;
-import com.company.web.smart_garage.utils.PasswordUtility;
 import com.company.web.smart_garage.utils.mappers.UserMapper;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -25,8 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +44,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequestMapping("/users")
 public class UserMvcController {
 
-    public static final int DEFAULT_PAGE_SIZE = 5;
+    public static final int DEFAULT_PAGE_SIZE = 10;
     private final UserService userService;
     private final UserMapper userMapper;
     private final EmailSenderService emailSenderService;

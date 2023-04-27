@@ -47,7 +47,7 @@ import static com.company.web.smart_garage.utils.Constants.*;
 @RequestMapping("/visits")
 public class VisitsMvcController {
 
-    public static final int DEFAULT_PAGE_SIZE = 5;
+    public static final int DEFAULT_PAGE_SIZE = 10;
     public static final String VISIT_VIEW = "visit";
     public static final String ALL_VISITS_VIEW = "allVisits";
     public static final String VISIT_CREATE_VIEW = "visitCreate";
